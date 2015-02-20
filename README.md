@@ -15,7 +15,7 @@ TradyFit allows users to buy/sell sports gear
 * Run the command ``vagrant ssh``
 * ``cd vagrant/tradyfit``
 * For launching the web application:
-    - ```python manage.py runserver --host 0.0.0.0
+    - ```python manage.py runserver --host 0.0.0.0```
     - Open a browser and go to localhost:5000
 * For launching the unit tests
     - ```python manage.py test```
