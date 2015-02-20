@@ -20,7 +20,9 @@ manager.add_command('db', MigrateCommand)
 def test():
     """Run the unit tests."""
     import unittest
-    tests = unittest.TestLoader().discover('./tests/')
+    path = os.path.dirname(os.path.abspath(__file__))
+    tests_dir = os.path.join(path,"tests")
+    tests = unittest.TestLoader().discover(tests_dir)
     unittest.TextTestRunner(verbosity=2).run(tests)
 
 
