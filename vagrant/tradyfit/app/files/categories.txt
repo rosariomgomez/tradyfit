@@ -1,0 +1,24 @@
+basketball
+badmington
+baseball
+bowling
+boxing
+cricket
+cycling
+dancing
+equestrian
+football
+golf
+gymnastics
+hockey
+martial arts
+running
+rugby
+skating
+snowboarding
+soccer
+surfing
+swimming
+tennis
+triathlon
+volleyball
