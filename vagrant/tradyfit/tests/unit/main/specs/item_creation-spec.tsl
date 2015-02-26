@@ -1,0 +1,484 @@
+
+Test Case 1  		<error>
+   Type name :  Empty
+
+
+Test Case 2  		<error>
+   Type name :  Short (<3 chars)
+
+
+Test Case 3  		<error>
+   Type name :  Long (>80 chars)
+
+
+Test Case 4  		<error>
+   Type name :  Special characters (accented, asian, EOL)
+
+
+Test Case 5  		<error>
+   Type name :  Leading spaces
+
+
+Test Case 6  		<error>
+   Type name :  SQL injection
+
+
+Test Case 7  		<error>
+   Type name :  XSS injection
+
+
+Test Case 8  		<error>
+   Type description :  Long (>500 chars)
+
+
+Test Case 9  		<error>
+   Type price :  Chars
+
+
+Test Case 10 		<error>
+   Type price :  Long decimal (>10 digits)
+
+
+Test Case 11 		<error>
+   Type price :  Negative
+
+
+Test Case 12 		<error>
+   Type price :  With commas
+
+
+Test Case 13 		<error>
+   Type price :  European style number
+
+
+Test Case 14 		<error>
+   Type :  Non existent category (integer)
+
+
+Test Case 15 		<error>
+   Type :  Empty category
+
+
+Test Case 16 		<error>
+   Type :  SQL injection in category
+
+
+Test Case 17 		(Key = 1.1.1.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  Correct (have (0,500) chars)
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 18 		(Key = 1.1.2.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  Correct (have (0,500) chars)
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 19 		(Key = 1.1.5.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  Correct (have (0,500) chars)
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 20 		(Key = 1.1.9.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  Correct (have (0,500) chars)
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 21 		(Key = 1.2.1.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  Empty
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 22 		(Key = 1.2.2.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  Empty
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 23 		(Key = 1.2.5.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  Empty
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 24 		(Key = 1.2.9.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  Empty
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 25 		(Key = 1.4.1.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  Special characters (accented, asian, EOL)
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 26 		(Key = 1.4.2.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  Special characters (accented, asian, EOL)
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 27 		(Key = 1.4.5.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  Special characters (accented, asian, EOL)
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 28 		(Key = 1.4.9.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  Special characters (accented, asian, EOL)
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 29 		(Key = 1.5.1.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  SQL injection
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 30 		(Key = 1.5.2.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  SQL injection
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 31 		(Key = 1.5.5.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  SQL injection
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 32 		(Key = 1.5.9.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  SQL injection
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 33 		(Key = 1.6.1.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  XSS injection
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 34 		(Key = 1.6.2.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  XSS injection
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 35 		(Key = 1.6.5.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  XSS injection
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 36 		(Key = 1.6.9.1.)
+   Type name        :  Correct (have (3,80) letters, numbers, dots or underscores)
+   Type description :  XSS injection
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 37 		(Key = 6.1.1.1.)
+   Type name        :  Already exists
+   Type description :  Correct (have (0,500) chars)
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 38 		(Key = 6.1.2.1.)
+   Type name        :  Already exists
+   Type description :  Correct (have (0,500) chars)
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 39 		(Key = 6.1.5.1.)
+   Type name        :  Already exists
+   Type description :  Correct (have (0,500) chars)
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 40 		(Key = 6.1.9.1.)
+   Type name        :  Already exists
+   Type description :  Correct (have (0,500) chars)
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 41 		(Key = 6.2.1.1.)
+   Type name        :  Already exists
+   Type description :  Empty
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 42 		(Key = 6.2.2.1.)
+   Type name        :  Already exists
+   Type description :  Empty
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 43 		(Key = 6.2.5.1.)
+   Type name        :  Already exists
+   Type description :  Empty
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 44 		(Key = 6.2.9.1.)
+   Type name        :  Already exists
+   Type description :  Empty
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 45 		(Key = 6.4.1.1.)
+   Type name        :  Already exists
+   Type description :  Special characters (accented, asian, EOL)
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 46 		(Key = 6.4.2.1.)
+   Type name        :  Already exists
+   Type description :  Special characters (accented, asian, EOL)
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 47 		(Key = 6.4.5.1.)
+   Type name        :  Already exists
+   Type description :  Special characters (accented, asian, EOL)
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 48 		(Key = 6.4.9.1.)
+   Type name        :  Already exists
+   Type description :  Special characters (accented, asian, EOL)
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 49 		(Key = 6.5.1.1.)
+   Type name        :  Already exists
+   Type description :  SQL injection
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 50 		(Key = 6.5.2.1.)
+   Type name        :  Already exists
+   Type description :  SQL injection
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 51 		(Key = 6.5.5.1.)
+   Type name        :  Already exists
+   Type description :  SQL injection
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 52 		(Key = 6.5.9.1.)
+   Type name        :  Already exists
+   Type description :  SQL injection
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 53 		(Key = 6.6.1.1.)
+   Type name        :  Already exists
+   Type description :  XSS injection
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 54 		(Key = 6.6.2.1.)
+   Type name        :  Already exists
+   Type description :  XSS injection
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 55 		(Key = 6.6.5.1.)
+   Type name        :  Already exists
+   Type description :  XSS injection
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 56 		(Key = 6.6.9.1.)
+   Type name        :  Already exists
+   Type description :  XSS injection
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 57 		(Key = 7.1.1.1.)
+   Type name        :  Multiple spaces
+   Type description :  Correct (have (0,500) chars)
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 58 		(Key = 7.1.2.1.)
+   Type name        :  Multiple spaces
+   Type description :  Correct (have (0,500) chars)
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 59 		(Key = 7.1.5.1.)
+   Type name        :  Multiple spaces
+   Type description :  Correct (have (0,500) chars)
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 60 		(Key = 7.1.9.1.)
+   Type name        :  Multiple spaces
+   Type description :  Correct (have (0,500) chars)
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 61 		(Key = 7.2.1.1.)
+   Type name        :  Multiple spaces
+   Type description :  Empty
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 62 		(Key = 7.2.2.1.)
+   Type name        :  Multiple spaces
+   Type description :  Empty
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 63 		(Key = 7.2.5.1.)
+   Type name        :  Multiple spaces
+   Type description :  Empty
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 64 		(Key = 7.2.9.1.)
+   Type name        :  Multiple spaces
+   Type description :  Empty
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 65 		(Key = 7.4.1.1.)
+   Type name        :  Multiple spaces
+   Type description :  Special characters (accented, asian, EOL)
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 66 		(Key = 7.4.2.1.)
+   Type name        :  Multiple spaces
+   Type description :  Special characters (accented, asian, EOL)
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 67 		(Key = 7.4.5.1.)
+   Type name        :  Multiple spaces
+   Type description :  Special characters (accented, asian, EOL)
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 68 		(Key = 7.4.9.1.)
+   Type name        :  Multiple spaces
+   Type description :  Special characters (accented, asian, EOL)
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 69 		(Key = 7.5.1.1.)
+   Type name        :  Multiple spaces
+   Type description :  SQL injection
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 70 		(Key = 7.5.2.1.)
+   Type name        :  Multiple spaces
+   Type description :  SQL injection
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 71 		(Key = 7.5.5.1.)
+   Type name        :  Multiple spaces
+   Type description :  SQL injection
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 72 		(Key = 7.5.9.1.)
+   Type name        :  Multiple spaces
+   Type description :  SQL injection
+   Type price       :  Scientific notation
+   Type             :  Existent category
+
+
+Test Case 73 		(Key = 7.6.1.1.)
+   Type name        :  Multiple spaces
+   Type description :  XSS injection
+   Type price       :  Two decimal number (<10 digits)
+   Type             :  Existent category
+
+
+Test Case 74 		(Key = 7.6.2.1.)
+   Type name        :  Multiple spaces
+   Type description :  XSS injection
+   Type price       :  Empty
+   Type             :  Existent category
+
+
+Test Case 75 		(Key = 7.6.5.1.)
+   Type name        :  Multiple spaces
+   Type description :  XSS injection
+   Type price       :  More than 2 decimals (will be rounded)
+   Type             :  Existent category
+
+
+Test Case 76 		(Key = 7.6.9.1.)
+   Type name        :  Multiple spaces
+   Type description :  XSS injection
+   Type price       :  Scientific notation
+   Type             :  Existent category
+

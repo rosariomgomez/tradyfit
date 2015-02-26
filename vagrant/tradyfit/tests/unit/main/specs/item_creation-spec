@@ -1,0 +1,43 @@
+# Name
+  Type name:
+    Correct (have (3,80) letters, numbers, dots or underscores).
+    Empty. [error]
+    Short (<3 chars). [error]
+    Long (>80 chars). [error]
+    Special characters (accented, asian, EOL). [error]
+    Already exists.
+    Multiple spaces.
+    Leading spaces. [error]
+    XSS injection. [error]
+
+# Description
+  Type description:
+    Correct (have (0,500) chars).
+    Empty.
+    Long (>500 chars). [error]
+    Special characters (accented, asian, EOL).
+    SQL injection.
+    XSS injection.
+
+# Price
+  Type price:
+    Two decimal number (<10 digits).
+    Empty.
+    Chars. [error]
+    Long decimal (>10 digits). [error]
+    More than 2 decimals (will be rounded).
+    Negative. [error]
+    With commas. [error]
+    European style number. [error]
+    Scientific notation.
+
+# Category
+  Type:
+    Existent category.
+    Non existent category (integer). [error]
+    Empty category. [error]
+    SQL injection in category. [error]
+
+
+
+
