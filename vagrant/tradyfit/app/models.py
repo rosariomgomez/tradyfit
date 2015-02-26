@@ -22,6 +22,13 @@ class Category(db.Model):
 					db.session.add(category)
 		db.session.commit()
 
+	@staticmethod
+	def get_category_choices():
+		'''return a list with tuples (category_code, name) with 
+		all categories for populate form choices'''
+		categories = Category.query.all()
+		return [(c.id, c.name) for c in categories]
+
 
 class Item(db.Model):
 	__tablename__ = 'items'
@@ -29,6 +36,6 @@ class Item(db.Model):
 	name  = db.Column(db.String(80), nullable=False)
 	description = db.Column(db.Text)
 	price = db.Column(db.Numeric(precision=10, scale=2))
-	timestamp = db.Column(db.DateTime, index=True, 
-							default=datetime.utcnow)
+	timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
+	modified = db.Column(db.DateTime, index=True)
 	category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
