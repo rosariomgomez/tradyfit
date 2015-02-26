@@ -1,0 +1,9 @@
+<div class="item-name">{{ item.name.capitalize() }}</div>
+<div class="item-description">{{ item.description.capitalize() }}</div>
+<div class="item-price">{{ item.price }}$</div>
+<div class="item-category">{{ item.category.name.capitalize() }}</div>
+{% if item.modified %}
+	<div class="item-modified">Last modified: {{ item.modified }}</div>
+{% else %}
+	<div class="item-created">Created: {{ item.timestamp }}</div>
+{% endif %}
