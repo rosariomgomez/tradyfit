@@ -1,4 +1,5 @@
 #!/usr/bin/env python
+# -*- coding: utf-8 -*-
 import os
 from app import create_app, db
 from app.models import Category, Item
@@ -11,20 +12,20 @@ migrate = Migrate(app, db)
 
 
 def make_shell_context():
-    return dict(app=app, db=db, Category=Category, Item=Item)
+  return dict(app=app, db=db, Category=Category, Item=Item)
 manager.add_command("shell", Shell(make_context=make_shell_context))
 manager.add_command('db', MigrateCommand)
 
 
 @manager.command
 def test():
-    """Run the unit tests."""
-    import unittest
-    path = os.path.dirname(os.path.abspath(__file__))
-    tests_dir = os.path.join(path,"tests")
-    tests = unittest.TestLoader().discover(tests_dir)
-    unittest.TextTestRunner(verbosity=2).run(tests)
+  """Run the unit tests."""
+  import unittest
+  path = os.path.dirname(os.path.abspath(__file__))
+  tests_dir = os.path.join(path,"tests")
+  tests = unittest.TestLoader().discover(tests_dir)
+  unittest.TextTestRunner(verbosity=2).run(tests)
 
 
 if __name__ == '__main__':
-    manager.run()
+  manager.run()
