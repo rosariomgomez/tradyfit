@@ -7,13 +7,13 @@ from ..models import Category, Item
 
 
 class ItemForm(Form):
-  name = StringField('Name', validators = 
-                                [ Required(), Length(3, 80), 
-                                  Regexp('^[A-Za-z][. \w]+$', 0,
+  name = StringField('Name', validators =
+                                [ Required(), Length(3, 80),
+                                  Regexp('^[A-Za-z][.\- \w]+$', 0,
                                   'Product names must have only letters,'
-                                  ' numbers, dots or underscores')])
+                                  ' numbers, dots, dashes or underscores')])
   description = TextAreaField('Description', validators=[Length(0,500)])
-  price = DecimalField('Price', default=0, places=2, 
+  price = DecimalField('Price', default=0, places=2,
                         validators= [NumberRange(0, 10**10-1)])
   category = SelectField('Category', coerce=int)
   submit = SubmitField('Submit')
@@ -21,3 +21,12 @@ class ItemForm(Form):
   def __init__(self, *args, **kwargs):
     super(ItemForm, self).__init__(*args, **kwargs)
     self.category.choices = Category.get_category_choices()
+
+
+class SearchForm(Form):
+  search = StringField('What are you looking for?',
+                        validators=[ Required(), Length(3, 80),
+                                Regexp('^[A-Za-z][.\- \w]+$', 0,
+                                'Search must have only letters,'
+                                ' numbers, dots, dashes or underscores')])
+  submit = SubmitField('Search')
