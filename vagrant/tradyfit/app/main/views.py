@@ -3,14 +3,18 @@ from datetime import datetime
 from flask import current_app, render_template, flash, redirect, url_for
 from . import main
 from .. import db
-from .forms import ItemForm
+from .forms import ItemForm, SearchForm
 from ..models import Item, Category
 
 
-@main.route('/')
+@main.route('/', methods=['GET', 'POST'])
 def index():
+  search_form = SearchForm()
+  if search_form.validate_on_submit():
+    return redirect(url_for('main.search_results',
+                            query=search_form.search.data))
   items = Item.query.order_by(Item.timestamp.desc()).all()
-  return render_template('index.html', items=items)
+  return render_template('index.html', form=search_form, items=items)
 
 @main.route('/create/', methods=['GET', 'POST'])
 def create():
@@ -54,3 +58,10 @@ def delete(id):
   db.session.delete(item)
   flash('Your item has been deleted.')
   return redirect(url_for('main.index'))
+
+@main.route('/search_results/<query>')
+def search_results(query):
+  res = Item.query.search(query).order_by(Item.timestamp.desc()).limit(50).all()
+  return render_template('search_results.html', query=query, items=res)
+
+
