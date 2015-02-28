@@ -22,3 +22,12 @@ class CategoryModelTestCase(unittest.TestCase):
     Category.insert_categories()
     c = Category.query.filter_by(name='soccer').one()
     self.assertEqual(c.name, 'soccer')
+
+  def test_insert_categories_no_dup(self):
+    '''make sure that if a category is already in db, it is not
+    added again'''
+    c = Category(name='soccer')
+    db.session.add(c)
+    db.session.commit()
+    Category.insert_categories()
+    self.assertEqual(Category.query.filter_by(name='soccer').count(), 1)
