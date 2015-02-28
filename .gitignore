@@ -1,3 +1,4 @@
 *.py[cod]
 
 vagrant/.vagrant
+vagrant/tradyfit/tmp/
