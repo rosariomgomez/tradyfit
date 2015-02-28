@@ -6,10 +6,10 @@ from bs4 import BeautifulSoup
 from flask import current_app, url_for
 from app import create_app, db
 from app.models import Item, Category
-from app.main.forms import ItemForm
+from app.main.forms import ItemForm, SearchForm
 
 
-class ItemFormTestCase(unittest.TestCase):
+class FormTestCase(unittest.TestCase):
   def setUp(self):
     self.app = create_app('testing')
     self.app_context = self.app.app_context()
@@ -23,6 +23,8 @@ class ItemFormTestCase(unittest.TestCase):
     db.drop_all()
     self.app_context.pop()
 
+
+class ItemFormTestCase(FormTestCase):
   def test_create_item_form(self):
     '''verify an item can be correctly created (happy case)'''
     c = Category.query.filter_by(name='soccer').one()
@@ -39,7 +41,7 @@ class ItemFormTestCase(unittest.TestCase):
     '''verify that name field only accepts the defined data types
     Test cases created following the category partition method
     Full list of TCs at main/specs/item_creation-spec.tsl
-    Name: string(80), required, accept chars, numbers, dots and 
+    Name: string(3, 80), required, accept chars, numbers, dots, dashes and
           underscores. Must start with a char
     '''
     c = Category.query.filter_by(name='soccer').one()
@@ -87,7 +89,8 @@ class ItemFormTestCase(unittest.TestCase):
                     })
     form.validate()
     self.assertEqual(form.errors['name'],
-    [u'Product names must have only letters, numbers, dots or underscores'])
+    ['Product names must have only letters, numbers, dots, dashes or ' +
+    'underscores'])
 
     #5. TC5: Leading spaces
     form = ItemForm(data={
@@ -97,8 +100,9 @@ class ItemFormTestCase(unittest.TestCase):
                         'category': c.id
                     })
     form.validate()
-    self.assertEqual(form.errors['name'], 
-    [u'Product names must have only letters, numbers, dots or underscores'])
+    self.assertEqual(form.errors['name'],
+    ['Product names must have only letters, numbers, dots, dashes or ' +
+    'underscores'])
 
 
   def test_form_description_field(self):
@@ -122,7 +126,7 @@ class ItemFormTestCase(unittest.TestCase):
                         'category': c.id
                     })
     form.validate()
-    self.assertEqual(form.errors['description'], [u'Field must be ' + 
+    self.assertEqual(form.errors['description'], [u'Field must be ' +
                                 'between 0 and 500 characters long.'])
 
 
@@ -153,7 +157,7 @@ class ItemFormTestCase(unittest.TestCase):
                         'category': c.id
                     })
     form.validate()
-    self.assertEqual(form.errors['price'], 
+    self.assertEqual(form.errors['price'],
                             [u'Number must be between 0 and 9999999999.'])
 
     #3. TC11: Negative
@@ -164,7 +168,7 @@ class ItemFormTestCase(unittest.TestCase):
                         'category': c.id
                     })
     form.validate()
-    self.assertEqual(form.errors['price'], 
+    self.assertEqual(form.errors['price'],
                             [u'Number must be between 0 and 9999999999.'])
 
 
@@ -203,3 +207,32 @@ class ItemFormTestCase(unittest.TestCase):
                     })
     form.validate()
     self.assertEqual(form.errors['category'], [u'Not a valid choice'])
+
+
+class SearchFormTestCase(FormTestCase):
+  def test_search_form(self):
+    '''verify a search can be correctly executed (happy case)'''
+    form = SearchForm(data={'search': 't-shirt'})
+    form.validate()
+    self.assertTrue(not form.errors)
+
+  def test_form_search_field(self):
+    '''verify that search field only accepts the defined data types
+    Search: string(3, 80), required, accept chars, numbers, dots, dashes and
+            underscores. Must start with a char
+    '''
+    #1. XSS injection
+    form = SearchForm(data={'search': "<script>alert('XSS')</script>"})
+    form.validate()
+    self.assertEqual(form.errors['search'],
+    [u'Search must have only letters, numbers, dots, dashes or underscores'])
+
+    #2. Chars (>80)
+    form = SearchForm(data={'search': 'The Believers. The hidden story behind '+
+                            'the code that runs our lives and control' +
+                            ' everything by Geoffrey Hinton'})
+    form.validate()
+    self.assertEqual(form.errors['search'], [u'Field must be between 3 and' +
+                                            ' 80 characters long.'])
+
+
