@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-from . import db
+from . import db, login_manager
+from flask.ext.login import UserMixin
 from flask.ext.sqlalchemy import BaseQuery
 from sqlalchemy_searchable import SearchQueryMixin
 from sqlalchemy_utils.types import TSVectorType
@@ -8,6 +9,39 @@ from datetime import datetime
 import os
 
 make_searchable()
+
+
+class User(UserMixin, db.Model):
+  __tablename__ = 'users'
+  id = db.Column(db.Integer, primary_key=True)
+  fb_id = db.Column(db.String(120), unique=True, nullable=False, index=True)
+  email = db.Column(db.String(64), unique=True, nullable=False, index=True)
+  username = db.Column(db.String(64), unique=True, nullable=False, index=True)
+  name = db.Column(db.String(64), unique=False, nullable=False)
+  avatar_url = db.Column(db.String(), unique=True)
+  gender = db.Column(db.String(30))
+  country = db.Column(db.String(100), default='')
+  state =  db.Column(db.String(10), default='')
+  city =  db.Column(db.String(60), default='')
+  member_since = db.Column(db.DateTime(), default=datetime.utcnow)
+  last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
+  is_admin = db.Column(db.Boolean, default=False)
+  items = db.relationship('Item', backref='user', lazy='dynamic',
+                          cascade='all, delete-orphan')
+
+  def ping(self):
+    '''update last_seen field with current time'''
+    self.last_seen = datetime.utcnow()
+    db.session.add(self)
+
+  @staticmethod
+  def get_user(email):
+    return User.query.filter_by(email = email).first()
+
+@login_manager.user_loader
+def load_user(user_id):
+  return User.query.get(int(user_id))
+
 
 class Category(db.Model):
   __tablename__ = 'categories'
@@ -52,5 +86,6 @@ class Item(db.Model):
   modified = db.Column(db.DateTime, index=True)
   category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
   search_vector = db.Column(TSVectorType('name', 'description'))
+  user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
 
