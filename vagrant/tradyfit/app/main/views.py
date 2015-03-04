@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from flask import current_app, render_template, flash, redirect, url_for
+from flask.ext.login import current_user, login_required
 from . import main
 from .. import db
 from .forms import ItemForm, SearchForm
@@ -17,12 +18,14 @@ def index():
   return render_template('index.html', form=search_form, items=items)
 
 @main.route('/create/', methods=['GET', 'POST'])
+@login_required
 def create():
   form = ItemForm()
   if form.validate_on_submit():
     category = Category.query.get(form.category.data)
     item = Item(name=form.name.data, description=form.description.data,
-                price=form.price.data, category=category)
+                price=form.price.data, category=category,
+                user_id=current_user.id)
     db.session.add(item)
     flash('Your item has been created.')
     return redirect(url_for('main.index'))
@@ -34,8 +37,12 @@ def item(id):
   return render_template('item.html', item=item)
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
+@login_required
 def edit(id):
   item = Item.query.get_or_404(id)
+  if current_user != item.user:
+    return redirect(url_for('main.index'))
+
   form = ItemForm()
   if form.validate_on_submit():
     item.name = form.name.data
@@ -53,8 +60,12 @@ def edit(id):
   return render_template('edit_item.html', form=form, id=item.id)
 
 @main.route('/delete/<int:id>')
+@login_required
 def delete(id):
   item = Item.query.get_or_404(id)
+  if current_user != item.user:
+    return redirect(url_for('main.index'))
+
   db.session.delete(item)
   flash('Your item has been deleted.')
   return redirect(url_for('main.index'))
