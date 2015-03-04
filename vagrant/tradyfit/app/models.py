@@ -38,6 +38,16 @@ class User(UserMixin, db.Model):
   def get_user(email):
     return User.query.filter_by(email = email).first()
 
+  @staticmethod
+  def create_username(username):
+    '''verify username is not already in the db, if it exists,
+    add the next uid number to the name'''
+    if User.query.filter_by(username = username).first():
+      uid = User.query.count() + 1
+      return username + str(uid)
+    else:
+      return username
+
 @login_manager.user_loader
 def load_user(user_id):
   return User.query.get(int(user_id))
