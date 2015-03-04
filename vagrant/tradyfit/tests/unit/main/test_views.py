@@ -4,7 +4,7 @@ import re
 from bs4 import BeautifulSoup
 from flask import current_app, url_for
 from app import create_app, db
-from app.models import Item, Category
+from app.models import Item, Category, User
 
 
 class ViewTestCase(unittest.TestCase):
@@ -14,7 +14,7 @@ class ViewTestCase(unittest.TestCase):
     self.app_context.push()
     db.create_all()
     Category.insert_categories()
-    self.client = self.app.test_client()
+    self.client = self.app.test_client(use_cookies=True)
 
   def tearDown(self):
     db.session.remove()
@@ -34,6 +34,29 @@ class IndexViewTestCase(ViewTestCase):
     response = self.client.get(url_for('main.index'))
     r = response.get_data(as_text=True)
     self.assertTrue('Welcome to TradyFit' in r)
+
+  def test_navbar_anonymous_user(self):
+    '''verify if you are not logged in you cannot see the list an item
+    link and you see the log in link'''
+    response = self.client.get(url_for('main.index'))
+    r = response.get_data(as_text=True)
+    self.assertTrue('Log In with Facebook' in r)
+    self.assertFalse('List an item' in r)
+
+  def test_navbar_login_user(self):
+    '''verify if you are logged in, you can see the link to list an item
+    and the right dropdown menu'''
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+            username='john')
+    db.session.add(u)
+    db.session.commit()
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
+      resp = c.get(url_for('main.index'))
+      self.assertTrue(b'List an item' in resp.data)
+      self.assertTrue(u.username in resp.get_data(as_text=True))
 
   def test_item_displayed(self):
     '''verify you can see an item listed in the index page
@@ -85,26 +108,44 @@ class IndexViewTestCase(ViewTestCase):
 class CreateItemViewTestCase(ViewTestCase):
   '''Testing: @main.route('/create/', methods=['GET', 'POST'])'''
 
-  def test_create_item_route(self):
-    '''verify you can access the create an item page
+  def test_create_item_route_login(self):
+    '''verify you can create an item
     1. Go to the create an item's page
     2. Assert you get the correct page
     '''
-    response = self.client.get(url_for('main.create'))
-    self.assertEquals(response.status_code, 200)
-    r = response.get_data(as_text=True)
-    self.assertTrue('id="item-creation"' in r)
+    #create a user
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+            username='john')
+    db.session.add(u)
+    db.session.commit()
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
+      response = self.client.get(url_for('main.create'))
+      self.assertEquals(response.status_code, 200)
+      r = response.get_data(as_text=True)
+      self.assertTrue('id="item-creation"' in r)
 
   def test_create_item_form(self):
     '''verify all fields for creating an item are present
     1. Go to the create an item's page
     2. Check all fields in the form are present
     '''
-    response = self.client.get(url_for('main.create'))
-    r = response.get_data(as_text=True)
-    fields = ['name', 'description', 'price', 'category']
-    for field in fields:
-        self.assertTrue('id="' + field + '"' in r)
+    #create a user
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+            username='john')
+    db.session.add(u)
+    db.session.commit()
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
+      response = self.client.get(url_for('main.create'))
+      r = response.get_data(as_text=True)
+      fields = ['name', 'description', 'price', 'category']
+      for field in fields:
+          self.assertTrue('id="' + field + '"' in r)
 
   def test_create_item(self):
     '''verify an item can be correctly created
@@ -112,16 +153,25 @@ class CreateItemViewTestCase(ViewTestCase):
     2. Field in the form with a happy case
     3. Verify you are redirected to home page and the item is present
     '''
-    c = Category.query.filter_by(name='soccer').one()
-    resp = self.client.post(url_for('main.create'),
-                            data={
-                                'name': 'soccer ball',
-                                'description': 'plain ball',
-                                'price': 234,
-                                'category': c.id
-                            }, follow_redirects=True)
-    self.assertTrue(b'Your item has been created' in resp.data)
-    self.assertTrue(b'234$' in resp.data)
+    #create a user
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+            username='john')
+    db.session.add(u)
+    db.session.commit()
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
+      c = Category.query.filter_by(name='soccer').one()
+      resp = self.client.post(url_for('main.create'),
+                              data={
+                                  'name': 'soccer ball',
+                                  'description': 'plain ball',
+                                  'price': 234,
+                                  'category': c.id
+                              }, follow_redirects=True)
+      self.assertTrue(b'Your item has been created' in resp.data)
+      self.assertTrue(b'234$' in resp.data)
 
 
 class ItemViewTestCase(ViewTestCase):
@@ -152,68 +202,126 @@ class EditItemViewTestCase(ViewTestCase):
   '''Testing: @main.route('/edit/<int:id>', methods=['GET', 'POST'])'''
 
   def test_edit_item_route(self):
-    '''verify you get a 404 for a non existent item
-    and that you can access the edit page for a created item
+    '''verify you get a 404 for a non existent item and that you can
+    access the edit page for a created item if you are the owner
     1. Go to a non existent item edit's page
     2. Assert you get a 404 response
-    3. Create an item
+    3. Try to edit another user's item
     4. Go to the edit item's page
     5. Assert you get the correct edit page
     '''
-    response = self.client.get(url_for('main.edit', id=12))
-    self.assertEquals(response.status_code, 404)
+    #users creation
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+          username='john')
+    u1 = User(fb_id='25', email='maggy@example.com', name='Maggy Simpson',
+          username='maggy')
+    db.session.add_all([u, u1])
+    db.session.commit()
+    #item creation
     c = Category.query.filter_by(name='soccer').one()
     item = Item(name='soccer ball', description='plain ball',
-        price=23, category=c)
+                price=23, category=c, user_id=u.id)
     db.session.add(item)
     db.session.commit()
-    response = self.client.get(url_for('main.edit', id=item.id))
-    r = response.get_data(as_text=True)
-    self.assertTrue('id="edit-item-'+str(item.id) + '"' in r)
+
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u1.id
+        sess['_fresh'] = True
+      #1. non existent item
+      response = self.client.get(url_for('main.edit', id=12))
+      self.assertEquals(response.status_code, 404)
+
+      #2. try to edit other user's item
+      response = self.client.get(url_for('main.edit', id=item.id),
+                                follow_redirects=True)
+      self.assertFalse('id="edit-item-'+str(item.id) + '"' in
+                      response.get_data(as_text=True))
+
+    #3. edit your item
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
+      response = self.client.get(url_for('main.edit', id=item.id),
+                                follow_redirects=True)
+      self.assertTrue('id="edit-item-'+str(item.id) + '"' in
+                      response.get_data(as_text=True))
 
   def test_edit_form(self):
     '''verify that an item can be edit and it's updated correctly'''
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+          username='john')
+    db.session.add(u)
+    db.session.commit()
     c = Category.query.filter_by(name='soccer').one()
     item = Item(name='soccer ball', description='plain ball',
-                price=23, category=c)
+                price=23, category=c, user_id=u.id)
     db.session.add(item)
     db.session.commit()
-    resp = self.client.post(url_for('main.edit', id=item.id),
-                            data={
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
+      resp = self.client.post(url_for('main.edit', id=item.id),
+                              data={
                                 'name': item.name,
                                 'description': item.description,
                                 'price': 234,
-                                'category': c.id
-                            }, follow_redirects=True)
-    self.assertTrue(b'Your item has been updated' in resp.data)
-    self.assertTrue(b'234$' in resp.data)
+                                'category': item.category.id
+                              }, follow_redirects=True)
+      self.assertTrue(b'Your item has been updated.' in resp.data)
+      self.assertTrue(b'234$' in resp.data)
+
 
 class DeleteItemViewTestCase(ViewTestCase):
     '''Testing: @main.route('/delete/<int:id>')'''
 
     def test_delete_item_route(self):
       '''verify you get a 404 for a non existent item
-      and that you can delete a created item
+      and that you can delete a created item if you are the owner
       1. Request to delete a non existent item
       2. Assert you get a 404 response
-      3. Create an item
-      4. Check it appears at index page
+      3. Try to delete another user's item
       4. Go to the delete route
       5. Assert your item has been deleted
       '''
-      response = self.client.get(url_for('main.delete', id=12))
-      self.assertEquals(response.status_code, 404)
+      #users creation
+      u = User(fb_id='23', email='john@example.com', name='John Doe',
+            username='john')
+      u1 = User(fb_id='25', email='maggy@example.com', name='Maggy Simpson',
+            username='maggy')
+      db.session.add_all([u, u1])
+      db.session.commit()
+      #item creation
       c = Category.query.filter_by(name='soccer').one()
       item = Item(name='soccer ball', description='plain ball',
-                  price=23, category=c)
+                  price=23, category=c, user_id=u.id)
       db.session.add(item)
       db.session.commit()
-      response = self.client.get(url_for('main.index'))
-      r = response.get_data(as_text=True)
-      self.assertTrue("item-"+str(item.id) in r)
-      response = self.client.get(url_for('main.delete', id=item.id),
+
+      with self.client as c:
+        with c.session_transaction() as sess:
+          sess['user_id'] = u1.id
+          sess['_fresh'] = True
+        #1. non existent item
+        response = self.client.get(url_for('main.delete', id=12))
+        self.assertEquals(response.status_code, 404)
+
+        #2. try to delete other user's item
+        response = self.client.get(url_for('main.delete', id=item.id),
                                   follow_redirects=True)
-      self.assertTrue(b'Your item has been deleted.' in response.data)
+        self.assertFalse(b'Your item has been deleted.' in response.data)
+
+      #3. delete your item
+      with self.client as c:
+        with c.session_transaction() as sess:
+          sess['user_id'] = u.id
+          sess['_fresh'] = True
+        response = self.client.get(url_for('main.delete', id=item.id),
+                                  follow_redirects=True)
+        self.assertTrue(b'Your item has been deleted.' in response.data)
+
 
 class SearchResultsTestCase(ViewTestCase):
   '''Testing: @main.route('/search_results/<query>')'''
@@ -254,5 +362,4 @@ class SearchResultsTestCase(ViewTestCase):
     soup = BeautifulSoup(resp)
     items = soup.find_all("li", id=re.compile("^item-"))
     self.assertTrue(not items)
-
 
