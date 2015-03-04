@@ -9,14 +9,31 @@
     {{ wtf.quick_form(form) }}<br>
 </div>
 <div class="col-md-12">
-	<ul class="items">
-		{% for item in items %}
-		<li class="item" id="item-{{ item.id }}">
-			{% include "_item.html" %}
-			<a href="{{ url_for('main.edit', id=item.id) }}">Edit</a> |
-			<a href="{{ url_for('main.delete', id=item.id) }}">Delete</a>
-		</li>
-		{% endfor %}
-	</ul>
+  <ul class="items">
+    {% for item in items %}
+    <li class="item" id="item-{{ item.id }}">
+    {% include "_item.html" %}
+    {% if current_user.is_authenticated() and current_user.id == item.user_id %}
+      <a href="{{ url_for('main.edit', id=item.id) }}">Edit</a> |
+      <a href="{{ url_for('main.delete', id=item.id) }}">Delete</a>
+    {% endif %}
+    </li>
+    {% endfor %}
+  </ul>
 </div>
+{% endblock %}
+
+{% block scripts %}
+{{ super() }}
+<script type=text/javascript>
+$(function () {
+  //remove #_=_ added from FB login redirect
+  if (window.location.hash == '#_=_'){
+      history.replaceState
+          ? history.replaceState(null, null,
+                       window.location.href.split('#')[0])
+          : window.location.hash = '';
+  };
+});
+</script>
 {% endblock %}
