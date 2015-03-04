@@ -30,7 +30,7 @@ class DevelopmentConfig(Config):
 
 
 class TestingConfig(Config):
-  TESTING = True
+  TESTING = True #@login_required is disabled on tests
   SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
       'postgresql:///tradyfit_test'
   WTF_CSRF_ENABLED = False #disable csrf token protection on forms
