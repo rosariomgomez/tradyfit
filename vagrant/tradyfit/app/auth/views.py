@@ -75,20 +75,16 @@ def facebook_authorized():
     user = User.get_user(uinfo.data['email'])
     if not user:
       #create unique username from email
-      username = clean_username(user.split('@')[0])
+      username = User.create_username(uinfo.data['email'].split('@')[0])
 
       #request facebook user avatar
       uavatar = facebook.get('/me/picture?redirect=0&type=large')
-      #filename = save_avatar(uavatar.data['data']['url'])
       filename = uavatar.data['data']['url']
 
       #check if gender is provided
       gender = 'unknown'
       if 'gender' in uinfo.data:
         gender = uinfo.data['gender']
-
-      #extract geolocation info from the user ip
-      #country, region, city = get_location(get_ip())
 
       #create user and add it to database
       user = User(fb_id=uinfo.data['id'], gender=gender,
@@ -97,9 +93,7 @@ def facebook_authorized():
                   avatar_url=filename)
       db.session.add(user)
       db.session.commit()
-    elif not user.fb_id:
-        user.fb_id = uinfo.data['id']
-        db.session.add(user)
+
     login_user(user)
     return redirect(url_for('main.index'))
 
@@ -108,6 +102,6 @@ def facebook_authorized():
 @login_required
 def logout():
   '''remove added values to the session cookie and log out'''
-  #session.pop('fb_oauth', None)
+  session.pop('fb_oauth', None)
   logout_user()
   return redirect(url_for('main.index'))
