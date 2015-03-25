@@ -35,6 +35,16 @@ class TestingConfig(Config):
       'postgresql:///tradyfit_test'
   WTF_CSRF_ENABLED = False #disable csrf token protection on forms
 
+  FACEBOOK = {
+    'consumer_key': 'test',
+    'consumer_secret': 'test',
+    'request_token_params': {'scope': 'email'},
+    'base_url': 'https://graph.facebook.com',
+    'request_token_url': None,
+    'access_token_url': '/oauth/access_token',
+    'authorize_url': 'https://www.facebook.com/dialog/oauth'
+  }
+
 
 class ProductionConfig(Config):
   pass
