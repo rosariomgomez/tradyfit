@@ -102,7 +102,7 @@ class FBLoginTestCase(AuthViewTestCase):
         self.assertTrue('john' in resp.get_data(as_text=True))
 
   def test_already_login_user_fb_auth(self):
-    '''if user is alreay authenticated verify it is redirected
+    '''if user is already authenticated verify it is redirected
     to index
     1. Create a user
     2. Log in user by adding it to session
