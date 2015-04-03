@@ -43,6 +43,10 @@ class TestingConfig(Config):
       'postgresql:///tradyfit_test'
   WTF_CSRF_ENABLED = False #disable csrf token protection on forms
 
+  #AWS S3 credentials
+  S3_LOCATION = ''
+  S3_BUCKET = ''
+
   FACEBOOK = {
     'consumer_key': 'test',
     'consumer_secret': 'test',
