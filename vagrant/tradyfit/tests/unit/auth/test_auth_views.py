@@ -6,7 +6,9 @@ from flask_oauthlib.client import OAuthException
 from app import create_app, db
 from app.models import User
 from app.auth.views import facebook
+from app.main import helpers
 from datetime import datetime, timedelta
+from uuid import uuid4
 
 
 class AuthViewTestCase(unittest.TestCase):
@@ -34,7 +36,7 @@ class BeforeRequestTestCase(AuthViewTestCase):
     4. Assert that last_seen user attribute has been updated
     '''
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url=uuid4().hex + '.jpg')
     db.session.add(u)
     db.session.commit()
     before_last_seen = u.last_seen
@@ -82,6 +84,7 @@ class FBLoginTestCase(AuthViewTestCase):
                               return_value= { 'error': 'User not found'})
     return mock_fb_info
 
+
   def test_login_user_fb_auth(self):
     '''verify a new user is created when login with FB for the first time
     1. Create mock objects
@@ -92,14 +95,18 @@ class FBLoginTestCase(AuthViewTestCase):
     mock_fb_resp = FBLoginTestCase.mock_facebook_auth()
     mock_fb_info = FBLoginTestCase.mock_facebook_info()
 
+    mock_save_avatar = Mock(name='save_avatar')
+    mock_save_avatar.return_value = 'testimage.jpg'
+
     self.assertTrue(User.get_user('john@testing.com') is None)
 
     with patch.object(facebook, 'authorized_response', mock_fb_resp):
       with patch.object(facebook, 'get', mock_fb_info):
-        resp = self.client.get(url_for('auth.facebook_authorized'),
-                              follow_redirects=True)
-        self.assertTrue(isinstance(User.get_user('john@testing.com'), User))
-        self.assertTrue('john' in resp.get_data(as_text=True))
+        with patch.object(helpers, 'save_avatar', mock_save_avatar):
+          resp = self.client.get(url_for('auth.facebook_authorized'),
+                                  follow_redirects=True)
+          self.assertTrue(isinstance(User.get_user('john@testing.com'), User))
+          self.assertTrue('john' in resp.get_data(as_text=True))
 
   def test_already_login_user_fb_auth(self):
     '''if user is already authenticated verify it is redirected
@@ -110,7 +117,7 @@ class FBLoginTestCase(AuthViewTestCase):
     4. Assert user is redirected to index
     '''
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url=uuid4().hex + '.jpg')
     db.session.add(u)
     db.session.commit()
     with self.client as c:
