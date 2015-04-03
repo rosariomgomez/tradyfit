@@ -17,6 +17,7 @@ WTForms==2.0.2
 alembic==0.7.4
 beautifulsoup4==4.3.2
 blinker==1.3
+boto==2.36.0
 itsdangerous==0.22
 mock==1.0.1
 psycopg2==2.4.5
