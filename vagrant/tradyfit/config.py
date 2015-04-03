@@ -18,6 +18,13 @@ class Config:
     'authorize_url': 'https://www.facebook.com/dialog/oauth'
   }
 
+  #AWS S3 credentials
+  S3_LOCATION = 'https://s3.amazonaws.com'
+  S3_KEY = os.environ.get('S3_KEY')
+  S3_SECRET = os.environ.get('S3_SECRET')
+  S3_UPLOAD_AVATAR_DIR = '/user_avatars'
+
+
   @staticmethod
   def init_app(app):
       pass
@@ -27,6 +34,7 @@ class DevelopmentConfig(Config):
   DEBUG = True
   SQLALCHEMY_DATABASE_URI = os.environ.get('DEV_DATABASE_URL') or \
       'postgresql:///tradyfit_dev'
+  S3_BUCKET = 'tradyfitbucket.dev'
 
 
 class TestingConfig(Config):
@@ -47,6 +55,7 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
+  #S3_BUCKET = 'tradyfitbucket'
   pass
 
 config = {
