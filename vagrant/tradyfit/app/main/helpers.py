@@ -37,7 +37,6 @@ def save_avatar(avatar):
       sml.set_acl('public-read')
       return filename
     except:
-      print('boto connection not working')
       return 'default_avatar.jpg'
   else:
     return 'default_avatar.jpg'
