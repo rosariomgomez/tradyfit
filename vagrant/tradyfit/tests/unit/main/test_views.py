@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import re
+from uuid import uuid4
 from bs4 import BeautifulSoup
 from flask import current_app, url_for
 from app import create_app, db
@@ -47,7 +48,7 @@ class IndexViewTestCase(ViewTestCase):
     '''verify if you are logged in, you can see the link to list an item
     and the right dropdown menu'''
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url=uuid4().hex + '.jpg')
     db.session.add(u)
     db.session.commit()
     with self.client as c:
@@ -115,7 +116,7 @@ class CreateItemViewTestCase(ViewTestCase):
     '''
     #create a user
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url=uuid4().hex + '.jpg')
     db.session.add(u)
     db.session.commit()
     with self.client as c:
@@ -134,7 +135,7 @@ class CreateItemViewTestCase(ViewTestCase):
     '''
     #create a user
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url=uuid4().hex + '.jpg')
     db.session.add(u)
     db.session.commit()
     with self.client as c:
@@ -155,7 +156,7 @@ class CreateItemViewTestCase(ViewTestCase):
     '''
     #create a user
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url=uuid4().hex + '.jpg')
     db.session.add(u)
     db.session.commit()
     with self.client as c:
@@ -212,9 +213,9 @@ class EditItemViewTestCase(ViewTestCase):
     '''
     #users creation
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-          username='john')
+          username='john', avatar_url=uuid4().hex + '.jpg')
     u1 = User(fb_id='25', email='maggy@example.com', name='Maggy Simpson',
-          username='maggy')
+          username='maggy', avatar_url=uuid4().hex + '.jpg')
     db.session.add_all([u, u1])
     db.session.commit()
     #item creation
@@ -251,7 +252,7 @@ class EditItemViewTestCase(ViewTestCase):
   def test_edit_form(self):
     '''verify that an item can be edit and it's updated correctly'''
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-          username='john')
+          username='john', avatar_url=uuid4().hex + '.jpg')
     db.session.add(u)
     db.session.commit()
     c = Category.query.filter_by(name='soccer').one()
@@ -288,9 +289,9 @@ class DeleteItemViewTestCase(ViewTestCase):
       '''
       #users creation
       u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url=uuid4().hex + '.jpg')
       u1 = User(fb_id='25', email='maggy@example.com', name='Maggy Simpson',
-            username='maggy')
+            username='maggy', avatar_url=uuid4().hex + '.jpg')
       db.session.add_all([u, u1])
       db.session.commit()
       #item creation
