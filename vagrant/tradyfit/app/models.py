@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 from . import db, login_manager
+from flask import current_app
 from flask.ext.login import UserMixin
 from flask.ext.sqlalchemy import BaseQuery
 from sqlalchemy_searchable import SearchQueryMixin
@@ -47,6 +48,12 @@ class User(UserMixin, db.Model):
       return username + str(uid)
     else:
       return username
+
+  def avatar(self):
+    return current_app.config['S3_LOCATION'] + "/" + \
+    current_app.config['S3_BUCKET'] + \
+    current_app.config['S3_UPLOAD_AVATAR_DIR'] + "/" + \
+    self.avatar_url
 
 @login_manager.user_loader
 def load_user(user_id):
