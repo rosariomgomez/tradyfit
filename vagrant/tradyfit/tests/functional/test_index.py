@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 import re
+from uuid import uuid4
 from bs4 import BeautifulSoup
 from flask import current_app, url_for
 from app import create_app, db
@@ -28,9 +29,9 @@ class IndexFunctionalTestCase(unittest.TestCase):
     3. Assert the edit link is present for the user's item
     '''
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url=uuid4().hex + '.jpg')
     u1 = User(fb_id='25', email='maggy@example.com', name='Maggy Simpson',
-              username='maggy')
+              username='maggy', avatar_url=uuid4().hex + '.jpg')
     db.session.add_all([u,u1])
     db.session.commit()
     c = Category.query.filter_by(name='soccer').one()
@@ -58,9 +59,9 @@ class IndexFunctionalTestCase(unittest.TestCase):
     5. Verfiy the item does not appear at the index page anymore
     '''
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url=uuid4().hex + '.jpg')
     u1 = User(fb_id='25', email='maggy@example.com', name='Maggy Simpson',
-              username='maggy')
+              username='maggy', avatar_url=uuid4().hex + '.jpg')
     db.session.add_all([u,u1])
     db.session.commit()
     c = Category.query.filter_by(name='soccer').one()
