@@ -2,10 +2,10 @@
 import unittest
 import requests
 import os
+import boto
 from mock import Mock, PropertyMock, patch
 from app import create_app
-from app.main.helpers import make_image_request, save_avatar
-
+from app.main import helpers
 
 class HelperTestCase(unittest.TestCase):
   def setUp(self):
@@ -44,10 +44,33 @@ class HelperTestCase(unittest.TestCase):
                                                   mock_response.return_value)
     # Assign our mock response as the result of our patched function
     mock_get.return_value = mock_response
-    self.assertTrue(make_image_request(url) is not None)
+    self.assertTrue(helpers.make_image_request(url) is not None)
 
   def test_make_image_request_bad_url(self):
     '''test helpers.make_image_request with a non legit url'''
     url = None
-    self.assertTrue(make_image_request(url) is None)
+    self.assertTrue(helpers.make_image_request(url) is None)
+
+  @patch('boto.connect_s3')
+  def test_save_avatar(self, mock_boto_conn):
+    '''test filename returned when an image is provided'''
+    mock_image_req = Mock(return_value = 'fakeimagecontent')
+    mock_boto = Mock()
+    with patch.object(helpers, 'make_image_request', mock_image_req):
+      self.assertTrue(
+        helpers.save_avatar('avatar.jpg') is not 'default_avatar.jpg')
+
+  def test_save_invalid_avatar(self):
+    '''test default filename is returned when no image is provided'''
+    mock_image_req = Mock(return_value=None)
+    with patch.object(helpers, 'make_image_request', mock_image_req):
+      self.assertTrue(helpers.save_avatar('something') == 'default_avatar.jpg')
+
+  def test_invalid_connection(self):
+    '''test default_avatar is returned if connection raise an error'''
+    mock_image_req = Mock(return_value = 'fakeimagecontent')
+    mock_boto_conn = Mock(side_effect=Exception('Boom!'))
+    with patch.object(helpers, 'make_image_request', mock_image_req):
+      with patch.object(boto, 'connect_s3', mock_boto_conn):
+        self.assertTrue(helpers.save_avatar('image.jpg') == 'default_avatar.jpg')
 
