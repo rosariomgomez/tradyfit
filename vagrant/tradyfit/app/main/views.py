@@ -1,12 +1,25 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
-from flask import current_app, render_template, flash, redirect, url_for
+from flask import current_app, render_template, flash, redirect, url_for, \
+request, abort
 from flask.ext.login import current_user, login_required
 from . import main
 from .. import db
 from .forms import ItemForm, SearchForm
 from ..models import Item, Category
 
+
+@main.route('/shutdown')
+def server_shutdown():
+  '''HTTP request to shutdown Werkzeug server running in a background thread
+  during functional tests running with Selenium'''
+  if not current_app.testing:
+    abort(404)
+  shutdown = request.environ.get('werkzeug.server.shutdown')
+  if not shutdown:
+    abort(500)
+  shutdown()
+  return 'Shutting down...'
 
 @main.route('/', methods=['GET', 'POST'])
 def index():
@@ -74,5 +87,4 @@ def delete(id):
 def search_results(query):
   res = Item.query.search(query).order_by(Item.timestamp.desc()).limit(50).all()
   return render_template('search_results.html', query=query, items=res)
-
 
