@@ -47,16 +47,6 @@ class TestingConfig(Config):
   S3_LOCATION = ''
   S3_BUCKET = ''
 
-  FACEBOOK = {
-    'consumer_key': 'test',
-    'consumer_secret': 'test',
-    'request_token_params': {'scope': 'email'},
-    'base_url': 'https://graph.facebook.com',
-    'request_token_url': None,
-    'access_token_url': '/oauth/access_token',
-    'authorize_url': 'https://www.facebook.com/dialog/oauth'
-  }
-
 
 class ProductionConfig(Config):
   #S3_BUCKET = 'tradyfitbucket'
