@@ -47,6 +47,10 @@ class TestingConfig(Config):
   S3_LOCATION = ''
   S3_BUCKET = ''
 
+  #FB Test user credentials
+  FB_TEST_EMAIL = os.environ.get('FB_TEST_EMAIL')
+  FB_TEST_PWD = os.environ.get('FB_TEST_PWD'),
+
 
 class ProductionConfig(Config):
   #S3_BUCKET = 'tradyfitbucket'
