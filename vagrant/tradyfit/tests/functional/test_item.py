@@ -1,76 +1,41 @@
 # -*- coding: utf-8 -*-
-import threading
-import time
 import unittest
-import re
 from uuid import uuid4
-from selenium import webdriver
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.webdriver.common.by import By
-from selenium.webdriver.support.ui import WebDriverWait
-from selenium.webdriver.support import expected_conditions as EC
-from app import create_app, db
-from app.models import Item, Category, User
+from app import db
+from app.models import User, Category
+from helper import SeleniumTestCase
+import page
+from locators import NavBarLocators
 
-class SeleniumTestCase(unittest.TestCase):
-  client = None
 
-  @classmethod
-  def run_server(cls):
-    cls.app.run(host="0.0.0.0", port=5000)
+class ItemTestCase(SeleniumTestCase):
 
   @classmethod
   def setUpClass(cls):
-    # start Firefox in remote
-    try:
-      cls.client = webdriver.Remote(
-              command_executor='http://10.0.0.3:4444/wd/hub',
-              desired_capabilities=DesiredCapabilities.FIREFOX)
-    except:
-      print('something went wrong, make sure the remote webdriver server is up')
+    # start webdriver, create app, launch server in thread
+    super(ItemTestCase, cls).setUpClass()
 
-    # skip these tests if the browser could not be started
-    if cls.client:
-      # create the application
-      cls.app = create_app('testing')
-      cls.app_context = cls.app.app_context()
-      cls.app_context.push()
+    # create the database
+    db.create_all()
+    Category.insert_categories()
 
-      # suppress logging to keep unittest output clean
-      import logging
-      logger = logging.getLogger('werkzeug')
-      logger.setLevel("ERROR")
-
-      # create the database
-      db.create_all()
-
-      # start the Flask server in a thread
-      td = threading.Thread(target=SeleniumTestCase.run_server)
-      td.start()
-
-      # give the server a second to ensure it is up
-      time.sleep(1)
 
   @classmethod
   def tearDownClass(cls):
-    if cls.client:
-      # stop the flask server and the browser
-      cls.client.get('http://localhost:5000/shutdown')
-      cls.client.close()
+    # stop the server, remove app context
+    super(ItemTestCase, cls).tearDownClass()
 
-      # destroy database
-      db.drop_all()
-      db.session.remove()
+    # destroy database
+    db.drop_all()
+    db.session.remove()
 
-      # remove application context
-      cls.app_context.pop()
 
   def setUp(self):
     if not self.client:
       self.skipTest('Web browser not available')
-    #create the fb test user
-    u = User(fb_id='100009532443743',
-            email='dfnzpaq_carrierosen_1428278204@tfbnw.net',
+    #create the fb test user to log in
+    u = User(fb_id=self.app.config['FB_TEST_ID'],
+            email=self.app.config['FB_TEST_EMAIL'],
             name='Maria Amiecbddcgdc', username='Maria',
             avatar_url=uuid4().hex + '.jpg')
     db.session.add(u)
@@ -79,35 +44,32 @@ class SeleniumTestCase(unittest.TestCase):
   def tearDown(self):
     pass
 
+
   def test_create_item(self):
     self.client.get('http://localhost:5000')
-    self.assertTrue('Welcome to TradyFit' in self.client.page_source)
 
+    # home page object
+    home_page = page.HomePage(self.client)
+    self.assertTrue(home_page.is_title_matches)
     # navigate to login page
-    self.client.find_element_by_link_text('Log In with Facebook').click()
-    self.assertTrue('Facebook Login' in self.client.page_source)
+    home_page.go_to_login()
 
-    # login
-    self.client.find_element_by_name('email').\
-        send_keys(self.app.config['FB_TEST_EMAIL'])
-    password_field = self.client.find_element_by_name('pass')
-    password_field.send_keys(self.app.config['FB_TEST_PWD'])
-    password_field.submit()
+    login_page = page.LoginPage(self.client)
+    self.assertTrue(login_page.is_title_matches)
+
+    # login user
+    login_page.login(self.app.config['FB_TEST_EMAIL'],
+                    self.app.config['FB_TEST_PWD'])
 
     #user redirected to Home page
-    #wait until List an item link is displayed or 2 secs
-    element = WebDriverWait(self.client, 2).until(
-      EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, "List an item"))
-    )
     self.assertTrue('Maria' in self.client.page_source)
 
-    # navigate to create an item page
-    self.client.find_element_by_link_text('List an item').click()
-    self.assertTrue('List your item' in self.client.page_source)
+    # navigate to item page
+    self.client.find_element(*NavBarLocators.LIST_ITEM).click()
+
+    item_page = page.ItemPage(self.client)
+    self.assertTrue(item_page.is_title_matches)
 
     # assert an Image can be added
     self.assertTrue('Upload image' in self.client.page_source)
-
-
-
 
