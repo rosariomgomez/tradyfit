@@ -48,6 +48,7 @@ class TestingConfig(Config):
   S3_BUCKET = ''
 
   #FB Test user credentials
+  FB_TEST_ID = '100009532443743'
   FB_TEST_EMAIL = os.environ.get('FB_TEST_EMAIL')
   FB_TEST_PWD = os.environ.get('FB_TEST_PWD'),
 
