@@ -6,6 +6,9 @@ import re
 from uuid import uuid4
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from selenium.webdriver.common.by import By
+from selenium.webdriver.support.ui import WebDriverWait
+from selenium.webdriver.support import expected_conditions as EC
 from app import create_app, db
 from app.models import Item, Category, User
 
@@ -86,12 +89,16 @@ class SeleniumTestCase(unittest.TestCase):
 
     # login
     self.client.find_element_by_name('email').\
-        send_keys('dfnzpaq_carrierosen_1428278204@tfbnw.net')
+        send_keys(self.app.config['FB_TEST_EMAIL'])
     password_field = self.client.find_element_by_name('pass')
-    password_field.send_keys('tradyfitSecret')
+    password_field.send_keys(self.app.config['FB_TEST_PWD'])
     password_field.submit()
 
-    time.sleep(2)
+    #user redirected to Home page
+    #wait until List an item link is displayed or 2 secs
+    element = WebDriverWait(self.client, 2).until(
+      EC.presence_of_element_located((By.PARTIAL_LINK_TEXT, "List an item"))
+    )
     self.assertTrue('Maria' in self.client.page_source)
 
     # navigate to create an item page
