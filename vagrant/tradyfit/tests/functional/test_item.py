@@ -12,7 +12,7 @@ class ItemTestCase(SeleniumTestCase):
 
   @classmethod
   def setUpClass(cls):
-    # start webdriver, create app, launch server in thread
+    # connet to webdriver, create app, launch server in thread
     super(ItemTestCase, cls).setUpClass()
 
     # create the database
