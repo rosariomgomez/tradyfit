@@ -25,19 +25,28 @@ manager.add_command('db', MigrateCommand)
 
 @manager.command
 def test(coverage=False):
-  """Run the unit tests."""
+  """Run the unit/integration tests. With coverage also functional tests"""
+
+  path = os.path.dirname(os.path.abspath(__file__))
+
   if coverage and not os.environ.get('FLASK_COVERAGE'):
     import sys
     os.environ['FLASK_COVERAGE'] = '1'
     os.execvp(sys.executable, [sys.executable] + sys.argv)
+
   import unittest
-  path = os.path.dirname(os.path.abspath(__file__))
-  #only discover unit and integration tests
-  int_tests_dir = os.path.join(path,"tests/integration")
-  unit_tests_dir = os.path.join(path,"tests/unit")
-  tests = unittest.TestLoader().discover(int_tests_dir)
-  tests.addTests(unittest.TestLoader().discover(unit_tests_dir))
+  if coverage:
+    tests_dir = os.path.join(path,"tests")
+    tests = unittest.TestLoader().discover(tests_dir)
+  else:
+    #only discover unit and integration tests
+    int_tests_dir = os.path.join(path,"tests/integration")
+    unit_tests_dir = os.path.join(path,"tests/unit")
+    tests = unittest.TestLoader().discover(int_tests_dir)
+    tests.addTests(unittest.TestLoader().discover(unit_tests_dir))
+
   unittest.TextTestRunner(verbosity=2).run(tests)
+
   if COV:
     COV.stop()
     COV.save()
