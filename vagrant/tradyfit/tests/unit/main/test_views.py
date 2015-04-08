@@ -297,7 +297,8 @@ class DeleteItemViewTestCase(ViewTestCase):
       #item creation
       c = Category.query.filter_by(name='soccer').one()
       item = Item(name='soccer ball', description='plain ball',
-                  price=23, category=c, user_id=u.id)
+                  price=23, category=c, user_id=u.id,
+                  image_url=current_app.config["DEFAULT_ITEM"])
       db.session.add(item)
       db.session.commit()
 
