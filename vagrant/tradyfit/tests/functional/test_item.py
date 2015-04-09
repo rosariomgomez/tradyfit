@@ -2,37 +2,40 @@
 import unittest
 from uuid import uuid4
 from app import db
-from app.models import User, Category
+from app.models import User, Item
+from app.main.helpers import delete_item_image
 from helper import SeleniumTestCase
 import page
 from locators import NavBarLocators
+import time
+import os
 
 
 class ItemTestCase(SeleniumTestCase):
 
   @classmethod
   def setUpClass(cls):
-    # connet to webdriver, create app, launch server in thread
+    # connect to webdriver, create app, launch server in thread
     super(ItemTestCase, cls).setUpClass()
-
-    # create the database
-    db.create_all()
-    Category.insert_categories()
 
 
   @classmethod
   def tearDownClass(cls):
-    # stop the server, remove app context
-    super(ItemTestCase, cls).tearDownClass()
+    #remote webdriver was launch
+    if cls.client:
+      # delete item images from S3 if any
+      items = Item.query.all()
+      for item in items:
+        delete_item_image(item.image_url)
 
-    # destroy database
-    db.drop_all()
-    db.session.remove()
+    # stop the server, destroy db and remove app context
+    super(ItemTestCase, cls).tearDownClass()
 
 
   def setUp(self):
     if not self.client:
       self.skipTest('Web browser not available')
+
     #create the fb test user to log in
     u = User(fb_id=self.app.config['FB_TEST_ID'],
             email=self.app.config['FB_TEST_EMAIL'],
@@ -64,12 +67,15 @@ class ItemTestCase(SeleniumTestCase):
     #user redirected to Home page
     self.assertTrue('Maria' in self.client.page_source)
 
-    # navigate to item page
+    # navigate to create item page
     self.client.find_element(*NavBarLocators.LIST_ITEM).click()
 
-    item_page = page.ItemPage(self.client)
-    self.assertTrue(item_page.is_title_matches)
+    list_item_page = page.ListItemPage(self.client)
+    self.assertTrue(list_item_page.is_title_matches)
 
-    # assert an Image can be added
-    self.assertTrue('Upload image' in self.client.page_source)
+    # assert an item was successfully created
+    image_path = os.path.dirname(os.path.abspath(__file__))
+    list_item_page.add_item('bike', 'super six', '1245.3', 'cycling',
+                            os.path.join(image_path,"files/bike.jpg"))
+    self.assertTrue('Your item has been created.' in self.client.page_source)
 
