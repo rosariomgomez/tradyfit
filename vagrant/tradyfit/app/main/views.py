@@ -37,6 +37,7 @@ def create():
   form = ItemForm()
 
   if form.validate_on_submit():
+    #if the filename attribute is empty, assign the default image
     if not (hasattr(form.image.data, 'filename') and form.image.data.filename):
       image = current_app.config["DEFAULT_ITEM"]
     else:
