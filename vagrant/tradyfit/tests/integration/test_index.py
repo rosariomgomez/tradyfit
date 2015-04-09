@@ -36,9 +36,9 @@ class IndexFunctionalTestCase(unittest.TestCase):
     db.session.commit()
     c = Category.query.filter_by(name='soccer').one()
     item = Item(name='soccer ball', description='plain ball',
-        price=23, category=c, user_id=u.id)
+        price=23, category=c, user_id=u.id, image_url='item.jpg')
     item2 = Item(name='soccer t-shirt', description='Real Madrid size M',
-        price=28, category=c, user_id=u1.id)
+        price=28, category=c, user_id=u1.id, image_url='item2.jpg')
     db.session.add_all([item,item2])
     db.session.commit()
     with self.client as c:
@@ -66,9 +66,10 @@ class IndexFunctionalTestCase(unittest.TestCase):
     db.session.commit()
     c = Category.query.filter_by(name='soccer').one()
     item = Item(name='soccer ball', description='plain ball',
-        price=23, category=c, user_id=u.id)
+        price=23, category=c, user_id=u.id,
+        image_url=self.app.config["DEFAULT_ITEM"])
     item2 = Item(name='soccer t-shirt', description='Real Madrid size M',
-        price=28, category=c, user_id=u1.id)
+        price=28, category=c, user_id=u1.id, image_url='item2.jpg')
     db.session.add_all([item,item2])
     db.session.commit()
     with self.client as c:
