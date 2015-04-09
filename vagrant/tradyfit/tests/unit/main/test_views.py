@@ -191,7 +191,7 @@ class ItemViewTestCase(ViewTestCase):
     self.assertEquals(response.status_code, 404)
     c = Category.query.filter_by(name='soccer').one()
     item = Item(name='soccer ball', description='plain ball',
-        price=23, category=c)
+        price=23, category=c, image_url='image.jpg')
     db.session.add(item)
     db.session.commit()
     response = self.client.get(url_for('main.item', id=item.id))
