@@ -71,3 +71,25 @@ class UserModelTestCase(ModelTestCase):
     db.session.add(u)
     db.session.commit()
     self.assertEqual(load_user(u.id), u)
+
+  def test_get_avatar(self):
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+            username='john', avatar_url='avatar.jpg')
+    db.session.add(u)
+    db.session.commit()
+    avatar = self.app.config['S3_LOCATION'] + "/" + \
+                self.app.config['S3_BUCKET'] + \
+                self.app.config['S3_UPLOAD_AVATAR_DIR'] + "/" + u.avatar_url
+    self.assertEqual(u.avatar(), avatar)
+
+
+class ItemModelTestCase(ModelTestCase):
+  def test_get_image(self):
+    item = Item(name='ball', description='small and round', price=23,
+                image_url='ball.jpg')
+    db.session.add(item)
+    db.session.commit()
+    image = self.app.config['S3_LOCATION'] + "/" + \
+                self.app.config['S3_BUCKET'] + \
+                self.app.config['S3_UPLOAD_ITEM_DIR'] + "/" + item.image_url
+    self.assertEqual(item.image(), image)
