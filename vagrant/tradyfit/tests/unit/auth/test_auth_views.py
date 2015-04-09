@@ -168,7 +168,7 @@ class LogoutTestCase(AuthViewTestCase):
 
   def test_fb_cookies_removed(self):
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url='avatar.jpg')
     db.session.add(u)
     db.session.commit()
     with self.client as c:
