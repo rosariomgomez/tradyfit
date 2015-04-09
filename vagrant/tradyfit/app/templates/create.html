@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-{% import "bootstrap/wtf.html" as wtf %}
+
 
 {% block title %}TradyFit - List an item{% endblock %}
 
@@ -8,6 +8,6 @@
     <h1>List your item</h1>
 </div>
 <div class="col-md-4" id="item-creation">
-    {{ wtf.quick_form(form) }}
+    {% include "_item_form.html" %}
 </div>
 {% endblock %}
