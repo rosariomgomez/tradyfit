@@ -298,7 +298,7 @@ class DeleteItemViewTestCase(ViewTestCase):
       c = Category.query.filter_by(name='soccer').one()
       item = Item(name='soccer ball', description='plain ball',
                   price=23, category=c, user_id=u.id,
-                  image_url=current_app.config["DEFAULT_ITEM"])
+                  image_url=self.app.config["DEFAULT_ITEM"])
       db.session.add(item)
       db.session.commit()
 
@@ -338,13 +338,16 @@ class SearchResultsTestCase(ViewTestCase):
     '''
     c = Category.query.filter_by(name='soccer').one()
     item = Item(name='soccer ball', description='ball signed by Manchester',
-                price=23, category=c)
+                price=23, category=c,
+                image_url=self.app.config["DEFAULT_ITEM"])
     db.session.add(item)
     db.session.commit()
     item1 = Item(name='t-shirt', description='manchester club t-shirt',
-                price=56, category=c)
+                price=56, category=c,
+                image_url=self.app.config["DEFAULT_ITEM"])
     item2 = Item(name='tri bycicle', description='scatante bike',
-                price=2356, category=c)
+                price=2356, category=c,
+                image_url=self.app.config["DEFAULT_ITEM"])
     db.session.add_all([item1, item2])
     db.session.commit()
     response = self.client.get(url_for('main.search_results',
