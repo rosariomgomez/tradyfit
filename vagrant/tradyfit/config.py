@@ -23,6 +23,13 @@ class Config:
   S3_KEY = os.environ.get('S3_KEY')
   S3_SECRET = os.environ.get('S3_SECRET')
   S3_UPLOAD_AVATAR_DIR = '/user_avatars'
+  S3_UPLOAD_ITEM_DIR = '/items'
+
+  DEFAULT_ITEM = 'default_item.jpg'
+  DEFAULT_AVATAR = 'default_avatar.jpg'
+
+  #MAX IMAGE SIZE ALLOWED 3MB
+  MAX_CONTENT_LENGTH = 3 * 1024 * 1024
 
 
   @staticmethod
@@ -43,9 +50,8 @@ class TestingConfig(Config):
       'postgresql:///tradyfit_test'
   WTF_CSRF_ENABLED = False #disable csrf token protection on forms
 
-  #AWS S3 credentials
-  S3_LOCATION = ''
-  S3_BUCKET = ''
+  #AWS S3
+  S3_BUCKET = 'tradyfitbucket.test'
 
   #FB Test user credentials
   FB_TEST_ID = '100009532443743'
