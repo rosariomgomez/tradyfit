@@ -10,6 +10,9 @@
 <div class="item-category">
   {{ item.category.name.capitalize() }}
 </div>
+<div class="item-image">
+  <img class="img-thumbnail" src="{{ item.image() }}">
+</div>
 {% if item.modified %}
 	<div class="item-modified">
     Modified {{ moment(item.modified).fromNow(refresh=True) }}
