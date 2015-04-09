@@ -2,7 +2,7 @@
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, SubmitField, \
 TextAreaField, DecimalField
-from flask_wtf.file import FileField, FileAllowed
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import Required, Length, NumberRange, Regexp
 from ..models import Category, Item
 
@@ -26,6 +26,11 @@ class ItemForm(Form):
     super(ItemForm, self).__init__(*args, **kwargs)
     self.category.choices = Category.get_category_choices()
 
+  def validate_image(self, field):
+    '''make sure that if image field contains info it is a file'''
+    if field.data:
+      fr = FileRequired('Image should be a file')
+      fr(self, field)
 
 class SearchForm(Form):
   search = StringField('What are you looking for?',
