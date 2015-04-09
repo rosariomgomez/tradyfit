@@ -5,21 +5,26 @@
 <div class="page-header">
     <h1>Welcome to TradyFit</h1>
 </div>
-<div class="col-md-4" id="search-form">
-    {{ wtf.quick_form(form) }}<br>
+<div class="row">
+  <div class="col-md-4" id="search-form">
+      {{ wtf.quick_form(form) }}<br>
+  </div>
 </div>
-<div class="col-md-12">
-  <ul class="items">
-    {% for item in items %}
-    <li class="item" id="item-{{ item.id }}">
-    {% include "_item.html" %}
-    {% if current_user.is_authenticated() and current_user.id == item.user_id %}
-      <a href="{{ url_for('main.edit', id=item.id) }}">Edit</a> |
-      <a href="{{ url_for('main.delete', id=item.id) }}">Delete</a>
-    {% endif %}
-    </li>
-    {% endfor %}
-  </ul>
+<div class="row">
+  <div class="col-md-6">
+    <ul class="items">
+      {% for item in items %}
+      <li class="item" id="item-{{ item.id }}">
+      {% include "_item.html" %}
+      {% if current_user.is_authenticated() and current_user.id == item.user_id %}
+        <a href="{{ url_for('main.edit', id=item.id) }}">Edit</a> |
+        <a href="{{ url_for('main.delete', id=item.id) }}">Delete</a>
+      {% endif %}
+      </li>
+      <br>
+      {% endfor %}
+    </ul>
+  </div>
 </div>
 {% endblock %}
 
