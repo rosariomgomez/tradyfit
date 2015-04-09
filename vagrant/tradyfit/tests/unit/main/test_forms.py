@@ -2,6 +2,8 @@
 import unittest
 import re
 import os
+from werkzeug import FileStorage
+from mock import Mock
 from bs4 import BeautifulSoup
 from flask import current_app, url_for
 from app import create_app, db
@@ -28,11 +30,14 @@ class ItemFormTestCase(FormTestCase):
   def test_create_item_form(self):
     '''verify an item can be correctly created (happy case)'''
     c = Category.query.filter_by(name='soccer').one()
+    mock_file = Mock(spec=FileStorage())
+    mock_file.filename = 'image.jpg'
     form = ItemForm(data={
                         'name': 'soccer ball',
                         'description': 'plain ball',
                         'price': 234,
-                        'category': c.id
+                        'category': c.id,
+                        'image': mock_file
                     })
     form.validate()
     self.assertTrue(not form.errors)
@@ -207,6 +212,51 @@ class ItemFormTestCase(FormTestCase):
                     })
     form.validate()
     self.assertEqual(form.errors['category'], [u'Not a valid choice'])
+
+
+  def test_form_image_field(self):
+    '''verify that image field only accepts the defined data types
+    Test cases created following the category partition method
+    Full list of TCs at main/specs/item_creation-spec.tsl
+    Image: FileStorage type, not required, max size 3MB,
+          allowed types: jpg, jpeg, png and gif
+    '''
+    c = Category.query.filter_by(name='soccer').one()
+
+    #1. TC1: Not provided
+    form = ItemForm(data={
+                        'name': 'ball',
+                        'description': 'plain ball',
+                        'price': 234,
+                        'category': c.id
+                    })
+    form.validate()
+    self.assertTrue(not form.errors)
+
+    #2. TC2: Not FileStorage type provided
+    form = ItemForm(data={
+                        'name': 'fo',
+                        'description': 'plain ball',
+                        'price': 234,
+                        'category': c.id,
+                        'image': 'a string'
+                    })
+    form.validate()
+    self.assertEqual(form.errors['image'], [u'Image should be a file'])
+
+    #3. TC4: Not allowed file type
+    mock_file = Mock(spec=FileStorage())
+    mock_file.filename = 'image.pdf'
+    form = ItemForm(data={
+                        'name': 'use your \n <b>say hi</b>',
+                        'description': 'plain ball',
+                        'price': 234,
+                        'category': c.id,
+                        'image': mock_file
+                    })
+    form.validate()
+    self.assertEqual(form.errors['image'],
+      [u'Only jpg, png and gif files allowed'])
 
 
 class SearchFormTestCase(FormTestCase):
