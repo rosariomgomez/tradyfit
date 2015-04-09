@@ -67,7 +67,7 @@ class IndexViewTestCase(ViewTestCase):
     '''
     c = Category.query.filter_by(name='soccer').one()
     item = Item(name='soccer ball', description='plain ball',
-        price=23, category=c)
+        price=23, category=c, image_url='image.jpg')
     db.session.add(item)
     response = self.client.get(url_for('main.index'))
     r = response.get_data(as_text=True)
@@ -82,10 +82,10 @@ class IndexViewTestCase(ViewTestCase):
     '''
     c = Category.query.filter_by(name='soccer').one()
     item = Item(name='soccer ball', description='plain ball',
-        price=23, category=c)
+        price=23, category=c, image_url='image.jpg')
     db.session.add(item)
     item2 = Item(name='soccer t-shirt', description='Real Madrid size M',
-        price=28, category=c)
+        price=28, category=c, image_url='image.jpg')
     db.session.add(item2)
     response = self.client.get(url_for('main.index'))
     soup = BeautifulSoup(response.get_data(as_text=True))
@@ -144,7 +144,7 @@ class CreateItemViewTestCase(ViewTestCase):
         sess['_fresh'] = True
       response = self.client.get(url_for('main.create'))
       r = response.get_data(as_text=True)
-      fields = ['name', 'description', 'price', 'category']
+      fields = ['name', 'description', 'price', 'category', 'image']
       for field in fields:
           self.assertTrue('id="' + field + '"' in r)
 
@@ -221,7 +221,8 @@ class EditItemViewTestCase(ViewTestCase):
     #item creation
     c = Category.query.filter_by(name='soccer').one()
     item = Item(name='soccer ball', description='plain ball',
-                price=23, category=c, user_id=u.id)
+                price=23, category=c, user_id=u.id,
+                image_url='image.jpg')
     db.session.add(item)
     db.session.commit()
 
@@ -257,7 +258,8 @@ class EditItemViewTestCase(ViewTestCase):
     db.session.commit()
     c = Category.query.filter_by(name='soccer').one()
     item = Item(name='soccer ball', description='plain ball',
-                price=23, category=c, user_id=u.id)
+                price=23, category=c, user_id=u.id,
+                image_url='image.jpg')
     db.session.add(item)
     db.session.commit()
     with self.client as c:
@@ -269,7 +271,8 @@ class EditItemViewTestCase(ViewTestCase):
                                 'name': item.name,
                                 'description': item.description,
                                 'price': 234,
-                                'category': item.category.id
+                                'category': item.category.id,
+                                'image': ''
                               }, follow_redirects=True)
       self.assertTrue(b'Your item has been updated.' in resp.data)
       self.assertTrue(b'234$' in resp.data)
@@ -338,16 +341,13 @@ class SearchResultsTestCase(ViewTestCase):
     '''
     c = Category.query.filter_by(name='soccer').one()
     item = Item(name='soccer ball', description='ball signed by Manchester',
-                price=23, category=c,
-                image_url=self.app.config["DEFAULT_ITEM"])
+                price=23, category=c, image_url='image.jpg')
     db.session.add(item)
     db.session.commit()
     item1 = Item(name='t-shirt', description='manchester club t-shirt',
-                price=56, category=c,
-                image_url=self.app.config["DEFAULT_ITEM"])
+                price=56, category=c, image_url='imgage.jpg')
     item2 = Item(name='tri bycicle', description='scatante bike',
-                price=2356, category=c,
-                image_url=self.app.config["DEFAULT_ITEM"])
+                price=2356, category=c, image_url='image.jpg')
     db.session.add_all([item1, item2])
     db.session.commit()
     response = self.client.get(url_for('main.search_results',
