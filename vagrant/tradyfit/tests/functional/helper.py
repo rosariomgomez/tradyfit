@@ -4,7 +4,8 @@ import time
 import unittest
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from app import create_app
+from app import create_app, db
+from app.models import Category
 
 
 class SeleniumTestCase(unittest.TestCase):
@@ -36,6 +37,10 @@ class SeleniumTestCase(unittest.TestCase):
       logger = logging.getLogger('werkzeug')
       logger.setLevel("ERROR")
 
+      # create the database and insert categories
+      db.create_all()
+      Category.insert_categories()
+
       # start the Flask server in a thread
       td = threading.Thread(target=SeleniumTestCase.run_server)
       td.start()
@@ -50,6 +55,10 @@ class SeleniumTestCase(unittest.TestCase):
       # stop the flask server and the browser
       cls.client.get('http://localhost:5000/shutdown')
       cls.client.close()
+
+      # destroy database
+      db.session.remove()
+      db.drop_all()
 
       # remove application context
       cls.app_context.pop()
