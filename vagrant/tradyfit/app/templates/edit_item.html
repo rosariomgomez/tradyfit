@@ -8,6 +8,9 @@
     <h1>Edit your item</h1>
 </div>
 <div class="col-md-4" id="edit-item-{{ id }}">
-	{{ wtf.quick_form(form) }}
+	{% include "_item_form.html" %}
+</div>
+<div class="col-md-4" id="item-image-{{ id }}">
+  <img class="img-thumbnail" src="{{ image }}">
 </div>
 {% endblock %}
