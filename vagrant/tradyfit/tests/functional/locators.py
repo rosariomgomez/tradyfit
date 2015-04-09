@@ -7,3 +7,11 @@ class NavBarLocators(object):
 class LoginPageLocators(object):
   EMAIL = (By.NAME, 'email')
   PASS = (By.NAME, 'pass')
+
+class ListItemPageLocators(object):
+  NAME = (By.ID, 'name')
+  DESCRIPTION = (By.ID, 'description')
+  PRICE = (By.ID, 'price')
+  CATEGORY = (By.ID, 'category')
+  IMAGE = (By.ID, 'image')
+  SUBMIT = (By.ID, 'submit')
