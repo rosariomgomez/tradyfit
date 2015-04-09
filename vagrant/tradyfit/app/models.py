@@ -19,7 +19,7 @@ class User(UserMixin, db.Model):
   email = db.Column(db.String(64), unique=True, nullable=False, index=True)
   username = db.Column(db.String(64), unique=True, nullable=False, index=True)
   name = db.Column(db.String(64), unique=False, nullable=False)
-  avatar_url = db.Column(db.String(), unique=True)
+  avatar_url = db.Column(db.String(), nullable=False)
   gender = db.Column(db.String(30))
   country = db.Column(db.String(100), default='')
   state =  db.Column(db.String(10), default='')
@@ -99,10 +99,16 @@ class Item(db.Model):
   name  = db.Column(db.String(80), nullable=False)
   description = db.Column(db.Text)
   price = db.Column(db.Numeric(precision=10, scale=2))
+  image_url = db.Column(db.String())
   timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
   modified = db.Column(db.DateTime, index=True)
   category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
   search_vector = db.Column(TSVectorType('name', 'description'))
   user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
+  def image(self):
+    return current_app.config['S3_LOCATION'] + "/" + \
+    current_app.config['S3_BUCKET'] + \
+    current_app.config['S3_UPLOAD_ITEM_DIR'] + "/" + \
+    self.image_url
 
