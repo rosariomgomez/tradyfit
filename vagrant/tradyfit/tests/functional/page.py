@@ -1,4 +1,5 @@
-from locators import NavBarLocators, LoginPageLocators
+from selenium.webdriver.support.select import Select
+from locators import NavBarLocators, LoginPageLocators, ListItemPageLocators
 
 class BasePage(object):
 
@@ -28,7 +29,24 @@ class LoginPage(BasePage):
     password_field.send_keys(user_pwd)
     password_field.submit()
 
-class ItemPage(BasePage):
+class ListItemPage(BasePage):
 
   def is_title_matches(self):
-    super("TradyFit - Item")
+    super("TradyFit - List an item")
+
+  def add_item(self, name, desc, price, category, image):
+    self.client.find_element(*ListItemPageLocators.NAME).send_keys(name)
+    self.client.find_element(*ListItemPageLocators.DESCRIPTION).send_keys(desc)
+    price_element = self.client.find_element(*ListItemPageLocators.PRICE)
+    #delete default value (0.00)
+    price_element.clear()
+    price_element.send_keys(price)
+    #select item from dropdown list
+    category_dropdown = self.client.find_element(*ListItemPageLocators.CATEGORY)
+    category_list = Select(category_dropdown)
+    category_list.select_by_visible_text(category)
+    #add image to upload
+    file_input = self.client.find_element(*ListItemPageLocators.IMAGE)
+    file_input.send_keys(image)
+    #submit the form
+    self.client.find_element(*ListItemPageLocators.SUBMIT).click()
