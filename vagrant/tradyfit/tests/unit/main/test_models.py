@@ -39,7 +39,7 @@ class CategoryModelTestCase(ModelTestCase):
 class UserModelTestCase(ModelTestCase):
   def test_username(self):
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url='avatar.jpg')
     db.session.add(u)
     db.session.commit()
     #the username already exists, append the next uid to the name
@@ -49,7 +49,7 @@ class UserModelTestCase(ModelTestCase):
 
   def test_ping(self):
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url='avatar.jpg')
     db.session.add(u)
     db.session.commit()
     time.sleep(2)
@@ -59,7 +59,7 @@ class UserModelTestCase(ModelTestCase):
 
   def test_get_user(self):
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url='avatar.jpg')
     db.session.add(u)
     db.session.commit()
     self.assertEqual(User.get_user('john@example.com'), u)
@@ -67,7 +67,7 @@ class UserModelTestCase(ModelTestCase):
 
   def test_load_user(self):
     u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john')
+            username='john', avatar_url='avatar.jpg')
     db.session.add(u)
     db.session.commit()
     self.assertEqual(load_user(u.id), u)
