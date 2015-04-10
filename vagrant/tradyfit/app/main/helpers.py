@@ -42,20 +42,24 @@ def upload_s3(s3_directory, filename, data):
     return False
 
 
+def delete_s3(s3_directory, filename):
+  '''delete a file from s3. Return True if deleted, False if there was a
+  problem'''
+  try:
+    b = get_s3_bucket()
+    k = b.get_key("/".join([s3_directory, filename])) #file route key
+    k.delete() #delete the file
+    return True
+  except:
+    return False
+
+
 def delete_item_image(filename):
   '''delete item image from S3 if it is not the DEFAULT_ITEM image'''
   if filename != current_app.config["DEFAULT_ITEM"]:
-    try:
-      b = get_s3_bucket()
-      #file route key
-      k = b.get_key("/".join(
-            [current_app.config["S3_UPLOAD_ITEM_DIR"], filename]))
-      #delete the file
-      k.delete()
-      return True
-    except:
-      return False
-  return True
+    return delete_s3(current_app.config["S3_UPLOAD_ITEM_DIR"], filename)
+  else:
+    return True
 
 
 def save_avatar(avatar):
