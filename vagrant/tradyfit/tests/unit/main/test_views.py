@@ -3,16 +3,21 @@ import unittest
 import re
 from uuid import uuid4
 from bs4 import BeautifulSoup
+from StringIO import StringIO
+from mock import Mock, patch
 from flask import current_app, url_for
 from app import create_app, db
 from app.models import Item, Category, User
-
+import app.main.views
 
 class ViewTestCase(unittest.TestCase):
   def setUp(self):
     self.app = create_app('testing')
     self.app_context = self.app.app_context()
     self.app_context.push()
+    #do not request urls from S3
+    self.app.config["S3_LOCATION"] = ''
+
     db.create_all()
     Category.insert_categories()
     self.client = self.app.test_client(use_cookies=True)
@@ -97,20 +102,40 @@ class IndexViewTestCase(ViewTestCase):
     response = self.client.get(url_for('main.index'))
     self.assertTrue(b'id="search-form"' in response.data)
 
-  def test_search_form_redirect(self):
-    '''verify the search form redirects to results when submit'''
-    resp = self.client.post(url_for('main.index'),
-                            data={
-                                'search': 'soccer ball',
-                            }, follow_redirects=True)
-    self.assertTrue(b'Search results for "soccer ball":' in resp.data)
+  def test_edit_link(self):
+    '''verify an item can be edited from the index page by the owner
+    1. Create two items by two different users
+    2. Go to index page
+    3. Assert the edit link is present for the user's item
+    '''
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+            username='john', avatar_url=uuid4().hex + '.jpg')
+    u1 = User(fb_id='25', email='maggy@example.com', name='Maggy Simpson',
+              username='maggy', avatar_url=uuid4().hex + '.jpg')
+    db.session.add_all([u,u1])
+    db.session.commit()
+    c = Category.query.filter_by(name='soccer').one()
+    item = Item(name='soccer ball', description='plain ball',
+        price=23, category=c, user_id=u.id, image_url='item.jpg')
+    item2 = Item(name='soccer t-shirt', description='Real Madrid size M',
+        price=28, category=c, user_id=u1.id, image_url='item2.jpg')
+    db.session.add_all([item,item2])
+    db.session.commit()
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
+      response = self.client.get(url_for('main.index'))
+      r = response.get_data(as_text=True)
+      self.assertTrue('<a href="/edit/' + str(item.id) + '"' in r)
+      self.assertFalse('<a href="/edit/' + str(item2.id) + '"' in r)
 
 
 class CreateItemViewTestCase(ViewTestCase):
   '''Testing: @main.route('/create/', methods=['GET', 'POST'])'''
 
   def test_create_item_route_login(self):
-    '''verify you can create an item
+    '''verify you can go to create an item page
     1. Go to the create an item's page
     2. Assert you get the correct page
     '''
@@ -148,32 +173,6 @@ class CreateItemViewTestCase(ViewTestCase):
       for field in fields:
           self.assertTrue('id="' + field + '"' in r)
 
-  def test_create_item(self):
-    '''verify an item can be correctly created
-    1. Go to the create an item's page
-    2. Field in the form with a happy case
-    3. Verify you are redirected to home page and the item is present
-    '''
-    #create a user
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john', avatar_url=uuid4().hex + '.jpg')
-    db.session.add(u)
-    db.session.commit()
-    with self.client as c:
-      with c.session_transaction() as sess:
-        sess['user_id'] = u.id
-        sess['_fresh'] = True
-      c = Category.query.filter_by(name='soccer').one()
-      resp = self.client.post(url_for('main.create'),
-                              data={
-                                  'name': 'soccer ball',
-                                  'description': 'plain ball',
-                                  'price': 234,
-                                  'category': c.id
-                              }, follow_redirects=True)
-      self.assertTrue(b'Your item has been created' in resp.data)
-      self.assertTrue(b'234$' in resp.data)
-
 
 class ItemViewTestCase(ViewTestCase):
   '''Testing: @main.route('/item/<int:id>')'''
@@ -207,7 +206,7 @@ class EditItemViewTestCase(ViewTestCase):
     access the edit page for a created item if you are the owner
     1. Go to a non existent item edit's page
     2. Assert you get a 404 response
-    3. Try to edit another user's item
+    3. Try to go to edit page from another user's
     4. Go to the edit item's page
     5. Assert you get the correct edit page
     '''
@@ -234,13 +233,13 @@ class EditItemViewTestCase(ViewTestCase):
       response = self.client.get(url_for('main.edit', id=12))
       self.assertEquals(response.status_code, 404)
 
-      #2. try to edit other user's item
+      #2. try to go to edit page from other user
       response = self.client.get(url_for('main.edit', id=item.id),
                                 follow_redirects=True)
       self.assertFalse('id="edit-item-'+str(item.id) + '"' in
                       response.get_data(as_text=True))
 
-    #3. edit your item
+    #3. edit your item page
     with self.client as c:
       with c.session_transaction() as sess:
         sess['user_id'] = u.id
@@ -250,8 +249,9 @@ class EditItemViewTestCase(ViewTestCase):
       self.assertTrue('id="edit-item-'+str(item.id) + '"' in
                       response.get_data(as_text=True))
 
-  def test_edit_form(self):
-    '''verify that an item can be edit and it's updated correctly'''
+  def test_edit_form_no_image_change(self):
+    '''verify that an item can be edit and it's updated correctly
+    without image change'''
     u = User(fb_id='23', email='john@example.com', name='John Doe',
           username='john', avatar_url=uuid4().hex + '.jpg')
     db.session.add(u)
@@ -277,13 +277,111 @@ class EditItemViewTestCase(ViewTestCase):
       self.assertTrue(b'Your item has been updated.' in resp.data)
       self.assertTrue(b'234$' in resp.data)
 
+  @patch('app.main.views.save_item_image', return_value='new_s3_img.jpg')
+  @patch('app.main.views.delete_item_image', return_value=True)
+  def test_edit_form_image_change(self, mock_save_image, mock_delete_image):
+    '''verify that an item can be edit and it's updated correctly
+    with new image'''
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+          username='john', avatar_url=uuid4().hex + '.jpg')
+    db.session.add(u)
+    db.session.commit()
+    c = Category.query.filter_by(name='soccer').one()
+    item = Item(name='soccer ball', description='plain ball',
+                price=23, category=c, user_id=u.id,
+                image_url='image.jpg')
+    db.session.add(item)
+    db.session.commit()
+
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
+      resp = self.client.post(url_for('main.edit', id=item.id),
+                              data={
+                                'name': item.name,
+                                'description': item.description,
+                                'price': 234,
+                                'category': item.category.id,
+                                'image': (StringIO('contents'), 'new_image.jpg')
+                              }, follow_redirects=True)
+      self.assertTrue(b'Your item has been updated.' in resp.data)
+      self.assertTrue(b'234$' in resp.data)
+      self.assertTrue(mock_delete_image.called_with('image.jpg'))
+
+  @patch('app.main.views.save_item_image', return_value=None)
+  def test_edit_form_image_change_fail(self, mock_save_image):
+    '''verify that an item can be edit and it is not updated if there
+    is a problem uploading the new image'''
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+          username='john', avatar_url=uuid4().hex + '.jpg')
+    db.session.add(u)
+    db.session.commit()
+    c = Category.query.filter_by(name='soccer').one()
+    item = Item(name='soccer ball', description='plain ball',
+                price=23, category=c, user_id=u.id,
+                image_url='image.jpg')
+    db.session.add(item)
+    db.session.commit()
+
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
+      resp = self.client.post(url_for('main.edit', id=item.id),
+                              data={
+                                'name': item.name,
+                                'description': item.description,
+                                'price': 234,
+                                'category': item.category.id,
+                                'image': (StringIO('contents'), 'new_image.jpg')
+                              }, follow_redirects=True)
+      self.assertTrue(b'Sorry, there was an error updating your item.'
+                      in resp.data)
+      self.assertTrue(b'image.jpg' in resp.data) #old image still in item
+
+  @patch('app.main.views.save_item_image', return_value='new_s3_img.jpg')
+  @patch('app.main.views.delete_item_image', return_value=False)
+  def test_edit_form_image_delete_fail(self, mock_save_item, mock_delete_image):
+    '''verify that an item can be edit and it's not updated if
+    there is an error deleting the images'''
+
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+          username='john', avatar_url=uuid4().hex + '.jpg')
+    db.session.add(u)
+    db.session.commit()
+    c = Category.query.filter_by(name='soccer').one()
+    item = Item(name='soccer ball', description='plain ball',
+                price=23, category=c, user_id=u.id,
+                image_url='image.jpg')
+    db.session.add(item)
+    db.session.commit()
+
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
+      resp = self.client.post(url_for('main.edit', id=item.id),
+                              data={
+                                'name': item.name,
+                                'description': item.description,
+                                'price': 234,
+                                'category': item.category.id,
+                                'image': (StringIO('contents'), 'new.jpg')
+                              }, follow_redirects=True)
+      self.assertTrue(b'Sorry, there was an error updating your item.' in
+                      resp.data)
+      self.assertTrue(b'image.jpg' in resp.data) #old image still in item
+
 
 class DeleteItemViewTestCase(ViewTestCase):
     '''Testing: @main.route('/delete/<int:id>')'''
 
-    def test_delete_item_route(self):
+    @patch('app.main.views.delete_item_image')
+    def test_delete_item_route(self, mock_delete_image):
       '''verify you get a 404 for a non existent item
       and that you can delete a created item if you are the owner
+      and if an error trying to delete the image occur the item is not deleted
       1. Request to delete a non existent item
       2. Assert you get a 404 response
       3. Try to delete another user's item
@@ -301,7 +399,7 @@ class DeleteItemViewTestCase(ViewTestCase):
       c = Category.query.filter_by(name='soccer').one()
       item = Item(name='soccer ball', description='plain ball',
                   price=23, category=c, user_id=u.id,
-                  image_url=self.app.config["DEFAULT_ITEM"])
+                  image_url='image.jpg')
       db.session.add(item)
       db.session.commit()
 
@@ -318,6 +416,20 @@ class DeleteItemViewTestCase(ViewTestCase):
                                   follow_redirects=True)
         self.assertFalse(b'Your item has been deleted.' in response.data)
 
+      #error trying to delete image
+      mock_delete_image.return_value = False
+      #3. try to delete your item
+      with self.client as c:
+        with c.session_transaction() as sess:
+          sess['user_id'] = u.id
+          sess['_fresh'] = True
+        response = self.client.get(url_for('main.delete', id=item.id),
+                                  follow_redirects=True)
+        self.assertTrue(b'Sorry, there was a problem deleting your item.'
+                        in response.data)
+
+      #successfully delete the item
+      mock_delete_image.return_value = True
       #3. delete your item
       with self.client as c:
         with c.session_transaction() as sess:
