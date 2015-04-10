@@ -42,7 +42,7 @@ class CommonHelperTestCase(HelperTestCase):
     '''verify the bucket is returned and non exception is raised'''
     mock_boto_conn = Mock()
     with patch.object(boto, 'connect_s3', mock_boto_conn):
-        self.assertTrue(helpers.get_s3_bucket() is not None)
+      self.assertTrue(helpers.get_s3_bucket() is not None)
 
   def test_get_s3_bucket_exception(self):
     '''if the connection with s3 fails, an exception is returned'''
