@@ -71,6 +71,12 @@ class CommonHelperTestCase(HelperTestCase):
     with patch.object(helpers, 'get_s3_bucket', mock_get_s3_bucket):
       self.assertTrue(helpers.delete_s3("S3_UPLOAD_ITEM_DIR", 'file'))
 
+  def test_delete_s3_fail(self):
+    '''verify True is returned if an image can be deleted'''
+    mock_get_s3_bucket = Mock(side_effect=Exception('boom!'))
+    with patch.object(helpers, 'get_s3_bucket', mock_get_s3_bucket):
+      self.assertFalse(helpers.delete_s3("S3_UPLOAD_ITEM_DIR", 'file'))
+
 
 class AvatarHelperTestCase(HelperTestCase):
   '''Test cases related with saving user avatar helper methods'''
