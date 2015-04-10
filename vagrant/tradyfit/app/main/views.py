@@ -53,7 +53,7 @@ def create():
       return redirect(url_for('main.index'))
     else:
       flash('Sorry, there was a problem creating your item. Try again later.')
-      return render_template('create.html', form=form)
+      return redirect(url_for('main.index'))
   return render_template('create.html', form=form)
 
 
