@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, flash, redirect, url_for
+from flask import render_template
 from . import main
 
 
@@ -7,8 +7,7 @@ from . import main
 def request_entity_too_large(e):
   '''redirect to create item form if a user tries to upload
   an image bigger than 3MB'''
-  flash('Image should be less than 3MB.')
-  return redirect(url_for('main.create'))
+  return render_template('413.html'), 413
 
 
 @main.app_errorhandler(404)
