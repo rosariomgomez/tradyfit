@@ -17,7 +17,7 @@ class ItemForm(Form):
   price = DecimalField('Price', default=0, places=2,
                         validators= [NumberRange(0, 10**10-1)])
   category = SelectField('Category', coerce=int)
-  image = FileField('Image', validators=[
+  image = FileField('Image (max. size: 3MB)', validators=[
                     FileAllowed(['jpg', 'jpeg', 'png', 'gif'],
                       'Only jpg, png and gif files allowed')])
   submit = SubmitField('Submit')
