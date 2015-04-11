@@ -31,7 +31,7 @@ def index():
   items = Item.query.order_by(Item.timestamp.desc()).all()
   return render_template('index.html', form=search_form, items=items)
 
-@main.route('/create/', methods=['GET', 'POST'])
+@main.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
   form = ItemForm()
