@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
+import os
 import maxminddb
 from ipaddr import IPAddress, IPv4Address, IPv6Address
 
-
-geo_db = maxminddb.open_database('geoip/GeoLite2-City.mmdb')
+path = os.path.dirname(os.path.abspath(__file__))
+db_file = os.path.join(path,'../geoip/GeoLite2-City.mmdb')
+geo_db = maxminddb.open_database(db_file)
 
 
 class Geolocation(object):
