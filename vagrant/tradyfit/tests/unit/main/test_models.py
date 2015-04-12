@@ -1,9 +1,10 @@
 # -*- coding: utf-8 -*-
 import unittest
 import time
+from mock import patch
 from app import create_app, db
 from app.models import Category, Item, User, load_user
-
+from app.geolocation import Geolocation
 
 class ModelTestCase(unittest.TestCase):
   def setUp(self):
@@ -81,6 +82,39 @@ class UserModelTestCase(ModelTestCase):
                 self.app.config['S3_BUCKET'] + \
                 self.app.config['S3_UPLOAD_AVATAR_DIR'] + "/" + u.avatar_url
     self.assertEqual(u.avatar(), avatar)
+
+  def test_location_user_with_city(self):
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+            username='john', avatar_url='avatar.jpg', city='Mountain View')
+    db.session.add(u)
+    db.session.commit()
+    u.location('10.0.0.2')
+    self.assertTrue(u.latitude == None)
+
+  @patch('app.geolocation.Geolocation', return_value={'key': 'value'})
+  @patch('app.geolocation.Geolocation.get_country', return_value=(True, 'US'))
+  @patch('app.geolocation.Geolocation.get_state', return_value=(True, 'CA'))
+  @patch('app.geolocation.Geolocation.get_city', return_value=(True, 'MV'))
+  @patch('app.geolocation.Geolocation.get_latitude', return_value=(True, 123))
+  @patch('app.geolocation.Geolocation.get_longitude', return_value=(True, -98))
+  def test_location_user_no_city(self, m_geo, m_country, m_state, m_city,
+      m_latitude, m_longitude):
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+            username='john', avatar_url='avatar.jpg')
+    db.session.add(u)
+    db.session.commit()
+    u.location('10.0.0.2')
+    self.assertTrue(u.latitude == 123)
+
+  @patch('app.geolocation.Geolocation', return_value={'key': 'value'})
+  @patch('app.geolocation.Geolocation.get_country', return_value=(True, ''))
+  def test_location_user_no_city_no_country(self, m_geo, m_country):
+    u = User(fb_id='23', email='john@example.com', name='John Doe',
+            username='john', avatar_url='avatar.jpg')
+    db.session.add(u)
+    db.session.commit()
+    u.location('10.0.0.2')
+    self.assertTrue(u.latitude == None)
 
 
 class ItemModelTestCase(ModelTestCase):
