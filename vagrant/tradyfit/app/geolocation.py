@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import maxminddb
-from ipaddr import IPAddress
+from ipaddr import IPAddress, IPv4Address, IPv6Address
 
 
 geo_db = maxminddb.open_database('geoip/GeoLite2-City.mmdb')
@@ -16,14 +16,13 @@ class Geolocation(object):
   def validate_ip(string_ip):
     '''verify that the IP is a valid IPv4 or IPv6 address'''
     try:
-      ip = ipaddr.IPAddress(string_ip)
-      if type(IPAddress(string_ip)) == ipaddr.IPv4Address or \
-          type(IPAddress(string_ip)) == ipaddr.IPv6Address:
-        return string_ip
+      ip = IPAddress(string_ip)
+      if type(ip) == IPv4Address or type(ip) == IPv6Address:
+        return True
       else:
-        return None
+        return False
     except ValueError:
-      return None
+      return False
 
 
   @staticmethod
@@ -41,47 +40,50 @@ class Geolocation(object):
   def get_city(self):
     '''return city from dict geolocation'''
     try:
-      return self.location.get('city').get('names').get('en') or ''
+      city = self.location.get('city').get('names').get('en')
+      return True, city
     except:
-      return ''
+      return False, None
 
 
   def get_country(self):
     '''return country from dict geolocation'''
     try:
-      return self.location.get('country').get('iso_code') or ''
+      country = self.location.get('country').get('iso_code')
+      return True, country
     except:
-      return ''
+      return False, None
 
 
   def get_state(self):
     '''return state from dict geolocation if country is US'''
-    country = self.get_country()
-    state = ''
-    if country == 'US':
+    r, country = self.get_country()
+    if r and country == 'US':
       try:
-        state = self.location.get('subdivisions') or ''
+        state = self.location.get('subdivisions')
         if state:
           state = state[0].get('iso_code')
-        return state
+        return True, state
       except:
-        return ''
+        return False, None
     else:
-      return state
+      return False, None
 
 
   def get_latitude(self):
     '''return latitude from dict geolocation'''
     try:
-      return self.location.get('location').get('latitude') or None
+      latitude = self.location.get('location').get('latitude')
+      return True, latitude
     except:
-      return None
+      return False, None
 
 
   def get_longitude(self):
     '''return longitude from dict geolocation'''
     try:
-      return self.location.get('location').get('longitude') or None
+      longitude = self.location.get('location').get('longitude')
+      return True, longitude
     except:
-      return None
+      return False, None
 
