@@ -13,7 +13,7 @@ from . import auth
 @auth.before_app_request
 def before_request():
   '''executes in each request and updates last_seen user field
-  every 15 minutes'''
+  every 15 minutes (and location information from IP the first time)'''
   if current_user.is_authenticated():
     if session.get('last_seen'):
       if session.get('last_seen') < datetime.utcnow() - timedelta(minutes=15):
@@ -22,6 +22,9 @@ def before_request():
     else:
       session['last_seen'] = datetime.utcnow()
       current_user.ping()
+      #extract geolocation info from the user ip
+      ip = get_ip()
+      current_user.location(ip)
 
 
 oauth = OAuth()
@@ -107,3 +110,14 @@ def logout():
   session.pop('fb_oauth', None)
   logout_user()
   return redirect(url_for('main.index'))
+
+
+def get_ip():
+  '''Return user IP: If a forwarded header exists the access_route
+  contains a list of all ip addresses from the client ip to the last
+  proxy server (need to be created where a request context exist)'''
+  try:
+    ip = request.access_route[0]
+    return ip
+  except:
+    return None
