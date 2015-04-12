@@ -13,6 +13,13 @@ from app.geolocation import Geolocation
 make_searchable()
 
 
+def get_image(folder, url):
+  '''get public url for S3 images'''
+  return current_app.config['S3_LOCATION'] + "/" + \
+    current_app.config['S3_BUCKET'] + \
+    current_app.config[folder] + "/" + url
+
+
 class User(UserMixin, db.Model):
   __tablename__ = 'users'
   id = db.Column(db.Integer, primary_key=True)
@@ -80,10 +87,8 @@ class User(UserMixin, db.Model):
       return username
 
   def avatar(self):
-    return current_app.config['S3_LOCATION'] + "/" + \
-    current_app.config['S3_BUCKET'] + \
-    current_app.config['S3_UPLOAD_AVATAR_DIR'] + "/" + \
-    self.avatar_url
+    return get_image('S3_UPLOAD_AVATAR_DIR', self.avatar_url)
+
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -137,8 +142,5 @@ class Item(db.Model):
   user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
 
   def image(self):
-    return current_app.config['S3_LOCATION'] + "/" + \
-    current_app.config['S3_BUCKET'] + \
-    current_app.config['S3_UPLOAD_ITEM_DIR'] + "/" + \
-    self.image_url
+    return get_image('S3_UPLOAD_ITEM_DIR', self.image_url)
 
