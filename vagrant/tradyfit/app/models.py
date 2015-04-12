@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import os
 from . import db, login_manager
 from flask import current_app
 from flask.ext.login import UserMixin
@@ -7,7 +8,7 @@ from sqlalchemy_searchable import SearchQueryMixin
 from sqlalchemy_utils.types import TSVectorType
 from sqlalchemy_searchable import make_searchable
 from datetime import datetime
-import os
+from app.geolocation import Geolocation
 
 make_searchable()
 
@@ -24,16 +25,32 @@ class User(UserMixin, db.Model):
   country = db.Column(db.String(100), default='')
   state =  db.Column(db.String(10), default='')
   city =  db.Column(db.String(60), default='')
+  latitude = db.Column(db.Numeric(precision=10, scale=6))
+  longitude = db.Column(db.Numeric(precision=10, scale=6))
   member_since = db.Column(db.DateTime(), default=datetime.utcnow)
   last_seen = db.Column(db.DateTime(), default=datetime.utcnow)
   is_admin = db.Column(db.Boolean, default=False)
   items = db.relationship('Item', backref='user', lazy='dynamic',
                           cascade='all, delete-orphan')
 
+
   def ping(self):
     '''update last_seen field with current time'''
     self.last_seen = datetime.utcnow()
     db.session.add(self)
+
+
+  def location(self, ip):
+    '''update user location if not yet stored'''
+    if not self.city:
+      user_location = Geolocation(ip)
+      self.country = user_location.get_country()
+      self.state = user_location.get_state()
+      self.city = user_location.get_city()
+      self.latitude = user_location.get_latitude()
+      self.longitude = user_location.get_longitude()
+      db.session.add(self)
+
 
   @staticmethod
   def get_user(email):
