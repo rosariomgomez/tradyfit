@@ -67,6 +67,13 @@ class GeolocationTestCase(unittest.TestCase):
     r, state = geo_obj.get_state()
     self.assertTrue(r is False and state == None)
 
+  def test_get_none_state(self):
+    geo_obj = Geolocation('76.102.12.224')
+    #manually modify the entrance for state value
+    geo_obj.location['subdivisions'] = None
+    r, state = geo_obj.get_state()
+    self.assertTrue(r is True and state == None)
+
   def test_get_valid_latitude(self):
     geo_obj = Geolocation('76.102.12.224')
     r, latitude = geo_obj.get_latitude()
