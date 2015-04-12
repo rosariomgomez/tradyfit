@@ -40,7 +40,8 @@ class ItemTestCase(SeleniumTestCase):
     u = User(fb_id=self.app.config['FB_TEST_ID'],
             email=self.app.config['FB_TEST_EMAIL'],
             name='Maria Amiecbddcgdc', username='Maria',
-            avatar_url=uuid4().hex + '.jpg')
+            avatar_url=uuid4().hex + '.jpg',
+            city='Mountain View', country='US', state='CA')
     db.session.add(u)
     db.session.commit()
 
