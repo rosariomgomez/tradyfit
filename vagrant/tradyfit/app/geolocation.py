@@ -19,10 +19,7 @@ class Geolocation(object):
     '''verify that the IP is a valid IPv4 or IPv6 address'''
     try:
       ip = IPAddress(string_ip)
-      if type(ip) == IPv4Address or type(ip) == IPv6Address:
-        return True
-      else:
-        return False
+      return True
     except ValueError:
       return False
 
@@ -40,7 +37,10 @@ class Geolocation(object):
 
 
   def get_city(self):
-    '''return city from dict geolocation'''
+    '''return city from dict geolocation.
+    Even that get the city doesn't throws an exception, it could be None
+    Possible Outputs: (True, <string>city or None) or (False, None)
+    '''
     try:
       city = self.location.get('city').get('names').get('en')
       return True, city
@@ -49,7 +49,9 @@ class Geolocation(object):
 
 
   def get_country(self):
-    '''return country from dict geolocation'''
+    '''return country from dict geolocation
+    Possible Outputs: (True, <string>city or None) or (False, None)
+    '''
     try:
       country = self.location.get('country').get('iso_code')
       return True, country
@@ -58,7 +60,9 @@ class Geolocation(object):
 
 
   def get_state(self):
-    '''return state from dict geolocation if country is US'''
+    '''return state from dict geolocation if country is US
+    Possible Outputs: (True, <string>city or None) or (False, None)
+    '''
     r, country = self.get_country()
     if r and country == 'US':
       try:
@@ -73,7 +77,9 @@ class Geolocation(object):
 
 
   def get_latitude(self):
-    '''return latitude from dict geolocation'''
+    '''return latitude from dict geolocation
+    Possible Outputs: (True, <string>city or None) or (False, None)
+    '''
     try:
       latitude = self.location.get('location').get('latitude')
       return True, latitude
@@ -82,7 +88,9 @@ class Geolocation(object):
 
 
   def get_longitude(self):
-    '''return longitude from dict geolocation'''
+    '''return longitude from dict geolocation
+    Possible Outputs: (True, <string>city or None) or (False, None)
+    '''
     try:
       longitude = self.location.get('location').get('longitude')
       return True, longitude
