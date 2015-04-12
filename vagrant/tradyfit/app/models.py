@@ -43,13 +43,26 @@ class User(UserMixin, db.Model):
   def location(self, ip):
     '''update user location if not yet stored'''
     if not self.city:
-      user_location = Geolocation(ip)
-      self.country = user_location.get_country()
-      self.state = user_location.get_state()
-      self.city = user_location.get_city()
-      self.latitude = user_location.get_latitude()
-      self.longitude = user_location.get_longitude()
-      db.session.add(self)
+      user_geo = Geolocation(ip)
+      if user_geo.location:
+        r, country = user_geo.get_country()
+        if not r: #do not continue if the country is not present
+          return
+        self.country = country
+        r, state = user_geo.get_state()
+        if r:
+          self.state = state
+        r, city = user_geo.get_city()
+        if r:
+          self.city = city
+        r, latitude = user_geo.get_latitude()
+        if r:
+          self.latitude = latitude
+        r, longitude = user_geo.get_longitude()
+        if r:
+          self.longitude = longitude
+
+        db.session.add(self)
 
 
   @staticmethod
