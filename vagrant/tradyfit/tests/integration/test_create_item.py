@@ -1,35 +1,18 @@
 # -*- coding: utf-8 -*-
-import unittest
-import re
 from uuid import uuid4
 from StringIO import StringIO
-from mock import Mock, patch
+from mock import patch
 from flask import current_app, url_for
-from app import create_app, db
+from base import ClientTestCase
+from app import db
 from app.models import Item, Category, User
 import app.main.views
 
 
-class CreateItemIntegrationTestCase(unittest.TestCase):
-  def setUp(self):
-    self.app = create_app('testing')
-    self.app_context = self.app.app_context()
-    self.app_context.push()
-    #do not request urls from S3
-    self.app.config["S3_LOCATION"] = ''
+class CreateItemIntegrationTestCase(ClientTestCase):
 
-    db.create_all()
-    Category.insert_categories()
-    self.client = self.app.test_client()
-
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
-    self.app_context.pop()
-
-
-  @patch('app.main.views.save_item_image')
-  def test_create_item(self, mock_save_item_image):
+  @patch('app.main.views.save_item_image', return_value='image.jpg')
+  def test_create_item(self, mock):
     '''verify an item can be correctly created
     1. Go to the create an item's page
     2. Field in the form with a happy case
@@ -40,8 +23,6 @@ class CreateItemIntegrationTestCase(unittest.TestCase):
             username='john', avatar_url=uuid4().hex + '.jpg')
     db.session.add(u)
     db.session.commit()
-
-    mock_save_item_image.return_value = 'image.jpg'
 
     with self.client as c:
       with c.session_transaction() as sess:
@@ -60,8 +41,8 @@ class CreateItemIntegrationTestCase(unittest.TestCase):
       self.assertTrue(b'234$' in resp.data)
 
 
-  @patch('app.main.views.save_item_image')
-  def test_create_item_image_problem(self, mock_save_item_image):
+  @patch('app.main.views.save_item_image', return_value=None)
+  def test_create_item_image_problem(self, mock):
     '''verify an item will not be created if fails uploading the image
     1. Go to the create an item's page
     2. Field in the form with a happy case
@@ -73,9 +54,6 @@ class CreateItemIntegrationTestCase(unittest.TestCase):
             username='john', avatar_url=uuid4().hex + '.jpg')
     db.session.add(u)
     db.session.commit()
-
-    #simulate error on S3 uploading
-    mock_save_item_image.return_value = None
 
     with self.client as c:
       with c.session_transaction() as sess:
