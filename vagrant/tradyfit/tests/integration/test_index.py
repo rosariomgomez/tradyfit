@@ -1,31 +1,14 @@
 # -*- coding: utf-8 -*-
-import unittest
-import re
 from uuid import uuid4
-from bs4 import BeautifulSoup
-from mock import Mock, patch
+from mock import patch
 from flask import current_app, url_for
-from app import create_app, db
+from base import ClientTestCase
+from app import db
 from app.models import Item, Category, User
 import app.main.views
 
 
-class IndexIntegrationTestCase(unittest.TestCase):
-  def setUp(self):
-    self.app = create_app('testing')
-    self.app_context = self.app.app_context()
-    self.app_context.push()
-    #do not request urls from S3
-    self.app.config["S3_LOCATION"] = ''
-
-    db.create_all()
-    Category.insert_categories()
-    self.client = self.app.test_client()
-
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
-    self.app_context.pop()
+class IndexIntegrationTestCase(ClientTestCase):
 
   def test_search_form_redirect(self):
     '''verify the search form redirects to results when submit'''
@@ -35,7 +18,7 @@ class IndexIntegrationTestCase(unittest.TestCase):
                             }, follow_redirects=True)
     self.assertTrue(b'Search results for "soccer ball":' in resp.data)
 
-  @patch('app.main.views.delete_item_image')
+  @patch('app.main.views.delete_item_image', return_value=True)
   def test_delete_item(self, mock_delete_image):
     '''verify an item can be deleted from the index page
     1. Create an item
@@ -58,9 +41,6 @@ class IndexIntegrationTestCase(unittest.TestCase):
         price=28, category=c, user_id=u1.id, image_url='item2.jpg')
     db.session.add_all([item,item2])
     db.session.commit()
-
-    #mock the call to delete image
-    mock_delete_image.return_value = True
 
     with self.client as c:
       with c.session_transaction() as sess:
