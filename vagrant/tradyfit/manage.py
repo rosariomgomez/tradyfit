@@ -35,16 +35,8 @@ def test(coverage=False):
     os.execvp(sys.executable, [sys.executable] + sys.argv)
 
   import unittest
-  if coverage:
-    tests_dir = os.path.join(path,"tests")
-    tests = unittest.TestLoader().discover(tests_dir)
-  else:
-    #only discover unit and integration tests
-    int_tests_dir = os.path.join(path,"tests/integration")
-    unit_tests_dir = os.path.join(path,"tests/unit")
-    tests = unittest.TestLoader().discover(int_tests_dir)
-    tests.addTests(unittest.TestLoader().discover(unit_tests_dir))
-
+  tests_dir = os.path.join(path,"tests")
+  tests = unittest.TestLoader().discover(tests_dir)
   unittest.TextTestRunner(verbosity=2).run(tests)
 
   if COV:
