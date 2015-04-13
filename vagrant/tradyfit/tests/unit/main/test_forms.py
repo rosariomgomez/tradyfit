@@ -1,33 +1,37 @@
 # -*- coding: utf-8 -*-
-import re
 import os
 from werkzeug import FileStorage
 from mock import Mock
-from bs4 import BeautifulSoup
 from base import UnitTestCase
 from app.models import Item, Category
 from app.main.forms import ItemForm, SearchForm
 
 
-class FormTestCase(UnitTestCase):
-  def setUp(self):
-    super(FormTestCase, self).setUp()
-    Category.insert_categories()
+LONG_TEXT = 'The Believers. The hidden story behind the code that runs our \
+lives and control everything by Geoffrey Hinton'
+
+def mock_file(filename):
+  mock = Mock(spec=FileStorage())
+  mock.filename = filename
+  return mock
+
+def create_item_form(name, description, price, category, image=None):
+  return ItemForm(data={
+                    'name': name,
+                    'description': description,
+                    'price': price,
+                    'category': category,
+                    'image': image
+                    })
 
 
-class ItemFormTestCase(FormTestCase):
+class ItemFormTestCase(UnitTestCase):
+
   def test_create_item_form(self):
     '''verify an item can be correctly created (happy case)'''
-    c = Category.query.filter_by(name='soccer').one()
-    mock_file = Mock(spec=FileStorage())
-    mock_file.filename = 'image.jpg'
-    form = ItemForm(data={
-                        'name': 'soccer ball',
-                        'description': 'plain ball',
-                        'price': 234,
-                        'category': c.id,
-                        'image': mock_file
-                    })
+    c = Category.get_category(name='soccer')
+    mock = mock_file('image.jpg')
+    form = create_item_form('soccer ball', 'plain ball', 234, c.id, mock)
     form.validate()
     self.assertTrue(not form.errors)
 
@@ -38,61 +42,34 @@ class ItemFormTestCase(FormTestCase):
     Name: string(3, 80), required, accept chars, numbers, dots, dashes and
           underscores. Must start with a char
     '''
-    c = Category.query.filter_by(name='soccer').one()
+    c = Category.get_category(name='soccer')
 
     #1. TC1: Empty name
-    form = ItemForm(data={
-                        'name': '',
-                        'description': 'plain ball',
-                        'price': 234,
-                        'category': c.id
-                    })
+    form = create_item_form('', 'plain ball', 234, c.id)
     form.validate()
     self.assertEqual(form.errors['name'], [u'This field is required.'])
 
     #2. TC2: Short (<3 chars)
-    form = ItemForm(data={
-                        'name': 'fo',
-                        'description': 'plain ball',
-                        'price': 234,
-                        'category': c.id
-                    })
+    form = create_item_form('fo', 'plain ball', 234, c.id)
     form.validate()
     self.assertEqual(form.errors['name'], [u'Field must be between 3 and' +
                                             ' 80 characters long.'])
 
     #3. TC3: Long (>80 chars)
-    form = ItemForm(data={
-                        'name': 'The Believers. The hidden story behind ' +
-                                'the code that runs our lives and control' +
-                                ' everything by Geoffrey Hinton',
-                        'description': 'plain ball',
-                        'price': 234,
-                        'category': c.id
-                    })
+    form = create_item_form(LONG_TEXT, 'plain ball', 234, c.id)
     form.validate()
     self.assertEqual(form.errors['name'], [u'Field must be between 3 and' +
                                             ' 80 characters long.'])
 
     #4. TC4: Special characters (accented, asian, EOL...)
-    form = ItemForm(data={
-                        'name': 'use your \n <b>say hi</b>',
-                        'description': 'plain ball',
-                        'price': 234,
-                        'category': c.id
-                    })
+    form = create_item_form('use your \n <b>say hi</b>', 'a ball', 234, c.id)
     form.validate()
     self.assertEqual(form.errors['name'],
     ['Product names must have only letters, numbers, dots, dashes or ' +
     'underscores'])
 
     #5. TC5: Leading spaces
-    form = ItemForm(data={
-                        'name': ' baseball cup',
-                        'description': 'plain ball',
-                        'price': 234,
-                        'category': c.id
-                    })
+    form = create_item_form(' ball', 'plain ball', 234, c.id)
     form.validate()
     self.assertEqual(form.errors['name'],
     ['Product names must have only letters, numbers, dots, dashes or ' +
@@ -105,7 +82,7 @@ class ItemFormTestCase(FormTestCase):
     Full list of TCs at specs/item_creation-spec.tsl
     Description: Text area from 0 to 500 chars
     '''
-    c = Category.query.filter_by(name='soccer').one()
+    c = Category.get_category(name='soccer')
 
     #1. TC8: Long (>500 chars)
     path = os.path.dirname(os.path.abspath(__file__))
@@ -113,12 +90,7 @@ class ItemFormTestCase(FormTestCase):
     with open(f, "r") as text:
         desc = text.readlines()
 
-    form = ItemForm(data={
-                        'name': 'soccer ball',
-                        'description': desc[0],
-                        'price': 234,
-                        'category': c.id
-                    })
+    form = create_item_form('soccer ball', desc[0], 234, c.id)
     form.validate()
     self.assertEqual(form.errors['description'], [u'Field must be ' +
                                 'between 0 and 500 characters long.'])
@@ -130,37 +102,22 @@ class ItemFormTestCase(FormTestCase):
     Full list of TCs at specs/item_creation-spec.tsl
     Price: Decimal number. Precision 10, scale 2 (example: 123.34)
     '''
-    c = Category.query.filter_by(name='soccer').one()
+    c = Category.get_category(name='soccer')
 
     #1. TC9: Chars
-    form = ItemForm(data={
-                        'name': 'baseball cup',
-                        'description': 'plain ball',
-                        'price': '23',
-                        'category': c.id
-                    })
+    form = create_item_form('soccer ball', 'plain ball', '234', c.id)
     form.validate()
     self.assertEqual(form.errors['price'],
                             [u'Number must be between 0 and 9999999999.'])
 
     #2. TC10: Long decimal (>10 digits)
-    form = ItemForm(data={
-                        'name': 'baseball cup',
-                        'description': 'plain ball',
-                        'price': 100000000090.89,
-                        'category': c.id
-                    })
+    form = create_item_form('soccer ball', 'plain ball', 100000000090.89, c.id)
     form.validate()
     self.assertEqual(form.errors['price'],
                             [u'Number must be between 0 and 9999999999.'])
 
     #3. TC11: Negative
-    form = ItemForm(data={
-                        'name': 'baseball cup',
-                        'description': 'plain ball',
-                        'price': -24.3,
-                        'category': c.id
-                    })
+    form = create_item_form('soccer ball', 'plain ball', -24.3, c.id)
     form.validate()
     self.assertEqual(form.errors['price'],
                             [u'Number must be between 0 and 9999999999.'])
@@ -173,32 +130,17 @@ class ItemFormTestCase(FormTestCase):
     Category: Integer. Id of an existent category
     '''
     #1. TC14: Non existent category
-    form = ItemForm(data={
-                        'name': 'baseball cup',
-                        'description': 'plain ball',
-                        'price': 24.3,
-                        'category': '987'
-                    })
+    form = create_item_form('soccer ball', 'plain ball', 24.3, '987')
     form.validate()
     self.assertEqual(form.errors['category'], [u'Not a valid choice'])
 
     #2. TC15: Empty category
-    form = ItemForm(data={
-                        'name': 'baseball cup',
-                        'description': 'plain ball',
-                        'price': 24.3,
-                        'category': ''
-                    })
+    form = create_item_form('soccer ball', 'plain ball', 24.3, '')
     form.validate()
     self.assertEqual(form.errors['category'], [u'Not a valid choice'])
 
     #3. TC16: SQL injection
-    form = ItemForm(data={
-                        'name': 'baseball cup',
-                        'description': 'plain ball',
-                        'price': 24.3,
-                        'category': "1' or '1' = '1"
-                    })
+    form = create_item_form('soccer ball', 'plain ball', 24.3, "1' or '1' = '1")
     form.validate()
     self.assertEqual(form.errors['category'], [u'Not a valid choice'])
 
@@ -210,45 +152,27 @@ class ItemFormTestCase(FormTestCase):
     Image: FileStorage type, not required, max size 3MB,
           allowed types: jpg, jpeg, png and gif
     '''
-    c = Category.query.filter_by(name='soccer').one()
+    c = Category.get_category(name='soccer')
 
     #1. TC1: Not provided
-    form = ItemForm(data={
-                        'name': 'ball',
-                        'description': 'plain ball',
-                        'price': 234,
-                        'category': c.id
-                    })
+    form = create_item_form('soccer ball', 'plain ball', 24.3, c.id)
     form.validate()
     self.assertTrue(not form.errors)
 
     #2. TC2: Not FileStorage type provided
-    form = ItemForm(data={
-                        'name': 'fo',
-                        'description': 'plain ball',
-                        'price': 234,
-                        'category': c.id,
-                        'image': 'a string'
-                    })
+    form = create_item_form('soccer ball', 'plain ball', 24.3, '987', 'string')
     form.validate()
     self.assertEqual(form.errors['image'], [u'Image should be a file'])
 
     #3. TC4: Not allowed file type
-    mock_file = Mock(spec=FileStorage())
-    mock_file.filename = 'image.pdf'
-    form = ItemForm(data={
-                        'name': 'use your \n <b>say hi</b>',
-                        'description': 'plain ball',
-                        'price': 234,
-                        'category': c.id,
-                        'image': mock_file
-                    })
+    mock = mock_file('image.pdf')
+    form = create_item_form('soccer ball', 'plain ball', 24.3, c.id, mock)
     form.validate()
     self.assertEqual(form.errors['image'],
       [u'Only jpg, png and gif files allowed'])
 
 
-class SearchFormTestCase(FormTestCase):
+class SearchFormTestCase(UnitTestCase):
   def test_search_form(self):
     '''verify a search can be correctly executed (happy case)'''
     form = SearchForm(data={'search': 't-shirt'})
@@ -267,9 +191,7 @@ class SearchFormTestCase(FormTestCase):
     [u'Search must have only letters, numbers, dots, dashes or underscores'])
 
     #2. Chars (>80)
-    form = SearchForm(data={'search': 'The Believers. The hidden story behind '+
-                            'the code that runs our lives and control' +
-                            ' everything by Geoffrey Hinton'})
+    form = SearchForm(data={'search': LONG_TEXT})
     form.validate()
     self.assertEqual(form.errors['search'], [u'Field must be between 3 and' +
                                             ' 80 characters long.'])
