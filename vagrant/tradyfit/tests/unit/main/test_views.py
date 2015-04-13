@@ -33,13 +33,9 @@ class IndexViewTestCase(ClientTestCase):
     '''verify if you are logged in, you can see the link to list an item
     and the right dropdown menu'''
     u = self.create_user()
-    with self.client as c:
-      with c.session_transaction() as sess:
-        sess['user_id'] = u.id
-        sess['_fresh'] = True
-      resp = c.get(url_for('main.index'))
-      self.assertTrue(b'List an item' in resp.data)
-      self.assertTrue(u.username in resp.get_data(as_text=True))
+    resp = self.make_get_request(u, 'main.index')
+    self.assertTrue(b'List an item' in resp.data)
+    self.assertTrue(u.username in resp.get_data(as_text=True))
 
   def test_item_displayed(self):
     '''verify you can see an item listed in the index page
@@ -83,14 +79,10 @@ class IndexViewTestCase(ClientTestCase):
     u1 = self.create_user('25', 'maggy@example.com', 'maggy')
     item = self.create_item(u.id)
     item2 = self.create_item(u1.id)
-    with self.client as c:
-      with c.session_transaction() as sess:
-        sess['user_id'] = u.id
-        sess['_fresh'] = True
-      response = self.client.get(url_for('main.index'))
-      r = response.get_data(as_text=True)
-      self.assertTrue('<a href="/edit/' + str(item.id) + '"' in r)
-      self.assertFalse('<a href="/edit/' + str(item2.id) + '"' in r)
+    response = self.make_get_request(u, 'main.index')
+    r = response.get_data(as_text=True)
+    self.assertTrue('<a href="/edit/' + str(item.id) + '"' in r)
+    self.assertFalse('<a href="/edit/' + str(item2.id) + '"' in r)
 
 
 class CreateItemViewTestCase(ClientTestCase):
@@ -102,14 +94,10 @@ class CreateItemViewTestCase(ClientTestCase):
     2. Assert you get the correct page
     '''
     u = self.create_user()
-    with self.client as c:
-      with c.session_transaction() as sess:
-        sess['user_id'] = u.id
-        sess['_fresh'] = True
-      response = self.client.get(url_for('main.create'))
-      self.assertEquals(response.status_code, 200)
-      r = response.get_data(as_text=True)
-      self.assertTrue('id="item-creation"' in r)
+    response = self.make_get_request(u, 'main.create')
+    self.assertEquals(response.status_code, 200)
+    r = response.get_data(as_text=True)
+    self.assertTrue('id="item-creation"' in r)
 
   def test_create_item_form(self):
     '''verify all fields for creating an item are present
@@ -117,15 +105,11 @@ class CreateItemViewTestCase(ClientTestCase):
     2. Check all fields in the form are present
     '''
     u = self.create_user()
-    with self.client as c:
-      with c.session_transaction() as sess:
-        sess['user_id'] = u.id
-        sess['_fresh'] = True
-      response = self.client.get(url_for('main.create'))
-      r = response.get_data(as_text=True)
-      fields = ['name', 'description', 'price', 'category', 'image']
-      for field in fields:
-          self.assertTrue('id="' + field + '"' in r)
+    response = self.make_get_request(u, 'main.create')
+    r = response.get_data(as_text=True)
+    fields = ['name', 'description', 'price', 'category', 'image']
+    for field in fields:
+        self.assertTrue('id="' + field + '"' in r)
 
 
 class ItemViewTestCase(ClientTestCase):
@@ -147,6 +131,16 @@ class ItemViewTestCase(ClientTestCase):
     response = self.client.get(url_for('main.item', id=item.id))
     r = response.get_data(as_text=True)
     self.assertTrue('id="item-'+str(item.id) + '"' in r)
+
+
+def form_data(item, image_name):
+  return {
+          'name': item.name,
+          'description': item.description,
+          'price': 234,
+          'category': item.category.id,
+          'image': (StringIO('contents'), image_name)
+          }
 
 
 class EditItemViewTestCase(ClientTestCase):
@@ -224,13 +218,8 @@ class EditItemViewTestCase(ClientTestCase):
         sess['user_id'] = u.id
         sess['_fresh'] = True
       resp = self.client.post(url_for('main.edit', id=item.id),
-                              data={
-                                'name': item.name,
-                                'description': item.description,
-                                'price': 234,
-                                'category': item.category.id,
-                                'image': (StringIO('contents'), 'new_image.jpg')
-                              }, follow_redirects=True)
+                                data=form_data(item, 'new_image.jpg'),
+                                follow_redirects=True)
       self.assertTrue(b'Your item has been updated.' in resp.data)
       self.assertTrue(b'234$' in resp.data)
       self.assertTrue(mock_delete_image.called_with('image.jpg'))
@@ -248,13 +237,8 @@ class EditItemViewTestCase(ClientTestCase):
         sess['user_id'] = u.id
         sess['_fresh'] = True
       resp = self.client.post(url_for('main.edit', id=item.id),
-                              data={
-                                'name': item.name,
-                                'description': item.description,
-                                'price': 234,
-                                'category': item.category.id,
-                                'image': (StringIO('contents'), 'new_image.jpg')
-                              }, follow_redirects=True)
+                              data=form_data(item, 'new_image.jpg'),
+                              follow_redirects=True)
       self.assertTrue(b'Sorry, there was an error updating your item.'
                       in resp.data)
       self.assertTrue(item.image_url in resp.data) #old image still in item
@@ -273,13 +257,8 @@ class EditItemViewTestCase(ClientTestCase):
         sess['user_id'] = u.id
         sess['_fresh'] = True
       resp = self.client.post(url_for('main.edit', id=item.id),
-                              data={
-                                'name': item.name,
-                                'description': item.description,
-                                'price': 234,
-                                'category': item.category.id,
-                                'image': (StringIO('contents'), 'new.jpg')
-                              }, follow_redirects=True)
+                              data=form_data(item, 'new_image.jpg'),
+                              follow_redirects=True)
       self.assertTrue(b'Sorry, there was an error updating your item.' in
                       resp.data)
       self.assertTrue(item.image_url in resp.data) #old image still in item
