@@ -1,25 +1,13 @@
 # -*- coding: utf-8 -*-
-import unittest
 import time
 from mock import patch
-from app import create_app, db
+from base import UnitTestCase
+from app import db
 from app.models import Category, Item, User, load_user
 from app.geolocation import Geolocation
 
-class ModelTestCase(unittest.TestCase):
-  def setUp(self):
-    self.app = create_app('testing')
-    self.app_context = self.app.app_context()
-    self.app_context.push()
-    db.create_all()
 
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
-    self.app_context.pop()
-
-
-class CategoryModelTestCase(ModelTestCase):
+class CategoryModelTestCase(UnitTestCase):
   def test_insert_categories(self):
     categories = Category.query.all()
     self.assertEqual(categories, [])
@@ -37,7 +25,7 @@ class CategoryModelTestCase(ModelTestCase):
     self.assertEqual(Category.query.filter_by(name='soccer').count(), 1)
 
 
-class UserModelTestCase(ModelTestCase):
+class UserModelTestCase(UnitTestCase):
   def test_username(self):
     u = User(fb_id='23', email='john@example.com', name='John Doe',
             username='john', avatar_url='avatar.jpg')
@@ -117,7 +105,7 @@ class UserModelTestCase(ModelTestCase):
     self.assertTrue(u.latitude == None)
 
 
-class ItemModelTestCase(ModelTestCase):
+class ItemModelTestCase(UnitTestCase):
   def test_get_image(self):
     item = Item(name='ball', description='small and round', price=23,
                 image_url='ball.jpg')
