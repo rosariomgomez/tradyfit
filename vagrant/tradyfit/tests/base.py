@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import unittest
+from flask import url_for
 from app import create_app, db
 from app.models import Category, User, Item
 
@@ -51,4 +52,13 @@ class ClientTestCase(UnitTestCase):
     self.client = self.app.test_client()
     #do not request urls from S3
     self.app.config["S3_LOCATION"] = ''
+
+  def make_get_request(self, user, url):
+    '''make a get request with user in session'''
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = user.id
+        sess['_fresh'] = True
+      return c.get(url_for(url))
+
 
