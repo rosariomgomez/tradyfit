@@ -121,6 +121,10 @@ class Category(db.Model):
     categories = Category.query.all()
     return [(c.id, c.name) for c in categories]
 
+  @staticmethod
+  def get_category(name):
+    return Category.query.filter_by(name=name).one()
+
 
 class ItemQuery(BaseQuery, SearchQueryMixin):
   pass
