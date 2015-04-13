@@ -1,10 +1,7 @@
 # -*- coding: utf-8 -*-
-from uuid import uuid4
 from mock import patch
-from flask import current_app, url_for
+from flask import url_for
 from base import ClientTestCase
-from app import db
-from app.models import Item, Category, User
 import app.main.views
 
 
@@ -27,20 +24,10 @@ class IndexIntegrationTestCase(ClientTestCase):
     4. Delete the item
     5. Verfiy the item does not appear at the index page anymore
     '''
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john', avatar_url=uuid4().hex + '.jpg')
-    u1 = User(fb_id='25', email='maggy@example.com', name='Maggy Simpson',
-              username='maggy', avatar_url=uuid4().hex + '.jpg')
-    db.session.add_all([u,u1])
-    db.session.commit()
-    c = Category.query.filter_by(name='soccer').one()
-    item = Item(name='soccer ball', description='plain ball',
-        price=23, category=c, user_id=u.id,
-        image_url=self.app.config["DEFAULT_ITEM"])
-    item2 = Item(name='soccer t-shirt', description='Real Madrid size M',
-        price=28, category=c, user_id=u1.id, image_url='item2.jpg')
-    db.session.add_all([item,item2])
-    db.session.commit()
+    u = self.create_user()
+    u1 = self.create_user('25', 'maggy@example.com', 'maggy')
+    item = self.create_item(u.id)
+    item2 = self.create_item(u1.id, 't-shirt', 'blue small size')
 
     with self.client as c:
       with c.session_transaction() as sess:
@@ -53,4 +40,4 @@ class IndexIntegrationTestCase(ClientTestCase):
       response = self.client.get(url_for('main.delete', id=str(item.id)),
                                 follow_redirects=True)
       r = response.get_data(as_text=True)
-      self.assertFalse(item.name in r)
+      self.assertFalse(item.description in r)
