@@ -40,7 +40,7 @@ class UserModelTestCase(UnitTestCase):
   def test_username(self):
     u = self.create_user()
     #the username already exists, append the next uid to the name
-    self.assertTrue(User.create_username('john') == 'john2')
+    self.assertTrue(User.create_username(u.username) == u.username+str(u.id+1))
     #username doesn't exist, so it can be assigned
     self.assertTrue(User.create_username('jacky') == 'jacky')
 
@@ -53,7 +53,7 @@ class UserModelTestCase(UnitTestCase):
 
   def test_get_user(self):
     u = self.create_user()
-    self.assertEqual(User.get_user('john@example.com'), u)
+    self.assertEqual(User.get_user(u.email), u)
     self.assertEqual(User.get_user('nobody@example.com'), None)
 
   def test_load_user(self):
