@@ -2,7 +2,7 @@
 import requests
 import os
 import boto
-from mock import Mock, PropertyMock, patch
+from mock import Mock, patch
 from base import BasicTestCase
 from app.main import helpers
 
@@ -157,10 +157,3 @@ class ItemImageHelperTestCase(HelperTestCase):
       self.assertTrue(helpers.delete_item_image(
                         self.app.config["DEFAULT_ITEM"]) is True)
       self.assertFalse(mock_delete_s3.called)
-
-
-
-
-
-
-
