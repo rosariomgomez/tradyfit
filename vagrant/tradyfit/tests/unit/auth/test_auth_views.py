@@ -3,7 +3,7 @@ from mock import Mock, PropertyMock, patch
 from flask import current_app, url_for, session
 from flask_oauthlib.client import OAuthException
 from app import db
-from base import UnitTestCase
+from base import ClientTestCase
 from app.models import User
 from app.auth.views import facebook
 from app.main import helpers
@@ -11,14 +11,7 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 
-class AuthViewTestCase(UnitTestCase):
-
-  def setUp(self):
-    super(AuthViewTestCase, self).setUp()
-    self.client = self.app.test_client(use_cookies=True)
-
-
-class BeforeRequestTestCase(AuthViewTestCase):
+class BeforeRequestTestCase(ClientTestCase):
   '''Testing: @auth.route('/before_request')'''
 
   def test_update_last_seen(self):
@@ -42,7 +35,7 @@ class BeforeRequestTestCase(AuthViewTestCase):
       self.assertTrue(u.last_seen > before_last_seen)
 
 
-class FBLoginTestCase(AuthViewTestCase):
+class FBLoginTestCase(ClientTestCase):
   '''Testing: @auth.route('/fb-login/authorized')'''
 
   @staticmethod
@@ -156,7 +149,7 @@ class FBLoginTestCase(AuthViewTestCase):
                       content)
 
 
-class LogoutTestCase(AuthViewTestCase):
+class LogoutTestCase(ClientTestCase):
   '''Testing: @auth.route('/logout')'''
 
   def test_fb_cookies_removed(self):
