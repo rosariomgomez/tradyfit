@@ -1,13 +1,10 @@
 # -*- coding: utf-8 -*-
 import re
-from uuid import uuid4
 from bs4 import BeautifulSoup
 from StringIO import StringIO
-from mock import Mock, patch
+from mock import patch
 from flask import url_for
 from base import ClientTestCase
-from app import db
-from app.models import Item, Category, User
 import app.main.views
 
 
@@ -35,10 +32,7 @@ class IndexViewTestCase(ClientTestCase):
   def test_navbar_login_user(self):
     '''verify if you are logged in, you can see the link to list an item
     and the right dropdown menu'''
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john', avatar_url=uuid4().hex + '.jpg')
-    db.session.add(u)
-    db.session.commit()
+    u = self.create_user()
     with self.client as c:
       with c.session_transaction() as sess:
         sess['user_id'] = u.id
@@ -53,10 +47,8 @@ class IndexViewTestCase(ClientTestCase):
     2. Go to index page
     3. Assert the item is there
     '''
-    c = Category.query.filter_by(name='soccer').one()
-    item = Item(name='soccer ball', description='plain ball',
-        price=23, category=c, image_url='image.jpg')
-    db.session.add(item)
+    u = self.create_user()
+    item = self.create_item(u.id)
     response = self.client.get(url_for('main.index'))
     r = response.get_data(as_text=True)
     self.assertTrue("item-"+str(item.id) in r)
@@ -68,13 +60,9 @@ class IndexViewTestCase(ClientTestCase):
     2. Go to index page
     3. Assert the second item created appears on top
     '''
-    c = Category.query.filter_by(name='soccer').one()
-    item = Item(name='soccer ball', description='plain ball',
-        price=23, category=c, image_url='image.jpg')
-    db.session.add(item)
-    item2 = Item(name='soccer t-shirt', description='Real Madrid size M',
-        price=28, category=c, image_url='image.jpg')
-    db.session.add(item2)
+    u = self.create_user()
+    item = self.create_item(u.id)
+    item2 = self.create_item(u.id)
     response = self.client.get(url_for('main.index'))
     soup = BeautifulSoup(response.get_data(as_text=True))
     items = soup.find_all("li", id=re.compile("^item-"))
@@ -91,19 +79,10 @@ class IndexViewTestCase(ClientTestCase):
     2. Go to index page
     3. Assert the edit link is present for the user's item
     '''
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john', avatar_url=uuid4().hex + '.jpg')
-    u1 = User(fb_id='25', email='maggy@example.com', name='Maggy Simpson',
-              username='maggy', avatar_url=uuid4().hex + '.jpg')
-    db.session.add_all([u,u1])
-    db.session.commit()
-    c = Category.query.filter_by(name='soccer').one()
-    item = Item(name='soccer ball', description='plain ball',
-        price=23, category=c, user_id=u.id, image_url='item.jpg')
-    item2 = Item(name='soccer t-shirt', description='Real Madrid size M',
-        price=28, category=c, user_id=u1.id, image_url='item2.jpg')
-    db.session.add_all([item,item2])
-    db.session.commit()
+    u = self.create_user()
+    u1 = self.create_user('25', 'maggy@example.com', 'maggy')
+    item = self.create_item(u.id)
+    item2 = self.create_item(u1.id)
     with self.client as c:
       with c.session_transaction() as sess:
         sess['user_id'] = u.id
@@ -122,11 +101,7 @@ class CreateItemViewTestCase(ClientTestCase):
     1. Go to the create an item's page
     2. Assert you get the correct page
     '''
-    #create a user
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john', avatar_url=uuid4().hex + '.jpg')
-    db.session.add(u)
-    db.session.commit()
+    u = self.create_user()
     with self.client as c:
       with c.session_transaction() as sess:
         sess['user_id'] = u.id
@@ -141,11 +116,7 @@ class CreateItemViewTestCase(ClientTestCase):
     1. Go to the create an item's page
     2. Check all fields in the form are present
     '''
-    #create a user
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john', avatar_url=uuid4().hex + '.jpg')
-    db.session.add(u)
-    db.session.commit()
+    u = self.create_user()
     with self.client as c:
       with c.session_transaction() as sess:
         sess['user_id'] = u.id
@@ -171,11 +142,8 @@ class ItemViewTestCase(ClientTestCase):
     '''
     response = self.client.get(url_for('main.item', id=12))
     self.assertEquals(response.status_code, 404)
-    c = Category.query.filter_by(name='soccer').one()
-    item = Item(name='soccer ball', description='plain ball',
-        price=23, category=c, image_url='image.jpg')
-    db.session.add(item)
-    db.session.commit()
+    u = self.create_user()
+    item = self.create_item(u.id)
     response = self.client.get(url_for('main.item', id=item.id))
     r = response.get_data(as_text=True)
     self.assertTrue('id="item-'+str(item.id) + '"' in r)
@@ -193,20 +161,9 @@ class EditItemViewTestCase(ClientTestCase):
     4. Go to the edit item's page
     5. Assert you get the correct edit page
     '''
-    #users creation
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-          username='john', avatar_url=uuid4().hex + '.jpg')
-    u1 = User(fb_id='25', email='maggy@example.com', name='Maggy Simpson',
-          username='maggy', avatar_url=uuid4().hex + '.jpg')
-    db.session.add_all([u, u1])
-    db.session.commit()
-    #item creation
-    c = Category.query.filter_by(name='soccer').one()
-    item = Item(name='soccer ball', description='plain ball',
-                price=23, category=c, user_id=u.id,
-                image_url='image.jpg')
-    db.session.add(item)
-    db.session.commit()
+    u = self.create_user()
+    u1 = self.create_user('25', 'maggy@example.com', 'maggy')
+    item = self.create_item(u.id)
 
     with self.client as c:
       with c.session_transaction() as sess:
@@ -235,16 +192,10 @@ class EditItemViewTestCase(ClientTestCase):
   def test_edit_form_no_image_change(self):
     '''verify that an item can be edit and it's updated correctly
     without image change'''
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-          username='john', avatar_url=uuid4().hex + '.jpg')
-    db.session.add(u)
-    db.session.commit()
-    c = Category.query.filter_by(name='soccer').one()
-    item = Item(name='soccer ball', description='plain ball',
-                price=23, category=c, user_id=u.id,
-                image_url='image.jpg')
-    db.session.add(item)
-    db.session.commit()
+
+    u = self.create_user()
+    item = self.create_item(u.id)
+
     with self.client as c:
       with c.session_transaction() as sess:
         sess['user_id'] = u.id
@@ -254,8 +205,7 @@ class EditItemViewTestCase(ClientTestCase):
                                 'name': item.name,
                                 'description': item.description,
                                 'price': 234,
-                                'category': item.category.id,
-                                'image': ''
+                                'category': item.category.id
                               }, follow_redirects=True)
       self.assertTrue(b'Your item has been updated.' in resp.data)
       self.assertTrue(b'234$' in resp.data)
@@ -265,16 +215,9 @@ class EditItemViewTestCase(ClientTestCase):
   def test_edit_form_image_change(self, mock_save_image, mock_delete_image):
     '''verify that an item can be edit and it's updated correctly
     with new image'''
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-          username='john', avatar_url=uuid4().hex + '.jpg')
-    db.session.add(u)
-    db.session.commit()
-    c = Category.query.filter_by(name='soccer').one()
-    item = Item(name='soccer ball', description='plain ball',
-                price=23, category=c, user_id=u.id,
-                image_url='image.jpg')
-    db.session.add(item)
-    db.session.commit()
+
+    u = self.create_user()
+    item = self.create_item(u.id)
 
     with self.client as c:
       with c.session_transaction() as sess:
@@ -296,16 +239,9 @@ class EditItemViewTestCase(ClientTestCase):
   def test_edit_form_image_change_fail(self, mock_save_image):
     '''verify that an item can be edit and it is not updated if there
     is a problem uploading the new image'''
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-          username='john', avatar_url=uuid4().hex + '.jpg')
-    db.session.add(u)
-    db.session.commit()
-    c = Category.query.filter_by(name='soccer').one()
-    item = Item(name='soccer ball', description='plain ball',
-                price=23, category=c, user_id=u.id,
-                image_url='image.jpg')
-    db.session.add(item)
-    db.session.commit()
+
+    u = self.create_user()
+    item = self.create_item(u.id)
 
     with self.client as c:
       with c.session_transaction() as sess:
@@ -321,7 +257,7 @@ class EditItemViewTestCase(ClientTestCase):
                               }, follow_redirects=True)
       self.assertTrue(b'Sorry, there was an error updating your item.'
                       in resp.data)
-      self.assertTrue(b'image.jpg' in resp.data) #old image still in item
+      self.assertTrue(item.image_url in resp.data) #old image still in item
 
   @patch('app.main.views.save_item_image', return_value='new_s3_img.jpg')
   @patch('app.main.views.delete_item_image', return_value=False)
@@ -329,16 +265,8 @@ class EditItemViewTestCase(ClientTestCase):
     '''verify that an item can be edit and it's not updated if
     there is an error deleting the images'''
 
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-          username='john', avatar_url=uuid4().hex + '.jpg')
-    db.session.add(u)
-    db.session.commit()
-    c = Category.query.filter_by(name='soccer').one()
-    item = Item(name='soccer ball', description='plain ball',
-                price=23, category=c, user_id=u.id,
-                image_url='image.jpg')
-    db.session.add(item)
-    db.session.commit()
+    u = self.create_user()
+    item = self.create_item(u.id)
 
     with self.client as c:
       with c.session_transaction() as sess:
@@ -354,7 +282,7 @@ class EditItemViewTestCase(ClientTestCase):
                               }, follow_redirects=True)
       self.assertTrue(b'Sorry, there was an error updating your item.' in
                       resp.data)
-      self.assertTrue(b'image.jpg' in resp.data) #old image still in item
+      self.assertTrue(item.image_url in resp.data) #old image still in item
 
 
 class DeleteItemViewTestCase(ClientTestCase):
@@ -371,20 +299,9 @@ class DeleteItemViewTestCase(ClientTestCase):
       4. Go to the delete route
       5. Assert your item has been deleted
       '''
-      #users creation
-      u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john', avatar_url=uuid4().hex + '.jpg')
-      u1 = User(fb_id='25', email='maggy@example.com', name='Maggy Simpson',
-            username='maggy', avatar_url=uuid4().hex + '.jpg')
-      db.session.add_all([u, u1])
-      db.session.commit()
-      #item creation
-      c = Category.query.filter_by(name='soccer').one()
-      item = Item(name='soccer ball', description='plain ball',
-                  price=23, category=c, user_id=u.id,
-                  image_url='image.jpg')
-      db.session.add(item)
-      db.session.commit()
+      u = self.create_user()
+      u1 = self.create_user('25', 'maggy@example.com', 'maggy')
+      item = self.create_item(u.id)
 
       with self.client as c:
         with c.session_transaction() as sess:
@@ -434,21 +351,14 @@ class SearchResultsTestCase(ClientTestCase):
     3. Check both items appears on the results in the correct order
        (ordered by timestamp)
     '''
-    c = Category.query.filter_by(name='soccer').one()
-    item = Item(name='soccer ball', description='ball signed by Manchester',
-                price=23, category=c, image_url='image.jpg')
-    db.session.add(item)
-    db.session.commit()
-    item1 = Item(name='t-shirt', description='manchester club t-shirt',
-                price=56, category=c, image_url='imgage.jpg')
-    item2 = Item(name='tri bycicle', description='scatante bike',
-                price=2356, category=c, image_url='image.jpg')
-    db.session.add_all([item1, item2])
-    db.session.commit()
+    u = self.create_user()
+    item = self.create_item(u.id, 'tri suit', 'black and blue')
+    item1 = self.create_item(u.id, 'bycicle', 'tri scatante bike')
+    item2 = self.create_item(u.id,'t-shirt','manchester club t-shirt')
     response = self.client.get(url_for('main.search_results',
-                                      query='manchester'))
+                                      query='tri'))
     resp = response.get_data(as_text=True)
-    self.assertTrue('Search results for "manchester":' in resp)
+    self.assertTrue('Search results for "tri":' in resp)
     soup = BeautifulSoup(resp)
     items = soup.find_all("li", id=re.compile("^item-"))
     self.assertTrue(len(items) == 2)
