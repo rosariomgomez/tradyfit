@@ -1,20 +1,12 @@
 # -*- coding: utf-8 -*-
-import unittest
 import requests
 import os
 import boto
 from mock import Mock, PropertyMock, patch
-from app import create_app
+from base import BasicTestCase
 from app.main import helpers
 
-class HelperTestCase(unittest.TestCase):
-  def setUp(self):
-    self.app = create_app('testing')
-    self.app_context = self.app.app_context()
-    self.app_context.push()
-
-  def tearDown(self):
-    self.app_context.pop()
+class HelperTestCase(BasicTestCase):
 
   @staticmethod
   def local_get(url):

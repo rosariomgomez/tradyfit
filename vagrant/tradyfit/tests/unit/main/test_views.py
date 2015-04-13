@@ -1,31 +1,23 @@
 # -*- coding: utf-8 -*-
-import unittest
 import re
 from uuid import uuid4
 from bs4 import BeautifulSoup
 from StringIO import StringIO
 from mock import Mock, patch
-from flask import current_app, url_for
-from app import create_app, db
+from flask import url_for
+from base import UnitTestCase
+from app import db
 from app.models import Item, Category, User
 import app.main.views
 
-class ViewTestCase(unittest.TestCase):
+class ViewTestCase(UnitTestCase):
+
   def setUp(self):
-    self.app = create_app('testing')
-    self.app_context = self.app.app_context()
-    self.app_context.push()
+    super(ViewTestCase, self).setUp()
     #do not request urls from S3
     self.app.config["S3_LOCATION"] = ''
-
-    db.create_all()
     Category.insert_categories()
     self.client = self.app.test_client(use_cookies=True)
-
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
-    self.app_context.pop()
 
 
 class IndexViewTestCase(ViewTestCase):

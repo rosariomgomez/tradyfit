@@ -1,21 +1,10 @@
 # -*- coding: utf-8 -*-
-import unittest
 from mock import patch
-from app import create_app, db
+from base import UnitTestCase
 from app.geolocation import Geolocation
 
 
-class GeolocationTestCase(unittest.TestCase):
-  def setUp(self):
-    self.app = create_app('testing')
-    self.app_context = self.app.app_context()
-    self.app_context.push()
-    db.create_all()
-
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
-    self.app_context.pop()
+class GeolocationTestCase(UnitTestCase):
 
   def test_validate_ip(self):
     #valid IPv4

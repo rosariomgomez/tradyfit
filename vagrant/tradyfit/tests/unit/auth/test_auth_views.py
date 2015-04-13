@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import unittest
 from mock import Mock, PropertyMock, patch
 from flask import current_app, url_for, session
 from flask_oauthlib.client import OAuthException
-from app import create_app, db
+from app import db
+from base import UnitTestCase
 from app.models import User
 from app.auth.views import facebook
 from app.main import helpers
@@ -11,18 +11,11 @@ from datetime import datetime, timedelta
 from uuid import uuid4
 
 
-class AuthViewTestCase(unittest.TestCase):
-  def setUp(self):
-    self.app = create_app('testing')
-    self.app_context = self.app.app_context()
-    self.app_context.push()
-    db.create_all()
-    self.client = self.app.test_client(use_cookies=True)
+class AuthViewTestCase(UnitTestCase):
 
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
-    self.app_context.pop()
+  def setUp(self):
+    super(AuthViewTestCase, self).setUp()
+    self.client = self.app.test_client(use_cookies=True)
 
 
 class BeforeRequestTestCase(AuthViewTestCase):

@@ -1,29 +1,18 @@
 # -*- coding: utf-8 -*-
-import unittest
 import re
 import os
 from werkzeug import FileStorage
 from mock import Mock
 from bs4 import BeautifulSoup
-from flask import current_app, url_for
-from app import create_app, db
+from base import UnitTestCase
 from app.models import Item, Category
 from app.main.forms import ItemForm, SearchForm
 
 
-class FormTestCase(unittest.TestCase):
+class FormTestCase(UnitTestCase):
   def setUp(self):
-    self.app = create_app('testing')
-    self.app_context = self.app.app_context()
-    self.app_context.push()
-    db.create_all()
+    super(FormTestCase, self).setUp()
     Category.insert_categories()
-    self.client = self.app.test_client()
-
-  def tearDown(self):
-    db.session.remove()
-    db.drop_all()
-    self.app_context.pop()
 
 
 class ItemFormTestCase(FormTestCase):
