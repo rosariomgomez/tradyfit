@@ -133,13 +133,15 @@ class ItemViewTestCase(ClientTestCase):
     self.assertTrue('id="item-'+str(item.id) + '"' in r)
 
 
-def form_data(item, image_name):
+def form_data(item, image=None):
+  if image:
+    image = (StringIO('contents'), image)
   return {
           'name': item.name,
           'description': item.description,
           'price': 234,
           'category': item.category.id,
-          'image': (StringIO('contents'), image_name)
+          'image': image
           }
 
 
@@ -195,12 +197,7 @@ class EditItemViewTestCase(ClientTestCase):
         sess['user_id'] = u.id
         sess['_fresh'] = True
       resp = self.client.post(url_for('main.edit', id=item.id),
-                              data={
-                                'name': item.name,
-                                'description': item.description,
-                                'price': 234,
-                                'category': item.category.id
-                              }, follow_redirects=True)
+                              data=form_data(item), follow_redirects=True)
       self.assertTrue(b'Your item has been updated.' in resp.data)
       self.assertTrue(b'234$' in resp.data)
 
