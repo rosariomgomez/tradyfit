@@ -5,22 +5,13 @@ from bs4 import BeautifulSoup
 from StringIO import StringIO
 from mock import Mock, patch
 from flask import url_for
-from base import UnitTestCase
+from base import ClientTestCase
 from app import db
 from app.models import Item, Category, User
 import app.main.views
 
-class ViewTestCase(UnitTestCase):
 
-  def setUp(self):
-    super(ViewTestCase, self).setUp()
-    #do not request urls from S3
-    self.app.config["S3_LOCATION"] = ''
-    Category.insert_categories()
-    self.client = self.app.test_client(use_cookies=True)
-
-
-class IndexViewTestCase(ViewTestCase):
+class IndexViewTestCase(ClientTestCase):
   '''Testing: @main.route('/')'''
 
   def test_index_route(self):
@@ -123,7 +114,7 @@ class IndexViewTestCase(ViewTestCase):
       self.assertFalse('<a href="/edit/' + str(item2.id) + '"' in r)
 
 
-class CreateItemViewTestCase(ViewTestCase):
+class CreateItemViewTestCase(ClientTestCase):
   '''Testing: @main.route('/create/', methods=['GET', 'POST'])'''
 
   def test_create_item_route_login(self):
@@ -166,7 +157,7 @@ class CreateItemViewTestCase(ViewTestCase):
           self.assertTrue('id="' + field + '"' in r)
 
 
-class ItemViewTestCase(ViewTestCase):
+class ItemViewTestCase(ClientTestCase):
   '''Testing: @main.route('/item/<int:id>')'''
 
   def test_item_route(self):
@@ -190,7 +181,7 @@ class ItemViewTestCase(ViewTestCase):
     self.assertTrue('id="item-'+str(item.id) + '"' in r)
 
 
-class EditItemViewTestCase(ViewTestCase):
+class EditItemViewTestCase(ClientTestCase):
   '''Testing: @main.route('/edit/<int:id>', methods=['GET', 'POST'])'''
 
   def test_edit_item_route(self):
@@ -366,7 +357,7 @@ class EditItemViewTestCase(ViewTestCase):
       self.assertTrue(b'image.jpg' in resp.data) #old image still in item
 
 
-class DeleteItemViewTestCase(ViewTestCase):
+class DeleteItemViewTestCase(ClientTestCase):
     '''Testing: @main.route('/delete/<int:id>')'''
 
     @patch('app.main.views.delete_item_image')
@@ -432,7 +423,7 @@ class DeleteItemViewTestCase(ViewTestCase):
         self.assertTrue(b'Your item has been deleted.' in response.data)
 
 
-class SearchResultsTestCase(ViewTestCase):
+class SearchResultsTestCase(ClientTestCase):
   '''Testing: @main.route('/search_results/<query>')'''
 
   def test_search_results(self):
