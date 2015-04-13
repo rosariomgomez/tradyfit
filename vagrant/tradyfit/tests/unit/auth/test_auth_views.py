@@ -1,14 +1,12 @@
 # -*- coding: utf-8 -*-
 from mock import Mock, PropertyMock, patch
-from flask import current_app, url_for, session
+from flask import url_for, session
 from flask_oauthlib.client import OAuthException
-from app import db
-from base import ClientTestCase
 from app.models import User
+from base import ClientTestCase
 from app.auth.views import facebook
 from app.main import helpers
 from datetime import datetime, timedelta
-from uuid import uuid4
 
 
 class BeforeRequestTestCase(ClientTestCase):
@@ -21,10 +19,7 @@ class BeforeRequestTestCase(ClientTestCase):
     3. Request index view
     4. Assert that last_seen user attribute has been updated
     '''
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john', avatar_url=uuid4().hex + '.jpg')
-    db.session.add(u)
-    db.session.commit()
+    u = self.create_user()
     before_last_seen = u.last_seen
     with self.client as c:
       with c.session_transaction() as sess:
@@ -102,10 +97,7 @@ class FBLoginTestCase(ClientTestCase):
     3. Request fb-login view
     4. Assert user is redirected to index
     '''
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john', avatar_url=uuid4().hex + '.jpg')
-    db.session.add(u)
-    db.session.commit()
+    u = self.create_user()
     with self.client as c:
       with c.session_transaction() as sess:
         sess['user_id'] = u.id
@@ -153,10 +145,7 @@ class LogoutTestCase(ClientTestCase):
   '''Testing: @auth.route('/logout')'''
 
   def test_fb_cookies_removed(self):
-    u = User(fb_id='23', email='john@example.com', name='John Doe',
-            username='john', avatar_url='avatar.jpg')
-    db.session.add(u)
-    db.session.commit()
+    u = self.create_user()
     with self.client as c:
       with c.session_transaction() as sess:
         sess['user_id'] = u.id
