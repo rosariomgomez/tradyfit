@@ -1,5 +1,4 @@
 # -*- coding: utf-8 -*-
-from mock import patch
 from flask import url_for
 from base import ClientTestCase
 import app.main.views
@@ -15,8 +14,8 @@ class IndexIntegrationTestCase(ClientTestCase):
                             }, follow_redirects=True)
     self.assertTrue(b'Search results for "soccer ball":' in resp.data)
 
-  @patch('app.main.views.delete_item_image', return_value=True)
-  def test_delete_item(self, mock_delete_image):
+
+  def test_delete_item(self):
     '''verify an item can be deleted from the index page
     1. Create an item
     2. Go to index page
