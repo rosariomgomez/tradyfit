@@ -78,6 +78,10 @@ class User(UserMixin, db.Model):
     return User.query.filter_by(email = email).first()
 
   @staticmethod
+  def get_user_by_username(uname):
+    return User.query.filter_by(username=uname).first()
+
+  @staticmethod
   def create_username(username):
     '''verify username is not already in the db, if it exists,
     add the next uid number to the name'''
