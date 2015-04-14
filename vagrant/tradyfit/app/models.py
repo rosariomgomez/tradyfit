@@ -98,9 +98,8 @@ class User(UserMixin, db.Model):
 @event.listens_for(User, 'before_delete')
 def receive_before_delete(mapper, connection, target):
   '''before delete user, delete the avatar from S3'''
-  if not current_app.testing:
-    if not delete_avatar(target.avatar_url):
-      raise Exception('Avatar not deleted')
+  if not current_app.testing and not delete_avatar(target.avatar_url):
+    raise Exception('Avatar not deleted')
 
 
 @login_manager.user_loader
@@ -165,9 +164,8 @@ class Item(db.Model):
 @event.listens_for(Item, 'before_delete')
 def receive_before_delete(mapper, connection, target):
   '''before delete item, delete the image from S3'''
-  if not current_app.testing:
-    if not delete_item_image(target.image_url):
-      raise Exception('Image not deleted')
+  if not current_app.testing and not delete_item_image(target.image_url):
+    raise Exception('Image not deleted')
 
 
 class Country():
