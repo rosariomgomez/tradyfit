@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask.ext.wtf import Form
 from wtforms import StringField, SelectField, SubmitField, \
-TextAreaField, DecimalField
+TextAreaField, DecimalField, ValidationError
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import Required, Length, NumberRange, Regexp
 from ..models import Category, Item, User, Country, State
@@ -22,7 +22,9 @@ class UserForm(Form):
 
   state = SelectField('State (only US)')
 
-  city = StringField('City', validators=[Length(2, 50), Regexp('[ A-Za-z]+$')])
+  city = StringField('City', validators=[
+                      Required(), Length(2, 50), Regexp('^[A-Za-z][ A-Za-z]+$',
+                      0, 'City must have only letters')])
 
   submit = SubmitField('Update')
 
@@ -34,7 +36,7 @@ class UserForm(Form):
 
   def validate_username(self, field):
     if field.data != self.user.username and \
-    User.query.filter_by(username=field.data).first():
+    User.get_user_by_username(field.data):
       raise ValidationError('Username already in use.')
 
 
