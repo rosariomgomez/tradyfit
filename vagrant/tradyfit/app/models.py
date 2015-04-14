@@ -72,6 +72,16 @@ class User(UserMixin, db.Model):
 
         db.session.add(self)
 
+  def modify_geolocation(self, address):
+    '''update latitude and longitude information if user manually changes
+    her address'''
+    u_address = Geolocation.create_address(self.city, self.state, self.country)
+    if u_address != address:
+      coordinates = Geolocation.get_geolocation(address)
+      if coordinates:
+        self.latitude = coordinates[0]
+        self.longitude = coordinates[1]
+        db.session.add(self)
 
   @staticmethod
   def get_user(email):
@@ -93,6 +103,7 @@ class User(UserMixin, db.Model):
 
   def avatar(self):
     return get_image('S3_UPLOAD_AVATAR_DIR', self.avatar_url)
+
 
 
 @event.listens_for(User, 'before_delete')
