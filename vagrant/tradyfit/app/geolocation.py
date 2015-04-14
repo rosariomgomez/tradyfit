@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
 import maxminddb
+from flask import current_app
+from . import geolocator
 from ipaddr import IPAddress, IPv4Address, IPv6Address
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -34,6 +36,29 @@ class Geolocation(object):
       return geo_db.get(ip)
     except:
       return None
+
+
+  @staticmethod
+  def create_address(city, state, country):
+    '''generate a string with an address'''
+    if country == 'US':
+      return ', '.join([city, state, country])
+    else:
+      return ', '.join([city, country])
+
+
+  @staticmethod
+  def get_geolocation(address):
+    '''use GoogleV3 geolocation service to extract latitude and longitude
+    coordinates from an address
+    Input: (string) address
+    Output: (float, float) (latitude, longitude)'''
+    if not current_app.testing:
+      try:
+        location = geolocator.geocode(address)
+        return (location.latitude, location.longitude)
+      except:
+        return None
 
 
   def get_city(self):
