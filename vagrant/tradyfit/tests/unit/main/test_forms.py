@@ -4,11 +4,20 @@ from werkzeug import FileStorage
 from mock import Mock
 from base import UnitTestCase
 from app.models import Item, Category
-from app.main.forms import ItemForm, SearchForm
+from app.main.forms import UserForm, ItemForm, SearchForm
 
 
 LONG_TEXT = 'The Believers. The hidden story behind the code that runs our \
 lives and control everything by Geoffrey Hinton'
+
+def create_user_form(user, username, name, country, state, city):
+  return UserForm(user=user, data={
+                                'username': username,
+                                'name': name,
+                                'country': country,
+                                'state': state,
+                                'city': city
+                  })
 
 def mock_file(filename):
   mock = Mock(spec=FileStorage())
@@ -23,6 +32,118 @@ def create_item_form(name, description, price, category, image=None):
                     'category': category,
                     'image': image
                     })
+
+class UserFormTestCase(UnitTestCase):
+
+  def test_user_form(self):
+    '''verify user settings can be correclty modified'''
+    user = self.create_user()
+    form = create_user_form(user, 'john', 'John Doe', 'US', 'CA', 'Santa Cruz')
+    form.validate()
+    self.assertTrue(not form.errors)
+
+  def test_user_form_username_field(self):
+    '''verify the username field only accepts the defined data types and
+    will not be validated if the username already exists'''
+
+    user = self.create_user() #username = john
+    user1 = self.create_user('25', 'maggy@example.com', 'maggy')
+
+    #1. Username already exists
+    form = create_user_form(user1, 'john', 'Maggy Perkins', 'US', 'CA', 'City')
+    form.validate()
+    self.assertEqual(form.errors['username'], ['Username already in use.'])
+
+    #2. Empty username
+    form = create_user_form(user1, '', 'Maggy Perkins', 'US', 'CA', 'City')
+    form.validate()
+    self.assertEqual(form.errors['username'], ['This field is required.'])
+
+    #3. Short (<3 chars)
+    form = create_user_form(user1, 'fo', 'Maggy Perkins', 'US', 'CA', 'City')
+    form.validate()
+    self.assertEqual(form.errors['username'], ['Field must be between 3 and ' +
+                                              '64 characters long.'])
+
+    #4. Long (>64 chars) and spaces
+    form = create_user_form(user1, LONG_TEXT, 'Maggy P', 'US', 'CA', 'City')
+    form.validate()
+    self.assertEqual(form.errors['username'], [u'Field must be between 3 and ' +
+                    '64 characters long.', 'Username must have only letters, '+
+                    'numbers, dots or underscores'])
+
+
+  def test_user_form_name_field(self):
+    user = self.create_user()
+
+    #1. Empty name
+    form = create_user_form(user, 'john', '', 'US', 'CA', 'City')
+    form.validate()
+    self.assertEqual(form.errors['name'], ['This field is required.'])
+
+    #2. Short (<3 chars)
+    form = create_user_form(user, 'john', 'fo', 'US', 'CA', 'City')
+    form.validate()
+    self.assertEqual(form.errors['name'], ['Field must be between 3 and ' +
+                                            '64 characters long.'])
+
+    #3. Long (>64 chars)
+    form = create_user_form(user, 'john', LONG_TEXT, 'US', 'CA', 'City')
+    form.validate()
+    self.assertEqual(form.errors['name'], [u'Field must be between 3 and ' +
+                    '64 characters long.'])
+
+    #4. Special chars
+    form = create_user_form(user, 'john', 'use your \n <b>say hi</b>', 'US',
+                            'CA', 'City')
+    form.validate()
+    self.assertEqual(form.errors['name'], ['Name must have only letters, '+
+                    'numbers, dots or underscores'])
+
+    #4. Leading spaces
+    form = create_user_form(user, 'john', ' John Doe', 'US', 'CA', 'City')
+    form.validate()
+    self.assertEqual(form.errors['name'],
+                ['Name must have only letters, numbers, dots or underscores'])
+
+
+  def test_user_form_country_field(self):
+    user = self.create_user()
+
+    #1. Not a valid choice
+    form = create_user_form(user, 'john', 'John Doe', 'UIUIUI', 'CA', 'City')
+    form.validate()
+    self.assertEqual(form.errors['country'], ['Not a valid choice'])
+
+
+  def test_user_form_state_field(self):
+    user = self.create_user()
+
+    #1. Not a valid choice
+    form = create_user_form(user, 'john', 'John Doe', 'US', '', 'City')
+    form.validate()
+    self.assertEqual(form.errors['state'], ['Not a valid choice'])
+
+
+  def test_user_form_city_field(self):
+    user = self.create_user()
+
+    #1. Empty city
+    form = create_user_form(user, 'john', 'John Doe', 'US', 'CA', '')
+    form.validate()
+    self.assertEqual(form.errors['city'], ['This field is required.'])
+
+    #2. Long (>50 chars) and special chars
+    form = create_user_form(user, 'john', 'John Doe', 'US', 'CA', LONG_TEXT)
+    form.validate()
+    self.assertEqual(form.errors['city'], ['Field must be between 2 and ' +
+                                            '50 characters long.',
+                                            'City must have only letters'])
+
+    #3. Leading spaces
+    form = create_user_form(user, 'john', 'John Doe', 'US', 'CA', ' City')
+    form.validate()
+    self.assertEqual(form.errors['city'], ['City must have only letters'])
 
 
 class ItemFormTestCase(UnitTestCase):
