@@ -93,6 +93,16 @@ class UserModelTestCase(UnitTestCase):
     u.location('10.0.0.2')
     self.assertTrue(u.latitude == None)
 
+  @patch('app.geolocation.Geolocation.get_geolocation', return_value=(12,34))
+  def test_modify_geolocation(self, mock_geo_coord):
+    u = self.create_user()
+    self.assertTrue(u.latitude is None)
+    self.assertTrue(u.longitude is None)
+    u.modify_geolocation('Mountain View, CA, US')
+    db.session.commit()
+    self.assertTrue(u.latitude == 12)
+    self.assertTrue(u.longitude == 34)
+
 
 class ItemModelTestCase(UnitTestCase):
   def test_get_image(self):
