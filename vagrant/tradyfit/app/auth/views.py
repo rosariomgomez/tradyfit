@@ -5,7 +5,7 @@ from flask.ext.login import login_user, logout_user, current_user, \
 login_required
 from datetime import datetime, timedelta
 from app.models import User
-from app.main import helpers
+from app import helpers
 from .. import db
 from . import auth
 
