@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Your profile</h1>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+      {{ wtf.quick_form(form) }}<br>
+      <a href="{{ url_for('main.delete_account') }}">Delete account</a>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-4">
+    <br><hr>
+    <h3>Your listed items</h3>
+    <ul class="items">
+      {% for item in items %}
+        <li class="item" id="item-{{ item.id }}">
+          {% include "_item.html" %}
+          <a href="{{ url_for('main.edit', id=item.id) }}">Edit</a> |
+          <a href="{{ url_for('main.delete', id=item.id) }}">Delete</a>
+        </li>
+        <br>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
