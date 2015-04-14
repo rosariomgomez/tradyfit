@@ -8,6 +8,7 @@ from .. import db
 from .forms import UserForm, DeleteUserForm, ItemForm, SearchForm
 from ..models import Item, Category
 from ..helpers import save_item_image, delete_item_image
+from ..geolocation import Geolocation
 
 
 @main.route('/shutdown')
@@ -40,6 +41,11 @@ def profile():
   form = UserForm(user=current_user)
 
   if form.validate_on_submit():
+    #if address has changed update user coordinates (lat,lon)
+    address = Geolocation.create_address(form.city.data, form.state.data,
+                            form.country.data)
+    current_user.modify_geolocation(address)
+
     current_user.username = form.username.data
     current_user.name = form.name.data
     current_user.country = form.country.data
