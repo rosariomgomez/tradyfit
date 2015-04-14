@@ -64,7 +64,7 @@ class CommonHelperTestCase(HelperTestCase):
       self.assertTrue(helpers.delete_s3("S3_UPLOAD_ITEM_DIR", 'file'))
 
   def test_delete_s3_fail(self):
-    '''verify True is returned if an image can be deleted'''
+    '''verify False is returned if an image can't be deleted'''
     mock_get_s3_bucket = Mock(side_effect=Exception('boom!'))
     with patch.object(helpers, 'get_s3_bucket', mock_get_s3_bucket):
       self.assertFalse(helpers.delete_s3("S3_UPLOAD_ITEM_DIR", 'file'))
@@ -121,13 +121,12 @@ class AvatarHelperTestCase(HelperTestCase):
     with patch.object(helpers, 'delete_s3', mock_delete_s3):
       self.assertTrue(helpers.delete_avatar('image.jpg'))
 
-  def test_delete_avatar_default(self):
+  def test_delete_default_avatar(self):
     '''verify delete_s3 is not called and True is returned if default avatar
     file is provided to delete'''
     mock_delete_s3 = Mock()
     with patch.object(helpers, 'delete_s3', mock_delete_s3):
-      self.assertTrue(helpers.delete_avatar(
-                        self.app.config["DEFAULT_AVATAR"]) is True)
+      self.assertTrue(helpers.delete_avatar(self.app.config["DEFAULT_AVATAR"]))
       self.assertFalse(mock_delete_s3.called)
 
 
@@ -169,6 +168,6 @@ class ItemImageHelperTestCase(HelperTestCase):
     file is provided to delete'''
     mock_delete_s3 = Mock()
     with patch.object(helpers, 'delete_s3', mock_delete_s3):
-      self.assertTrue(helpers.delete_item_image(
-                        self.app.config["DEFAULT_ITEM"]) is True)
+      self.assertTrue(
+              helpers.delete_item_image(self.app.config["DEFAULT_ITEM"]))
       self.assertFalse(mock_delete_s3.called)
