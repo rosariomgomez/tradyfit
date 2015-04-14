@@ -21,6 +21,14 @@ class GeolocationTestCase(UnitTestCase):
     self.assertTrue(type(Geolocation.get_location(VALID_IPv4_US)) == dict)
     self.assertTrue(Geolocation.get_location(LOCAL_IP) == None)
 
+  def test_create_address(self):
+    self.assertTrue(
+      Geolocation.create_address('Madrid','NU','ES') == 'Madrid, ES')
+    self.assertTrue(
+      Geolocation.create_address('Sausalito','CA','US') == 'Sausalito, CA, US')
+    self.assertTrue(
+      Geolocation.create_address('', 'CA', 'US') == ', CA, US')
+
   def test_get_valid_city(self):
     geo_obj = Geolocation(VALID_IPv4_US)
     r, city = geo_obj.get_city()
