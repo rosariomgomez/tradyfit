@@ -2,6 +2,7 @@
 from uuid import uuid4
 from app import db
 from app.models import User, Item
+from app.helpers import delete_item_image
 from helper import SeleniumTestCase
 import page
 from locators import NavBarLocators
@@ -22,7 +23,9 @@ class ItemTestCase(SeleniumTestCase):
     #remote webdriver was launch
     if cls.client:
       #delete item images from S3 if any
-      Item.query.delete()
+      items = Item.query.all()
+      for item in items:
+        delete_item_image(item.image_url)
 
     # stop the server, destroy db and remove app context
     super(ItemTestCase, cls).tearDownClass()
