@@ -5,7 +5,7 @@ from flask_oauthlib.client import OAuthException
 from app.models import User
 from base import ClientTestCase
 from app.auth.views import facebook
-from app.main import helpers
+from app import helpers
 from datetime import datetime, timedelta
 
 
