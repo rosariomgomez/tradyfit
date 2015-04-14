@@ -1,14 +1,15 @@
 # -*- coding: utf-8 -*-
 import os
-from . import db, login_manager
+from . import db, login_manager, gc
 from flask import current_app
 from flask.ext.login import UserMixin
-from flask.ext.sqlalchemy import BaseQuery
+from flask.ext.sqlalchemy import BaseQuery, event
 from sqlalchemy_searchable import SearchQueryMixin
 from sqlalchemy_utils.types import TSVectorType
 from sqlalchemy_searchable import make_searchable
 from datetime import datetime
 from app.geolocation import Geolocation
+from app.helpers import delete_avatar, delete_item_image
 
 make_searchable()
 
@@ -90,6 +91,14 @@ class User(UserMixin, db.Model):
     return get_image('S3_UPLOAD_AVATAR_DIR', self.avatar_url)
 
 
+@event.listens_for(User, 'before_delete')
+def receive_before_delete(mapper, connection, target):
+  '''before delete user, delete the avatar from S3'''
+  if not current_app.testing:
+    if not delete_avatar(target.avatar_url):
+      raise Exception('Avatar not deleted')
+
+
 @login_manager.user_loader
 def load_user(user_id):
   return User.query.get(int(user_id))
@@ -147,4 +156,54 @@ class Item(db.Model):
 
   def image(self):
     return get_image('S3_UPLOAD_ITEM_DIR', self.image_url)
+
+
+@event.listens_for(Item, 'before_delete')
+def receive_before_delete(mapper, connection, target):
+  '''before delete item, delete the image from S3'''
+  if not current_app.testing:
+    if not delete_item_image(target.image_url):
+      raise Exception('Image not deleted')
+
+
+class Country():
+
+  @staticmethod
+  def get_countries():
+    return gc.get_countries()
+
+  @staticmethod
+  def get_countries_by_names():
+    return gc.get_countries_by_names()
+
+  @staticmethod
+  def get_country_choices():
+    '''return a list with tuples (country_code, name) with all the
+    countries sorted by country name'''
+    countries = Country.get_countries_by_names()
+    return [(value['iso'], name) for name, value in
+        sorted(countries.items())]
+
+  @staticmethod
+  def get_name(code):
+    return Country.get_countries()[code]['name']
+
+
+class State():
+
+  @staticmethod
+  def get_us_states_by_names():
+    return gc.get_us_states_by_names()
+
+  @staticmethod
+  def get_us_state_choices():
+    '''return a list with tuples (state_code, name) with all the
+    US states sorted by state name'''
+    states = State.get_us_states_by_names()
+    return [(value['code'], name) for name, value in
+        sorted(states.items())]
+
+  @staticmethod
+  def get_us_name(code):
+    return gc.get_us_states()[code]['name']
 
