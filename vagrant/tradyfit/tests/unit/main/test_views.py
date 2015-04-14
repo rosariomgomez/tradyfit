@@ -264,11 +264,9 @@ class EditItemViewTestCase(ClientTestCase):
 class DeleteItemViewTestCase(ClientTestCase):
     '''Testing: @main.route('/delete/<int:id>')'''
 
-    @patch('app.main.views.delete_item_image')
-    def test_delete_item_route(self, mock_delete_image):
+    def test_delete_item_route(self):
       '''verify you get a 404 for a non existent item
       and that you can delete a created item if you are the owner
-      and if an error trying to delete the image occur the item is not deleted
       1. Request to delete a non existent item
       2. Assert you get a 404 response
       3. Try to delete another user's item
@@ -292,28 +290,15 @@ class DeleteItemViewTestCase(ClientTestCase):
                                   follow_redirects=True)
         self.assertFalse(b'Your item has been deleted.' in response.data)
 
-      #error trying to delete image
-      mock_delete_image.return_value = False
-      #3. try to delete your item
-      with self.client as c:
-        with c.session_transaction() as sess:
-          sess['user_id'] = u.id
-          sess['_fresh'] = True
-        response = self.client.get(url_for('main.delete', id=item.id),
-                                  follow_redirects=True)
-        self.assertTrue(b'Sorry, there was a problem deleting your item.'
-                        in response.data)
-
-      #successfully delete the item
-      mock_delete_image.return_value = True
       #3. delete your item
       with self.client as c:
         with c.session_transaction() as sess:
           sess['user_id'] = u.id
           sess['_fresh'] = True
+
         response = self.client.get(url_for('main.delete', id=item.id),
                                   follow_redirects=True)
-        self.assertTrue(b'Your item has been deleted.' in response.data)
+        self.assertTrue('Your item has been deleted.' in response.data)
 
 
 class SearchResultsTestCase(ClientTestCase):
