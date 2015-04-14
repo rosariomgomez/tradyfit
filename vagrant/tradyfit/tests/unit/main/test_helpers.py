@@ -4,7 +4,7 @@ import os
 import boto
 from mock import Mock, patch
 from base import BasicTestCase
-from app.main import helpers
+from app import helpers
 
 class HelperTestCase(BasicTestCase):
 
