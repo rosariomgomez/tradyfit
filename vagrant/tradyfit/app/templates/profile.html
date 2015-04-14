@@ -7,6 +7,9 @@
 </div>
 
 <div class="row">
+  <div class="col-md-3" id="user-avatar">
+    <img class="img-circle" src="{{ current_user.avatar() }}">
+  </div>
   <div class="col-md-4" id="user-form">
       {{ wtf.quick_form(form) }}<br>
       <a href="{{ url_for('main.delete_account') }}">Delete account</a>
