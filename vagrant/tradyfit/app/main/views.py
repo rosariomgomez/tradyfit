@@ -5,9 +5,9 @@ request, abort
 from flask.ext.login import current_user, login_required
 from . import main
 from .. import db
-from .forms import ItemForm, SearchForm
-from .helpers import save_item_image, delete_item_image
+from .forms import UserForm, DeleteUserForm, ItemForm, SearchForm
 from ..models import Item, Category
+from ..helpers import save_item_image, delete_item_image
 
 
 @main.route('/shutdown')
@@ -22,6 +22,7 @@ def server_shutdown():
   shutdown()
   return 'Shutting down...'
 
+
 @main.route('/', methods=['GET', 'POST'])
 def index():
   search_form = SearchForm()
@@ -30,6 +31,44 @@ def index():
                             query=search_form.search.data))
   items = Item.query.order_by(Item.timestamp.desc()).all()
   return render_template('index.html', form=search_form, items=items)
+
+
+@main.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+  items = current_user.items
+  form = UserForm(user=current_user)
+
+  if form.validate_on_submit():
+    current_user.username = form.username.data
+    current_user.name = form.name.data
+    current_user.country = form.country.data
+    current_user.state = form.state.data
+    current_user.city = form.city.data
+    db.session.add(current_user)
+    flash('Your profile has been updated.')
+    return redirect(url_for('main.profile'))
+  form.username.data = current_user.username
+  form.name.data = current_user.name
+  form.country.data = current_user.country
+  form.state.data = current_user.state
+  form.city.data = current_user.city
+  return render_template('profile.html', form=form, items=items)
+
+
+@main.route('/delete_account', methods=['GET', 'POST'])
+@login_required
+def delete_account():
+  form = DeleteUserForm()
+  if form.validate_on_submit():
+    try:
+      db.session.delete(current_user)
+      flash('We are sorry to see you go...')
+    except:
+      flash('Sorry, there was a problem deleting your account. Try again later')
+    return redirect(url_for('main.index'))
+  return render_template('delete_account.html', form=form)
+
 
 @main.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -61,6 +100,7 @@ def create():
 def item(id):
   item = Item.query.get_or_404(id)
   return render_template('item.html', item=item)
+
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
@@ -101,21 +141,21 @@ def edit(id):
   return render_template('edit_item.html', form=form, id=item.id,
                           image=item.image())
 
+
 @main.route('/delete/<int:id>')
 @login_required
 def delete(id):
   item = Item.query.get_or_404(id)
   if current_user != item.user:
     return redirect(url_for('main.index'))
-
-  #before deleting the item from DB, remove image from S3
-  if delete_item_image(item.image_url):
+  try:
     db.session.delete(item)
     flash('Your item has been deleted.')
-  else:
+  except:
     flash('Sorry, there was a problem deleting your item. Try again later.')
     return redirect(url_for('main.item', id=item.id))
   return redirect(url_for('main.index'))
+
 
 @main.route('/search_results/<query>')
 def search_results(query):
