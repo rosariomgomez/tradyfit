@@ -5,12 +5,14 @@ from flask.ext.login import LoginManager
 from flask.ext.moment import Moment
 from config import config
 import geonamescache
+from geopy.geocoders import GoogleV3
 
 
 bootstrap = Bootstrap()
 db = SQLAlchemy()
 moment = Moment()
 gc = geonamescache.GeonamesCache()
+geolocator = GoogleV3()
 
 login_manager = LoginManager()
 login_manager.login_view = 'main.index'
