@@ -4,7 +4,42 @@ from wtforms import StringField, SelectField, SubmitField, \
 TextAreaField, DecimalField
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import Required, Length, NumberRange, Regexp
-from ..models import Category, Item
+from ..models import Category, Item, User, Country, State
+
+
+class UserForm(Form):
+  username = StringField('Username', validators=[
+                      Required(), Length(3, 64), Regexp('^[A-Za-z][.\w]+$', 0,
+                      'Username must have only letters, numbers, dots or '
+                      'underscores')])
+
+  name = StringField('Name', validators=[
+                      Required(), Length(3, 64), Regexp('^[A-Za-z][. \w]+$', 0,
+                      'Name must have only letters, numbers, dots or '
+                      'underscores')])
+
+  country = SelectField('Country')
+
+  state = SelectField('State (only US)')
+
+  city = StringField('City', validators=[Length(2, 50), Regexp('[ A-Za-z]+$')])
+
+  submit = SubmitField('Update')
+
+  def __init__(self, user, *args, **kwargs):
+    super(UserForm, self).__init__(*args, **kwargs)
+    self.country.choices = Country.get_country_choices()
+    self.state.choices = [('NU', 'Not US')] + State.get_us_state_choices()
+    self.user = user
+
+  def validate_username(self, field):
+    if field.data != self.user.username and \
+    User.query.filter_by(username=field.data).first():
+      raise ValidationError('Username already in use.')
+
+
+class DeleteUserForm(Form):
+  submit = SubmitField('Delete account')
 
 
 class ItemForm(Form):
@@ -31,6 +66,7 @@ class ItemForm(Form):
     if field.data:
       fr = FileRequired('Image should be a file')
       fr(self, field)
+
 
 class SearchForm(Form):
   search = StringField('What are you looking for?',
