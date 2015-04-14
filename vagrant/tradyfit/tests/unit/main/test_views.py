@@ -111,6 +111,21 @@ class ProfileViewTestCase(ClientTestCase):
         self.assertTrue('id="' + field + '"' in r)
 
 
+class DeleteAccountViewTestCase(ClientTestCase):
+  '''Testing: @main.route('/delete_account', methods=['GET','POST'])'''
+
+  def test_delete_account_route(self):
+    '''verify you can go to delete account page
+    1. Go to the delete account page
+    2. Assert you get the correct page
+    '''
+    u = self.create_user()
+    response = self.make_get_request(u, 'main.delete_account')
+    self.assertEquals(response.status_code, 200)
+    r = response.get_data(as_text=True)
+    self.assertTrue('id="delete-account"' in r)
+
+
 class CreateItemViewTestCase(ClientTestCase):
   '''Testing: @main.route('/create', methods=['GET', 'POST'])'''
 
