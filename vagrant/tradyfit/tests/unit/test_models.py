@@ -3,7 +3,7 @@ import time
 from mock import patch
 from base import BasicTestCase, UnitTestCase
 from app import db
-from app.models import Category, User, load_user
+from app.models import Category, User, load_user, Country, State
 from app.geolocation import Geolocation
 
 
@@ -102,3 +102,16 @@ class ItemModelTestCase(UnitTestCase):
                 self.app.config['S3_BUCKET'] + \
                 self.app.config['S3_UPLOAD_ITEM_DIR'] + "/" + item.image_url
     self.assertEqual(item.image(), image)
+
+
+class CountryModelTestCase(UnitTestCase):
+  def test_get_countries(self):
+    self.assertTrue(type(Country.get_countries()) == dict)
+
+  def test_get_country_name(self):
+    self.assertTrue(Country.get_name('US') == 'United States')
+
+
+class StateModelTestCase(UnitTestCase):
+  def test_us_state_name(self):
+    self.assertTrue(State.get_us_name('CA') == 'California')
