@@ -3,7 +3,7 @@ import time
 from mock import patch
 from base import BasicTestCase, UnitTestCase
 from app import db
-from app.models import Category, User, load_user, Country, State
+from app.models import Category, Item, User, load_user, Country, State
 from app.geolocation import Geolocation
 
 
@@ -103,6 +103,13 @@ class UserModelTestCase(UnitTestCase):
     self.assertTrue(u.latitude == 12)
     self.assertTrue(u.longitude == 34)
 
+  def test_delete_user(self):
+    '''verify that user items are also deleted when user is deleted'''
+    user = self.create_user()
+    item = self.create_item(user.id)
+    db.session.delete(user)
+    db.session.commit()
+    self.assertTrue(Item.query.all() == [])
 
 class ItemModelTestCase(UnitTestCase):
   def test_get_image(self):
