@@ -85,8 +85,34 @@ class IndexViewTestCase(ClientTestCase):
     self.assertFalse('<a href="/edit/' + str(item2.id) + '"' in r)
 
 
+class ProfileViewTestCase(ClientTestCase):
+  '''Testing: @main.route('/profile', methods=['GET','POST'])'''
+
+  def test_profile_route(self):
+    '''verify you can go to profile page
+    1. Go to the profile page
+    2. Assert you get the correct page
+    '''
+    u = self.create_user()
+    response = self.make_get_request(u, 'main.profile')
+    self.assertEquals(response.status_code, 200)
+    self.assertTrue('id="user-form"' in response.get_data(as_text=True))
+
+  def test_profile_form(self):
+    '''verify all fields for editing a user are present
+    1. Go to the profile page
+    2. Check all fields in the form are present
+    '''
+    u = self.create_user()
+    response = self.make_get_request(u, 'main.profile')
+    r = response.get_data(as_text=True)
+    fields = ['username', 'name', 'country', 'state', 'city']
+    for field in fields:
+        self.assertTrue('id="' + field + '"' in r)
+
+
 class CreateItemViewTestCase(ClientTestCase):
-  '''Testing: @main.route('/create/', methods=['GET', 'POST'])'''
+  '''Testing: @main.route('/create', methods=['GET', 'POST'])'''
 
   def test_create_item_route_login(self):
     '''verify you can go to create an item page
