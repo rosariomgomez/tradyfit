@@ -40,6 +40,15 @@ class User(UserMixin, db.Model):
   is_admin = db.Column(db.Boolean, default=False)
   items = db.relationship('Item', backref='user', lazy='dynamic',
                           cascade='all, delete-orphan')
+  #message relationships
+  msgs_sent = db.relationship('Message', backref='sender', lazy='dynamic',
+                              primaryjoin="User.id==Message.sender_id")
+
+  msgs_received = db.relationship('Message', backref='receiver', lazy='dynamic',
+                                  primaryjoin="User.id==Message.receiver_id")
+
+  msgs_unread = db.relationship('Message',
+        primaryjoin="and_(User.id==Message.receiver_id, Message.unread==True)")
 
 
   def ping(self):
@@ -105,7 +114,6 @@ class User(UserMixin, db.Model):
     return get_image('S3_UPLOAD_AVATAR_DIR', self.avatar_url)
 
 
-
 @event.listens_for(User, 'before_delete')
 def receive_before_delete(mapper, connection, target):
   '''before delete user, delete the avatar from S3'''
@@ -167,6 +175,7 @@ class Item(db.Model):
   category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
   search_vector = db.Column(TSVectorType('name', 'description'))
   user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+  messages = db.relationship('Message', backref='item', lazy='dynamic')
 
   def image(self):
     return get_image('S3_UPLOAD_ITEM_DIR', self.image_url)
@@ -177,6 +186,18 @@ def receive_before_delete(mapper, connection, target):
   '''before delete item, delete the image from S3'''
   if not current_app.testing and not delete_item_image(target.image_url):
     raise Exception('Image not deleted')
+
+
+class Message(db.Model):
+  __tablename__ = 'messages'
+  id    = db.Column(db.Integer, primary_key=True)
+  subject = db.Column(db.String(120), nullable=False)
+  description  = db.Column(db.Text)
+  unread = db.Column(db.Boolean, default=True)
+  sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+  receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+  item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
+  timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
 
 class Country():
