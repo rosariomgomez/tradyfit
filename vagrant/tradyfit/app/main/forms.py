@@ -77,9 +77,3 @@ class SearchForm(Form):
                                 'Search must have only letters,'
                                 ' numbers, dots, dashes or underscores')])
   submit = SubmitField('Search')
-
-
-class MessageForm(Form):
-  subject = TextAreaField('Subject', validators=[Required(), Length(2,120)])
-  description = TextAreaField('Description', validators=[Length(0,500)])
-  submit = SubmitField('Send')
