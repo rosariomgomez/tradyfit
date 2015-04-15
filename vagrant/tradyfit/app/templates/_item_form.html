@@ -1,13 +1,13 @@
 {% import "bootstrap/wtf.html" as wtf %}
 
 <form action="" method="POST" enctype="multipart/form-data">
-    {{ form.hidden_tag() }}
-    {{ wtf.form_errors(form, hiddens="only") }}
+  {{ form.hidden_tag() }}
+  {{ wtf.form_errors(form, hiddens="only") }}
 
-    {{ wtf.form_field(form.name) }}
-    {{ wtf.form_field(form.description) }}
-    {{ wtf.form_field(form.price) }}
-    {{ wtf.form_field(form.category) }}
-    {{ wtf.form_field(form.image) }}
-    {{ wtf.form_field(form.submit) }}
-  </form>
+  {{ wtf.form_field(form.name) }}
+  {{ wtf.form_field(form.description) }}
+  {{ wtf.form_field(form.price) }}
+  {{ wtf.form_field(form.category) }}
+  {{ wtf.form_field(form.image) }}
+  {{ wtf.form_field(form.submit) }}
+</form>
