@@ -3,7 +3,7 @@ import time
 from mock import patch
 from base import BasicTestCase, UnitTestCase
 from app import db
-from app.models import Category, Item, User, load_user, Country, State
+from app.models import Category, Item, User, load_user, Message, Country, State
 from app.geolocation import Geolocation
 
 
@@ -111,6 +111,7 @@ class UserModelTestCase(UnitTestCase):
     db.session.commit()
     self.assertTrue(Item.query.all() == [])
 
+
 class ItemModelTestCase(UnitTestCase):
   def test_get_image(self):
     user = self.create_user()
@@ -119,6 +120,26 @@ class ItemModelTestCase(UnitTestCase):
                 self.app.config['S3_BUCKET'] + \
                 self.app.config['S3_UPLOAD_ITEM_DIR'] + "/" + item.image_url
     self.assertEqual(item.image(), image)
+
+
+class MessageModelTestCase(UnitTestCase):
+  def test_create_message(self):
+    sender = self.create_user()
+    receiver = self.create_user('25', 'maggy@example.com', 'mag')
+    item = self.create_item(receiver.id)
+    msg = Message(subject='New message', description='I want your bike!',
+                  sender_id=sender.id, receiver_id=receiver.id,
+                  item_id=item.id)
+    db.session.add(msg)
+    db.session.commit()
+    #receiver assertions
+    self.assertTrue(len(receiver.msgs_unread) == 1)
+    self.assertTrue(receiver.msgs_sent.count() == 0)
+    self.assertTrue(receiver.msgs_received.count() == 1)
+    #sender assertions
+    self.assertTrue(sender.msgs_sent.count() == 1)
+    self.assertTrue(len(sender.msgs_unread) == 0)
+    self.assertTrue(sender.msgs_received.count() == 0)
 
 
 class CountryModelTestCase(UnitTestCase):
