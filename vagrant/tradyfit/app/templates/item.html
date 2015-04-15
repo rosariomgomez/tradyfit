@@ -8,7 +8,9 @@
 </div>
 <div class="col-md-4" id="item-{{item.id}}">
 	{% include "_item.html" %}
-	<a href="{{ url_for('main.edit', id=item.id) }}">Edit</a> |
-	<a href="{{ url_for('main.delete', id=item.id) }}">Delete</a>
+  {% if current_user.is_authenticated() and current_user.id == item.user_id %}
+    <a href="{{ url_for('main.edit', id=item.id) }}">Edit</a> |
+    <a href="{{ url_for('main.delete', id=item.id) }}">Delete</a>
+  {% endif %}
 </div>
 {% endblock %}
