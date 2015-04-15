@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
-from flask import current_app, url_for
+from flask import url_for
 from base import ClientTestCase
-from app import db
 import app.main.views
 
 
