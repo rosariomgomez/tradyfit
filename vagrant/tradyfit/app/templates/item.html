@@ -12,5 +12,9 @@
     <a href="{{ url_for('main.edit', id=item.id) }}">Edit</a> |
     <a href="{{ url_for('main.delete', id=item.id) }}">Delete</a>
   {% endif %}
+  <br>
+  {% if current_user.is_authenticated() and current_user.id != item.user_id %}
+    <a href="{{ url_for('msg.create', id=item.id) }}">Contact</a>
+  {% endif %}
 </div>
 {% endblock %}
