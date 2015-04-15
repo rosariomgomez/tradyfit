@@ -40,7 +40,7 @@ class MessageFormTestCase(UnitTestCase):
 
     #1. TC1: Long (>500 chars)
     path = os.path.dirname(os.path.abspath(__file__))
-    f = os.path.join(path,"sample_text.txt")
+    f = os.path.join(path,"../sample_text.txt")
     with open(f, "r") as text:
         desc = text.readlines()
 
