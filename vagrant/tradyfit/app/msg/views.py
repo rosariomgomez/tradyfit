@@ -31,3 +31,12 @@ def notifications():
   msgs_unread = current_user.msgs_unread
   return render_template('msg/notifications.html', msgs_sent=msgs_sent,
                           msgs_unread=msgs_unread, msgs_received=msgs_received)
+
+
+@msg.route('/msg/<int:id>')
+@login_required
+def message(id):
+  msg = Message.query.get_or_404(id)
+  if not (current_user == msg.receiver or current_user == msg.sender):
+    return redirect(url_for('main.index'))
+  return render_template('msg/message.html', msg=msg)
