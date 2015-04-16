@@ -42,3 +42,50 @@ class NotificationsViewTestCase(ClientTestCase):
     response = self.make_get_request(user, 'msg.notifications')
     self.assertEquals(response.status_code, 200)
     self.assertTrue('msgs-unread' in response.data)
+
+
+class MessageViewTestCase(ClientTestCase):
+  '''Testing: @msg.route('/msg/<int:id>')'''
+
+  def test_message_route_valid_user(self):
+    '''verify if you are the sender or receiver you can see the message'''
+    u = self.create_user()
+    u1 = self.create_user('25', 'maggy@example.com', 'maggy')
+    item = self.create_item(u.id)
+    msg = self.create_message(u.id, u1.id, item.id)
+
+    #login with user1
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u1.id
+        sess['_fresh'] = True
+
+      #1. received message
+      response = self.client.get(url_for('msg.message', id=msg.id))
+      self.assertEquals(response.status_code, 200)
+      self.assertTrue("msg-"+str(msg.id) in response.data)
+
+
+  def test_message_route_invalid_user(self):
+    '''verify that you will be redirected to main if you are not the
+    sender/receiver or show a 404 if the message doesn't exist'''
+    u = self.create_user()
+    u1 = self.create_user('25', 'maggy@example.com', 'maggy')
+    u2 = self.create_user('29', 'bart@example.com', 'bart')
+    item = self.create_item(u.id)
+    msg = self.create_message(u.id, u1.id, item.id)
+
+    #login with user 2
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u2.id
+        sess['_fresh'] = True
+
+      #1. non existent message
+      response = self.client.get(url_for('msg.message', id=12))
+      self.assertEquals(response.status_code, 404)
+
+      #2. not a user's message
+      response = self.client.get(url_for('msg.message', id=msg.id))
+      self.assertEquals(response.status_code, 302)
+      self.assertFalse("msg-"+str(msg.id) in response.data)
