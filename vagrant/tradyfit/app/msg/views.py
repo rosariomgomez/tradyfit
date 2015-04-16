@@ -41,14 +41,17 @@ def message(id):
     return redirect(url_for('main.index'))
 
   form = MessageForm()
-  if form.validate_on_submit():
-    reply = Message(subject=form.subject.data,
-                    description=form.description.data,
-                    sender_id=current_user.id, receiver_id=msg.sender_id,
-                    item_id=msg.item_id)
-    db.session.add(reply)
-    flash('Your message has been sent.')
-    return redirect(url_for('msg.notifications'))
+  #do not reply messages to deleted user accounts, to same user or
+  #regarding a product that has been deleted
+  if msg.item and msg.sender and current_user != msg.sender:
+    if form.validate_on_submit():
+      reply = Message(subject=form.subject.data,
+                      description=form.description.data,
+                      sender_id=current_user.id, receiver_id=msg.sender_id,
+                      item_id=msg.item_id)
+      db.session.add(reply)
+      flash('Your message has been sent.')
+      return redirect(url_for('msg.notifications'))
   form.subject.data = "Re: " + msg.subject
   return render_template('msg/message.html', msg=msg, form=form)
 
