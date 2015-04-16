@@ -33,10 +33,22 @@ def notifications():
                           msgs_unread=msgs_unread, msgs_received=msgs_received)
 
 
-@msg.route('/msg/<int:id>')
+@msg.route('/msg/<int:id>', methods=['GET', 'POST'])
 @login_required
 def message(id):
   msg = Message.query.get_or_404(id)
   if not (current_user == msg.receiver or current_user == msg.sender):
     return redirect(url_for('main.index'))
-  return render_template('msg/message.html', msg=msg)
+
+  form = MessageForm()
+  if form.validate_on_submit():
+    reply = Message(subject=form.subject.data,
+                    description=form.description.data,
+                    sender_id=current_user.id, receiver_id=msg.sender_id,
+                    item_id=msg.item_id)
+    db.session.add(reply)
+    flash('Your message has been sent.')
+    return redirect(url_for('msg.notifications'))
+  form.subject.data = "Re: " + msg.subject
+  return render_template('msg/message.html', msg=msg, form=form)
+
