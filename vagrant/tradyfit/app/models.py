@@ -194,9 +194,12 @@ class Message(db.Model):
   subject = db.Column(db.String(120), nullable=False)
   description  = db.Column(db.Text)
   unread = db.Column(db.Boolean, default=True)
-  sender_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-  receiver_id = db.Column(db.Integer, db.ForeignKey('users.id'))
-  item_id = db.Column(db.Integer, db.ForeignKey('items.id'))
+  sender_id = db.Column(db.Integer, db.ForeignKey('users.id',
+                                                  ondelete='SET NULL'))
+  receiver_id = db.Column(db.Integer, db.ForeignKey('users.id',
+                                                    ondelete='SET NULL'))
+  item_id = db.Column(db.Integer, db.ForeignKey('items.id',
+                                                ondelete='SET NULL'))
   timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
 
