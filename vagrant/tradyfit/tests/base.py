@@ -26,6 +26,8 @@ class UnitTestCase(BasicTestCase):
   def tearDown(self):
     db.session.remove()
     db.drop_all()
+    #remove connection, if not, it stays idle. After running several tests
+    #sqlalchemy is using all the connections and an Operational error occur
     db.get_engine(self.app).dispose()
     super(UnitTestCase, self).tearDown()
 
