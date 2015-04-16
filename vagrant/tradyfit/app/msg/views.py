@@ -7,7 +7,7 @@ from .forms import MessageForm
 from ..models import Item, Message
 
 
-@msg.route('/create/<int:id>', methods=['GET', 'POST'])
+@msg.route('/msg/create/<int:id>', methods=['GET', 'POST'])
 @login_required
 def create(id):
   item = Item.query.get_or_404(id)
@@ -21,3 +21,13 @@ def create(id):
     flash('Your message has been sent.')
     return redirect(url_for('main.item', id=item.id))
   return render_template('msg/create.html', form=form, item=item)
+
+
+@msg.route('/notifications')
+@login_required
+def notifications():
+  msgs_sent = current_user.msgs_sent.all()
+  msgs_received = current_user.msgs_received.all()
+  msgs_unread = current_user.msgs_unread
+  return render_template('msg/notifications.html', msgs_sent=msgs_sent,
+                          msgs_unread=msgs_unread, msgs_received=msgs_received)
