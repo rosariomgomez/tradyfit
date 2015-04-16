@@ -2,7 +2,7 @@
 import unittest
 from flask import url_for
 from app import create_app, db
-from app.models import Category, User, Item
+from app.models import Category, User, Item, Message
 
 
 class BasicTestCase(unittest.TestCase):
@@ -42,6 +42,13 @@ class UnitTestCase(BasicTestCase):
     db.session.add(item)
     db.session.commit()
     return item
+
+  def create_message(self, sender_id, receiver_id, item_id):
+    msg = Message(subject='Hi there!', description='some text',
+                  sender_id=sender_id, receiver_id=receiver_id, item_id=item_id)
+    db.session.add(msg)
+    db.session.commit()
+    return msg
 
 
 class ClientTestCase(UnitTestCase):
