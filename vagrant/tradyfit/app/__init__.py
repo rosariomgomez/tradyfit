@@ -34,6 +34,6 @@ def create_app(config_name):
   app.register_blueprint(auth_blueprint)
 
   from .msg import msg as msg_blueprint
-  app.register_blueprint(msg_blueprint, url_prefix='/msg')
+  app.register_blueprint(msg_blueprint)
 
   return app
