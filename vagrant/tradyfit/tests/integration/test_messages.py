@@ -31,7 +31,7 @@ class MessageIntegrationTestCase(ClientTestCase):
 
   def test_notifications(self):
     '''verify you can see an unread message in the notifications when a
-    message is sent'''
+    message is sent to you'''
     u = self.create_user()
     u1 = self.create_user('25', 'maggy@example.com', 'maggy')
     item = self.create_item(u.id)
