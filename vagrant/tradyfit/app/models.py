@@ -202,6 +202,17 @@ class Message(db.Model):
                                                 ondelete='SET NULL'))
   timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
 
+  @property
+  def serialize(self):
+    '''helper method to allow send messages as JSON objects
+    in a serializable format'''
+    return {
+      'id': self.id,
+      'subject': self.subject,
+      'timestamp': self.timestamp
+    }
+
+
 
 class Country():
 
