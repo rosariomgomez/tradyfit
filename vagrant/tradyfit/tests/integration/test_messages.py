@@ -44,3 +44,23 @@ class MessageIntegrationTestCase(ClientTestCase):
     ul_unread_messages = soup.find("ul", id="msgs-unread")
     unread_messages = ul_unread_messages.find_all("li", id=re.compile("^msg-"))
     self.assertTrue("msg-"+str(msg.id) in str(unread_messages[0]))
+
+  def test_reply_message(self):
+    '''verify you can reply a message'''
+    u = self.create_user()
+    u1 = self.create_user('25', 'maggy@example.com', 'maggy')
+    item = self.create_item(u.id)
+    msg = self.create_message(u1.id, u.id, item.id)
+
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
+
+      response = self.client.post(url_for('msg.message', id=msg.id),
+                                  data={
+                                    'subject': 'Answer to message',
+                                    'description': 'Some description here',
+                                  }, follow_redirects=True)
+      self.assertTrue('Your message has been sent.' in response.data)
+
