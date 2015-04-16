@@ -1,0 +1,13 @@
+<div class="msg-sender">
+  {% if msg.sender %}
+    {{ msg.sender.username }}
+  {% else %}
+    Sorry, this user account has been deleted
+  {% endif %}
+</div>
+<div class="msg-subject">
+  {{ msg.subject.capitalize() }}
+</div>
+<div class="msg-description">
+  {{ msg.description.capitalize()|default('No description provided', true) }}
+</div>
