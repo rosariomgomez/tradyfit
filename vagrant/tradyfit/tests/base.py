@@ -26,6 +26,7 @@ class UnitTestCase(BasicTestCase):
   def tearDown(self):
     db.session.remove()
     db.drop_all()
+    db.get_engine(self.app).dispose()
     super(UnitTestCase, self).tearDown()
 
   def create_user(self, fb_id='23', email='john@example.com', username='john'):
