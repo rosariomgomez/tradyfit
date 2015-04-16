@@ -40,6 +40,10 @@ def message(id):
   if not (current_user == msg.receiver or current_user == msg.sender):
     return redirect(url_for('main.index'))
 
+  #mark message as read if user is the receiver
+  if current_user == msg.receiver and msg.unread:
+    msg.unread = False
+
   form = MessageForm()
   #do not reply messages to deleted user accounts, to same user or
   #regarding a product that has been deleted
