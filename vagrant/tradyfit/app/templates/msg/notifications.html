@@ -10,7 +10,7 @@
       <h3>Unread messages</h3>
       {% for msg in msgs_unread %}
       <li class="msg" id="msg-{{ msg.id }}">
-        {% include "msg/_msg.html" %}
+        <a href="{{ url_for('msg.message', id=msg.id)}}">{{ msg.subject }}</a>
       </li>
       <br>
       {% endfor %}
@@ -20,7 +20,7 @@
       <h3>Received messages</h3>
       {% for msg in msgs_received %}
       <li class="msg" id="msg-{{ msg.id }}">
-        {% include "msg/_msg.html" %}
+        <a href="{{ url_for('msg.message', id=msg.id)}}">{{ msg.subject }}</a>
       </li>
       <br>
       {% endfor %}
@@ -30,7 +30,7 @@
       <h3>Sent messages</h3>
       {% for msg in msgs_sent %}
       <li class="msg" id="msg-{{ msg.id }}">
-        {% include "msg/_msg.html" %}
+        <a href="{{ url_for('msg.message', id=msg.id)}}">{{ msg.subject }}</a>
       </li>
       <br>
       {% endfor %}
