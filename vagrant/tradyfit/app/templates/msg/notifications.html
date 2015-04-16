@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<div class="page-header">
+    <h1>Notifications</h1>
+</div>
+<div class="row">
+  <div class="col-md-6">
+    <ul id="msgs-unread">
+      <h3>Unread messages</h3>
+      {% for msg in msgs_unread %}
+      <li class="msg" id="msg-{{ msg.id }}">
+        {% include "msg/_msg.html" %}
+      </li>
+      <br>
+      {% endfor %}
+    </ul>
+    <hr>
+    <ul id="msgs-received">
+      <h3>Received messages</h3>
+      {% for msg in msgs_received %}
+      <li class="msg" id="msg-{{ msg.id }}">
+        {% include "msg/_msg.html" %}
+      </li>
+      <br>
+      {% endfor %}
+    </ul>
+    <hr>
+    <ul id="msgs-sent">
+      <h3>Sent messages</h3>
+      {% for msg in msgs_unread %}
+      <li class="msg" id="msg-{{ msg.id }}">
+        {% include "msg/_msg.html" %}
+      </li>
+      <br>
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+{% endblock %}
