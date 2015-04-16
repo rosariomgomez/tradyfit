@@ -28,7 +28,7 @@
     <hr>
     <ul id="msgs-sent">
       <h3>Sent messages</h3>
-      {% for msg in msgs_unread %}
+      {% for msg in msgs_sent %}
       <li class="msg" id="msg-{{ msg.id }}">
         {% include "msg/_msg.html" %}
       </li>
