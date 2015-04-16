@@ -12,10 +12,12 @@
     </li>
   </div>
 </div>
-<div class="row">
-  <div class="col-md-4" id="msg-reply">
-  <h3>Reply</h3>
-    {{ wtf.quick_form(form) }}
+{% if msg.item and msg.sender and current_user != msg.sender %}
+  <div class="row">
+    <div class="col-md-4" id="msg-reply">
+    <h3>Reply</h3>
+      {{ wtf.quick_form(form) }}
+    </div>
   </div>
-</div>
+{% endif %}
 {% endblock %}
