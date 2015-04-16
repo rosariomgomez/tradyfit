@@ -141,6 +141,28 @@ class MessageModelTestCase(UnitTestCase):
     self.assertTrue(len(sender.msgs_unread) == 0)
     self.assertTrue(sender.msgs_received.count() == 0)
 
+  def test_message_deleted_FK(self):
+    '''create a message and verify that item/sender/receiver can be deleted'''
+    sender = self.create_user()
+    receiver = self.create_user('25', 'maggy@example.com', 'mag')
+    item = self.create_item(receiver.id)
+    msg = Message(subject='New message', description='I want your bike!',
+                  sender_id=sender.id, receiver_id=receiver.id,
+                  item_id=item.id)
+    db.session.add(msg)
+    db.session.commit()
+    #delete item
+    db.session.delete(item)
+    db.session.commit()
+    #delete sender
+    db.session.delete(sender)
+    db.session.commit()
+    #delete receiver
+    db.session.delete(receiver)
+    db.session.commit()
+    self.assertTrue(msg.sender is None)
+    self.assertTrue(msg.receiver is None)
+    self.assertTrue(msg.item is None)
 
 class CountryModelTestCase(UnitTestCase):
   def test_get_countries(self):
