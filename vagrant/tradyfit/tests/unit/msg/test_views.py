@@ -48,22 +48,24 @@ class MessageViewTestCase(ClientTestCase):
   '''Testing: @msg.route('/msg/<int:id>')'''
 
   def test_message_route_valid_user(self):
-    '''verify if you are the sender or receiver you can see the message'''
-    u = self.create_user()
-    u1 = self.create_user('25', 'maggy@example.com', 'maggy')
-    item = self.create_item(u.id)
-    msg = self.create_message(u.id, u1.id, item.id)
+    '''verify if you are the receiver you can see the message and
+    the message is marked as readed'''
+    sender = self.create_user()
+    receiver = self.create_user('25', 'maggy@example.com', 'maggy')
+    item = self.create_item(sender.id)
+    msg = self.create_message(sender.id, receiver.id, item.id)
 
-    #login with user1
+    #login with receiver
     with self.client as c:
       with c.session_transaction() as sess:
-        sess['user_id'] = u1.id
+        sess['user_id'] = receiver.id
         sess['_fresh'] = True
 
       #1. received message
       response = self.client.get(url_for('msg.message', id=msg.id))
       self.assertEquals(response.status_code, 200)
       self.assertTrue("msg-"+str(msg.id) in response.data)
+      self.assertFalse(msg.unread)
 
 
   def test_message_route_invalid_user(self):
