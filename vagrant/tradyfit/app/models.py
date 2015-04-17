@@ -170,6 +170,8 @@ class Item(db.Model):
   description = db.Column(db.Text)
   price = db.Column(db.Numeric(precision=10, scale=2))
   image_url = db.Column(db.String())
+  latitude = db.Column(db.Numeric(precision=10, scale=6))
+  longitude = db.Column(db.Numeric(precision=10, scale=6))
   timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
   modified = db.Column(db.DateTime, index=True)
   category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
