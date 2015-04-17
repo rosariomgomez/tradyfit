@@ -9,11 +9,11 @@ services:
     - postgresql
 
 #install dependencies
-install: pip install -qr vagrant/tradyfit/requirements.txt 
+install: pip install -qr vagrant/tradyfit/requirements.txt python-psycopg2
 
-#configure database
+#create database
 before_script:
-  - psql -c createuser -dRS vagrant
+  - postgres createuser -dRS vagrant
   - psql -c 'create database tradyfit_test;' -U vagrant
 
 #run tests
