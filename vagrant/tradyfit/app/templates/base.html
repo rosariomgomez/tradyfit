@@ -62,7 +62,4 @@
 {% block scripts %}
 {{ super() }}
 {{ moment.include_moment() }}
-{{ JSGlue.include() }}
-<script type=text/javascript src="{{
-  url_for('static', filename='js/messages.js') }}"></script>
 {% endblock %}
