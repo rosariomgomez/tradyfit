@@ -14,6 +14,10 @@ install:
 #create database
 before_script:
   - psql -c 'create database tradyfit_test;' -U postgres
+  #enable PostGIS
+  - psql -c 'CREATE EXTENSION postgis;' -U postgres -d tradifit_test
+  #enable Topology
+  - psql -c 'CREATE EXTENSION postgis_topology;' -U postgres -d tradifit_test
 
 #run tests
 script: 
