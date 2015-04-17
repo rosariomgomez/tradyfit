@@ -17,7 +17,7 @@ before_script:
 
 #run tests
 script: 
-  coverage run --source=./vagrant/trayfit vagrant/tradyfit/manage.py test
+  coverage run --source=vagrant/tradyfit vagrant/tradyfit/manage.py test
 
 after_success:
   coveralls
