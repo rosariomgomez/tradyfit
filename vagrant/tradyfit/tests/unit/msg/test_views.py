@@ -34,14 +34,43 @@ class CreateViewTestCase(ClientTestCase):
 
 
 class NotificationsViewTestCase(ClientTestCase):
-  '''Testing: @msg.route('/notifications')'''
+  '''Testing: @msg.route('/notifications', methods=['GET', 'POST'])'''
 
   def test_notifiactions_route(self):
-    '''verify you can go to notifications page'''
+    '''verify you can go to notifications page with a GET request'''
     user = self.create_user()
     response = self.make_get_request(user, 'msg.notifications')
     self.assertEquals(response.status_code, 200)
-    self.assertTrue('msgs-unread' in response.data)
+    self.assertTrue('id="messages"' in response.data)
+
+  def test_notifications_route_post(self):
+    '''verify you can get unread/sent/all messages via POST request'''
+    sender = self.create_user()
+    receiver = self.create_user('25', 'maggy@example.com', 'maggy')
+    item = self.create_item(sender.id)
+    msg = self.create_message(sender.id, receiver.id, item.id)
+    reply = self.create_message(receiver.id, sender.id, item.id)
+
+    #login with receiver
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = receiver.id
+        sess['_fresh'] = True
+
+      #POST request with type=unread
+      response = self.client.post(url_for('msg.notifications'),
+                                          data={'type':'unread'})
+      self.assertTrue(msg.subject in response.data)
+
+      #POST request with type=received
+      response = self.client.post(url_for('msg.notifications'),
+                                          data={'type':'received'})
+      self.assertTrue(msg.subject in response.data)
+
+      #POST request with type=sent
+      response = self.client.post(url_for('msg.notifications'),
+                                          data={'type':'sent'})
+      self.assertTrue(reply.subject in response.data)
 
 
 class MessageViewTestCase(ClientTestCase):
