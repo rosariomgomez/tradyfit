@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, request, jsonify
 from flask.ext.login import current_user, login_required
 from . import msg
 from .. import db
@@ -23,14 +23,22 @@ def create(id):
   return render_template('msg/create.html', form=form, item=item)
 
 
-@msg.route('/notifications')
+@msg.route('/notifications', methods=['GET', 'POST'])
 @login_required
 def notifications():
-  msgs_sent = current_user.msgs_sent.all()
-  msgs_received = current_user.msgs_received.all()
-  msgs_unread = current_user.msgs_unread
-  return render_template('msg/notifications.html', msgs_sent=msgs_sent,
-                          msgs_unread=msgs_unread, msgs_received=msgs_received)
+
+  if request.method == 'POST':
+    if request.form.get('type') == 'unread':
+      msgs = current_user.msgs_unread
+    elif request.form.get('type') == 'sent':
+      msgs = current_user.msgs_sent.all()
+    else:
+      msgs = current_user.msgs_received.all()
+    return jsonify(msgs=[msg.serialize for msg in msgs])
+
+  else: #GET request
+    msgs = current_user.msgs_unread
+    return render_template('msg/notifications.html', msgs=msgs)
 
 
 @msg.route('/msg/<int:id>', methods=['GET', 'POST'])
