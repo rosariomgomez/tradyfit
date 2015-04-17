@@ -9,7 +9,7 @@ services:
     - postgresql
 
 #install dependencies
-install: pip install -qr vagrant/tradyfit/requirements.txt python-psycopg2
+install: pip install -qr vagrant/tradyfit/requirements.txt
 
 #create database
 before_script:
