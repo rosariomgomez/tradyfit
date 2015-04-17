@@ -9,8 +9,6 @@
   {% for item in items %}
       <li class="item" id="item-{{ item.id }}">
       {% include "_item.html" %}
-      <a href="{{ url_for('main.edit', id=item.id) }}">Edit</a> |
-      <a href="{{ url_for('main.delete', id=item.id) }}">Delete</a>
     </li>
     {% endfor %}
   </ul>
