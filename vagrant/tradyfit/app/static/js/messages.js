@@ -10,10 +10,10 @@ function messages(type) {
       // create a new li and append it
       var $li = $('<li class="msg" id="msg-' + msg.id + '"">')
       // create the link to the message
-      $('<a>',{
+      $li.append($('<a>',{
         text: msg.subject,
         href: Flask.url_for('msg.message', {id: msg.id})
-      }).appendTo($li)
+      }))
       .appendTo($msg_ul);
     });
   });
