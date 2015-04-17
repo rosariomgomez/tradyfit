@@ -7,12 +7,18 @@ services:
     - postgresql
 
 #install dependencies
-install: pip install -qr vagrant/tradyfit/requirements.txt
+install: 
+  - pip install -qr vagrant/tradyfit/requirements.txt
+  - pip install coveralls
 
 #create database
 before_script:
   - psql -c 'create database tradyfit_test;' -U postgres
 
 #run tests
-script: python vagrant/tradyfit/manage.py test
+script: 
+  coverage run vagrant/tradyfit/manage.py test
+
+after_success:
+  coveralls
 
