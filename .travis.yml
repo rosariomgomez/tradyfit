@@ -1,0 +1,19 @@
+language: python
+
+python:
+  - 2.7
+
+services:
+    - postgresql
+
+#install dependencies
+install: pip install -qr vagrant/tradyfit/requirements.txt 
+
+#configure database
+before_script:
+  - psql -c 'createuser -dRS vagrant
+  - psql -c 'create database tradyfit_test;' -U vagrant
+
+#run tests
+script: python vagrant/tradyfit/manage.py test
+
