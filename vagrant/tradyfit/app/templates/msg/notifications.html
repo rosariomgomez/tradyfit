@@ -5,36 +5,17 @@
     <h1>Notifications</h1>
 </div>
 <div class="row">
-  <div class="col-md-6">
-    <ul id="msgs-unread">
-      <h3>Unread messages</h3>
-      {% for msg in msgs_unread %}
-      <li class="msg" id="msg-{{ msg.id }}">
-        <a href="{{ url_for('msg.message', id=msg.id)}}">{{ msg.subject }}</a>
-      </li>
-      <br>
-      {% endfor %}
-    </ul>
-    <hr>
-    <ul id="msgs-received">
-      <h3>Received messages</h3>
-      {% for msg in msgs_received %}
-      <li class="msg" id="msg-{{ msg.id }}">
-        <a href="{{ url_for('msg.message', id=msg.id)}}">{{ msg.subject }}</a>
-      </li>
-      <br>
-      {% endfor %}
-    </ul>
-    <hr>
-    <ul id="msgs-sent">
-      <h3>Sent messages</h3>
-      {% for msg in msgs_sent %}
-      <li class="msg" id="msg-{{ msg.id }}">
-        <a href="{{ url_for('msg.message', id=msg.id)}}">{{ msg.subject }}</a>
-      </li>
-      <br>
-      {% endfor %}
-    </ul>
+  <div class="col-md-4">
+    <a href="javascript:messages('unread');">Unread</a><br>
+    <a href="javascript:messages('sent');">Sent</a><br>
+    <a href="javascript:messages('received');">Received</a><br>
   </div>
-</div>
+  <div class="col-md-6">
+    <ul id="messages">
+    {% for msg in msgs %}
+      <li class="msg" id="msg-{{ msg.id }}">
+        <a href="{{ url_for('msg.message', id=msg.id)}}">{{ msg.subject }}</a>
+      </li>
+    </ul>
+    {% endfor %}
 {% endblock %}
