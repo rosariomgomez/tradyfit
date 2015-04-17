@@ -47,7 +47,7 @@ class User(UserMixin, db.Model):
   msgs_received = db.relationship('Message', backref='receiver', lazy='dynamic',
                                   primaryjoin="User.id==Message.receiver_id")
 
-  msgs_unread = db.relationship('Message',
+  msgs_unread = db.relationship('Message', lazy='select',
         primaryjoin="and_(User.id==Message.receiver_id, Message.unread==True)")
 
 
