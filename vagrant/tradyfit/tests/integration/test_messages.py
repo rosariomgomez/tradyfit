@@ -1,6 +1,4 @@
 # -*- coding: utf-8 -*-
-import re
-from bs4 import BeautifulSoup
 from flask import url_for
 from app import db
 from base import ClientTestCase
@@ -40,12 +38,8 @@ class MessageIntegrationTestCase(ClientTestCase):
     msg = self.create_message(u1.id, u.id, item.id)
 
     response = self.make_get_request(u, 'msg.notifications')
-    #assert message is present and it appears under unread messages category
+    #assert message is present
     self.assertTrue(msg.subject in response.data)
-    soup = BeautifulSoup(response.get_data(as_text=True))
-    ul_unread_messages = soup.find("ul", id="msgs-unread")
-    unread_messages = ul_unread_messages.find_all("li", id=re.compile("^msg-"))
-    self.assertTrue("msg-"+str(msg.id) in str(unread_messages[0]))
 
 
   def test_reply_message_success(self):
