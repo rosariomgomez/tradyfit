@@ -164,6 +164,21 @@ class MessageModelTestCase(UnitTestCase):
     self.assertTrue(msg.receiver is None)
     self.assertTrue(msg.item is None)
 
+  def test_message_serializer(self):
+    '''create a mesasge and verify you can get a JSON object when calling
+    serialize on it'''
+    sender = self.create_user()
+    receiver = self.create_user('25', 'maggy@example.com', 'mag')
+    item = self.create_item(receiver.id)
+    msg = Message(subject='New message', description='I want your bike!',
+                  sender_id=sender.id, receiver_id=receiver.id,
+                  item_id=item.id)
+    db.session.add(msg)
+    db.session.commit()
+    self.assertTrue(msg.serialize == {'id': msg.id, 'subject': msg.subject,
+                                      'timestamp': msg.timestamp})
+
+
 class CountryModelTestCase(UnitTestCase):
   def test_get_countries(self):
     self.assertTrue(type(Country.get_countries()) == dict)
