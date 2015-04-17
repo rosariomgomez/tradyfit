@@ -1,7 +1,7 @@
 TradyFit
 ==========
 
-[![Build Status](https://drone.io/github.com/rosariomgomez/tradyfit/status.png)](https://drone.io/github.com/rosariomgomez/tradyfit/latest)
+[![Build Status](https://travis-ci.org/rosariomgomez/tradyfit.svg?branch=master)](https://travis-ci.org/rosariomgomez/tradyfit)
 [![Code Climate](https://codeclimate.com/github/rosariomgomez/tradyfit/badges/gpa.svg)](https://codeclimate.com/github/rosariomgomez/tradyfit)
 
 TradyFit allows users to buy/sell sports gear
