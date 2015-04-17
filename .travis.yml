@@ -1,4 +1,4 @@
-sudo: required
+sudo: false
 
 language: python
 
@@ -13,8 +13,8 @@ install: pip install -qr vagrant/tradyfit/requirements.txt
 
 #create database
 before_script:
-  - sudo su postgres -c 'createuser -dRS vagrant'
-  - sudo su vagrant -c 'createdb tradyfit_test'
+  - su postgres -c 'createuser -dRS vagrant'
+  - su vagrant -c 'createdb tradyfit_test'
 
 #run tests
 script: python vagrant/tradyfit/manage.py test
