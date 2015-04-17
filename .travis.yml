@@ -13,8 +13,8 @@ install: pip install -qr vagrant/tradyfit/requirements.txt
 
 #create database
 before_script:
-  - sudo su postgres createuser -dRS vagrant
-  - psql -c 'create database tradyfit_test;' -U vagrant
+  - sudo su postgres -c 'createuser -dRS vagrant'
+  - sudo su vagrant -c 'createdb tradyfit_test'
 
 #run tests
 script: python vagrant/tradyfit/manage.py test
