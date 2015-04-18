@@ -7,6 +7,8 @@ from flask.ext.sqlalchemy import BaseQuery, event
 from sqlalchemy_searchable import SearchQueryMixin
 from sqlalchemy_utils.types import TSVectorType
 from sqlalchemy_searchable import make_searchable
+from geoalchemy2.types import Geometry
+from geoalchemy2.elements import WKTElement
 from datetime import datetime
 from app.geolocation import Geolocation
 from app.helpers import delete_avatar, delete_item_image
@@ -92,6 +94,21 @@ class User(UserMixin, db.Model):
         self.longitude = coordinates[1]
         db.session.add(self)
 
+
+  def has_coordinates(self):
+    '''return True if user has latitude and longitude information'''
+    return self.latitude and self.longitude
+
+
+  def get_point_coordinates(self):
+    '''convert the latitude, longitude coordinates to a WKT point'''
+    if self.has_coordinates():
+      return WKTElement('POINT({0} {1})'.format(self.longitude, self.latitude),
+                        srid=4326)
+    else:
+      return None
+
+
   @staticmethod
   def get_user(email):
     return User.query.filter_by(email = email).first()
@@ -170,8 +187,8 @@ class Item(db.Model):
   description = db.Column(db.Text)
   price = db.Column(db.Numeric(precision=10, scale=2))
   image_url = db.Column(db.String())
-  latitude = db.Column(db.Numeric(precision=10, scale=6))
-  longitude = db.Column(db.Numeric(precision=10, scale=6))
+  location = db.Column(Geometry(geometry_type='POINT', srid=4326),
+                        nullable=True)
   timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
   modified = db.Column(db.DateTime, index=True)
   category_id = db.Column(db.Integer, db.ForeignKey('categories.id'))
@@ -213,7 +230,6 @@ class Message(db.Model):
       'subject': self.subject,
       'timestamp': self.timestamp
     }
-
 
 
 class Country():
