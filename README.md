@@ -9,3 +9,4 @@ TradyFit
 
 TradyFit allows users to buy/sell sports gear
 
+Read the [documentation](http://tradyfit.readthedocs.org/en/latest/) for more details
