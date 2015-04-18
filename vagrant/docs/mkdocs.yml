@@ -1,0 +1,5 @@
+site_name: TradyFit 
+pages:
+- [index.md, Home]
+- [about.md, About]
+theme: readthedocs
