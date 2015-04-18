@@ -31,9 +31,18 @@ class UnitTestCase(BasicTestCase):
     db.get_engine(self.app).dispose()
     super(UnitTestCase, self).tearDown()
 
-  def create_user(self, fb_id='23', email='john@example.com', username='john'):
+  def create_user_no_location(self, fb_id='23', email='john@example.com',
+                              username='john'):
     u = User(fb_id=fb_id, email=email, name='John Doe', username=username,
             avatar_url='avatar.jpg', city='Mountain View')
+    db.session.add(u)
+    db.session.commit()
+    return u
+
+  def create_user(self, fb_id='23', email='john@example.com', username='john'):
+    u = User(fb_id=fb_id, email=email, name='John Doe', username=username,
+            avatar_url='avatar.jpg', city='Mountain View', state='CA',
+            country='US', latitude=38.907192, longitude=-77.036871)
     db.session.add(u)
     db.session.commit()
     return u
