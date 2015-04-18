@@ -46,7 +46,7 @@ class UserFormTestCase(UnitTestCase):
     '''verify the username field only accepts the defined data types and
     will not be validated if the username already exists'''
 
-    user = self.create_user() #username = john
+    user = self.create_user('1', 'john@example.com', 'john')
     user1 = self.create_user('25', 'maggy@example.com', 'maggy')
 
     #1. Username already exists
