@@ -68,7 +68,7 @@ class UserModelTestCase(UnitTestCase):
     self.assertEqual(u.avatar(), avatar)
 
   def test_location_user_with_city(self):
-    u = self.create_user()
+    u = self.create_user_no_location()
     u.location('10.0.0.2')
     self.assertTrue(u.latitude == None)
 
@@ -88,14 +88,14 @@ class UserModelTestCase(UnitTestCase):
   @patch('app.geolocation.Geolocation', return_value={'key': 'value'})
   @patch('app.geolocation.Geolocation.get_country', return_value=(True, ''))
   def test_location_user_no_city_no_country(self, m_geo, m_country):
-    u = self.create_user()
+    u = self.create_user_no_location()
     u.city = ''
     u.location('10.0.0.2')
     self.assertTrue(u.latitude == None)
 
   @patch('app.geolocation.Geolocation.get_geolocation', return_value=(12,34))
   def test_modify_geolocation(self, mock_geo_coord):
-    u = self.create_user()
+    u = self.create_user_no_location()
     self.assertTrue(u.latitude is None)
     self.assertTrue(u.longitude is None)
     u.modify_geolocation('Mountain View, CA, US')
