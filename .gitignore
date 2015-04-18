@@ -3,4 +3,4 @@
 vagrant/.vagrant
 vagrant/tradyfit/env/
 vagrant/tradyfit/tmp/
-docs/site
+vagrant/docs/site
