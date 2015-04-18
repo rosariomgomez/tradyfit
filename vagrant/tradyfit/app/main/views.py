@@ -90,9 +90,10 @@ def create():
 
     if image:
       category = Category.query.get(form.category.data)
+      location = current_user.get_point_coordinates()
       item = Item(name=form.name.data, description=form.description.data,
                   price=form.price.data, category=category, image_url=image,
-                  user_id=current_user.id)
+                  user_id=current_user.id, location=location)
       db.session.add(item)
       flash('Your item has been created.')
       return redirect(url_for('main.index'))
@@ -165,6 +166,12 @@ def delete(id):
 
 @main.route('/search_results/<query>')
 def search_results(query):
-  res = Item.query.search(query).order_by(Item.timestamp.desc()).limit(50).all()
+  if current_user.is_authenticated() and current_user.has_coordinates():
+    user_loc = current_user.get_point_coordinates()
+    res = Item.query.search(query).order_by(
+                  Item.location.distance_box(user_loc)).limit(50).all()
+  else:
+    res = Item.query.search(query).order_by(
+                  Item.timestamp.desc()).limit(50).all()
   return render_template('search_results.html', query=query, items=res)
 
