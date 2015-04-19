@@ -187,6 +187,9 @@ class Item(db.Model):
   description = db.Column(db.Text)
   price = db.Column(db.Numeric(precision=10, scale=2))
   image_url = db.Column(db.String())
+  country = db.Column(db.String(100), default='')
+  state =  db.Column(db.String(10), default='')
+  city =  db.Column(db.String(60), default='')
   location = db.Column(Geometry(geometry_type='POINT', srid=4326),
                         nullable=True)
   timestamp = db.Column(db.DateTime, index=True, default=datetime.utcnow)
