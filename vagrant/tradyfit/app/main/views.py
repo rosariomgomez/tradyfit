@@ -79,6 +79,10 @@ def delete_account():
 @main.route('/create', methods=['GET', 'POST'])
 @login_required
 def create():
+  if not current_user.has_coordinates:
+    flash('Before creating an item, you should have a valid location')
+    return redirect(url_for('main.profile'))
+
   form = ItemForm()
 
   if form.validate_on_submit():
