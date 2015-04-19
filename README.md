@@ -1,6 +1,7 @@
 TradyFit
 ==========
 
+[![Stories in Ready](https://badge.waffle.io/rosariomgomez/tradyfit.png?label=ready&title=Ready)](https://waffle.io/rosariomgomez/tradyfit)
 [![Build Status](https://travis-ci.org/rosariomgomez/tradyfit.svg?branch=master)](https://travis-ci.org/rosariomgomez/tradyfit)
 [![Coverage Status](https://coveralls.io/repos/rosariomgomez/tradyfit/badge.svg)](https://coveralls.io/r/rosariomgomez/tradyfit)
 [![Code Climate](https://codeclimate.com/github/rosariomgomez/tradyfit/badges/gpa.svg)](https://codeclimate.com/github/rosariomgomez/tradyfit)
