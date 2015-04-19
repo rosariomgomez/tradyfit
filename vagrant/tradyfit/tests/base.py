@@ -39,13 +39,24 @@ class UnitTestCase(BasicTestCase):
     db.session.commit()
     return u
 
-  def create_user(self, fb_id='23', email='john@example.com', username='john'):
-    u = User(fb_id=fb_id, email=email, name='John Doe', username=username,
-            avatar_url='avatar.jpg', city='Mountain View', state='CA',
-            country='US', latitude=38.907192, longitude=-77.036871)
+  def create_user(self, fb_id='4', email='lisa@example.com', username='lisa'):
+    u = User(fb_id=fb_id, email=email, name='Lisa Simp', username=username,
+            avatar_url='avatar.jpg', city='Madrid', state='NU',
+            country='ES', latitude=40.479732, longitude=-3.5898299)
     db.session.add(u)
     db.session.commit()
     return u
+
+  def create_user_location(self, fb_id='3', email='maggy@example.com',
+        username='maggy', city='Berlin', state='NU', country='DE',
+        latitude=52.5244, longitude=13.4105):
+    u = User(fb_id=fb_id, email=email, name='Maggy Simp', username=username,
+              avatar_url='avatar.jpg', city=city, state=state,
+              country=country, latitude=latitude, longitude=longitude)
+    db.session.add(u)
+    db.session.commit()
+    return u
+
 
   def create_item(self, user_id, item_name='ball', item_desc='small and round'):
     c = Category.get_category('soccer')
@@ -78,6 +89,6 @@ class ClientTestCase(UnitTestCase):
       with c.session_transaction() as sess:
         sess['user_id'] = user.id
         sess['_fresh'] = True
-      return c.get(url_for(url))
+      return c.get(url_for(url), follow_redirects=True)
 
 
