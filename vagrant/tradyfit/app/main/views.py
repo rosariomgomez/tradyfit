@@ -93,7 +93,9 @@ def create():
       location = current_user.get_point_coordinates()
       item = Item(name=form.name.data, description=form.description.data,
                   price=form.price.data, category=category, image_url=image,
-                  user_id=current_user.id, location=location)
+                  user_id=current_user.id, location=location,
+                  country=current_user.country, state=current_user.state,
+                  city=current_user.city)
       db.session.add(item)
       flash('Your item has been created.')
       return redirect(url_for('main.index'))
