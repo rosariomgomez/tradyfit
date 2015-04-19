@@ -5,23 +5,43 @@ a feature in a certain way.
 
 #Search engine for items
 
-I've implemented this full text indexing searc via [SQLAlchemy-Searchable](https://sqlalchemy-searchable.readthedocs.org/en/latest/index.html) because it can be neatly integrated into Flask-SQLAlchemy using SearchQueryMixin class. It makes use of PostgreSQL built-in TSVectorType class to vectorize string columns and create the search vectors.
+I've implemented this full text indexing search via [SQLAlchemy-Searchable](https://sqlalchemy-searchable.readthedocs.org/en/latest/index.html) because it can be neatly integrated into Flask-SQLAlchemy using SearchQueryMixin class. It makes use of PostgreSQL built-in TSVectorType class to vectorize string columns and create the search vectors.
 
 <h3>How to perform a search</h3>
 
-SearchQueryMixin provides the search method for ItemQuery. You can chain calls just like when using query filter calls. Here we search for the first 50 items that contain the word ‘ball’ ordered by creation time.
-`Item.query.search('ball').order_by(Item.timestamp.desc()).limit(50).all()`
+SearchQueryMixin provides the search method for ItemQuery. You can chain calls just like when using query filter calls.  
+
+In the following example, we search for the first 50 items that contain the word ‘ball’ ordered by creation time:
+```  
+Item.query.search('ball').order_by(Item.timestamp.desc()).limit(50).all()
+```
 
 <h3>Important notes</h3>
  - Followed documentation for [Flask-SQLAlchemy integration](https://sqlalchemy-searchable.readthedocs.org/en/latest/integrations.html)
- - Modified generated migration script to update the [search triggers](https://sqlalchemy-searchable.readthedocs.org/en/latest/alembic_migrations.html). Check the [applied migration script]() for reference.
+ - Modified generated migration script to update the [search triggers](https://sqlalchemy-searchable.readthedocs.org/en/latest/alembic_migrations.html). Check the [applied migration script](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/migrations/versions/35b2b9f7b64e_added_search_vector_to_items_table.py) for reference.
 
 <h3>Pitfalls</h3>
 I did a first implementation using Whoosh via [Flask-WhooshAlchemy](https://pythonhosted.org/Flask-WhooshAlchemy/).
 Problem: it stores the indices in files, so not compatible with Heroku deployment restrictions for accessing the filesystem.
 
+
+# Nearby searches
+
+When a user is logged in and has latitude and longitude values, the search's results are ordered by nearby location. The execution of a raw SQL query will be very expensive in processing, that's why I used the PostGIS extension for PostgreSQL and I perform the queries via GeoAlchemy2 library.  
+
+The latitude, longitude user's values are converted to a [WKB element](http://en.wikipedia.org/wiki/Well-known_text) geometry point. The search results are ordered by the nearest neighbors' items to the user:  
+```
+Item.query.search(query).order_by(Item.location.distance_box(user_loc))
+```
+For more information about spatial queries, check the GeoAlchemy [documentaion](http://geoalchemy-2.readthedocs.org/en/latest/orm_tutorial.html#spatial-query)
+
+<h3>Important notes</h3>
+- Modified the automatic generated migration script from flask-migrate. Check the [migration applied]() for reference.
+- Needed to enable PostGIS on [.travis.yml](https://github.com/rosariomgomez/tradyfit/blob/master/.travis.yml#L18) file for running tests on Travis-CI.
+
 # External services
-<h2>Facebook login</h2>
+
+<h3>Facebook login</h3>
 The reason of implementing social login instead of a personal sign up system is to avoid storing sensible users’ information.
 
 In order to interact with the 3rd party log in services, I’ve used flask-oauthlib that implements Oauth.
@@ -34,18 +54,22 @@ I’ve created the __auth blueprint__ to include all the code related with the a
 The config.py file contains the necessary set up for the service. The passwords and API keys are set up as environment variables.
 
 __User model:__
-fb_id (facebook_id): unique not nullable
-email: unique not nullable
 
-The user's avatar is pulled from facebook the first time the user log in and stored in an S3 bucket.
+- fb_id (facebook_id): unique not nullable
+- email: unique not nullable
+- avatar_url: user's avatar url to S3 (avatar is pulled from facebook the first time the user log in and stored in an S3 bucket).
 
-<h2>Amazon S3</h2>
+<h3>Amazon S3</h3>
 Amazon S3 is a popular and reliable storage option for storing files. I've used it to store user avatars and product images. Details on how to configure it [here](https://github.com/rosariomgomez/tradyfit/wiki/Notes#amazon-s3-configuration).
-- I use [boto](https://github.com/boto/boto) Python library for handling the S3 upload.
+
+- I use [boto](https://github.com/boto/boto) Python library for handling the S3 upload.  
 - Security checks for file uploading (useful [documentation](http://flask.pocoo.org/docs/0.10/patterns/fileuploads/)):
     - __Maximum size:__ Specified in `config.py` file via `MAX_CONTENT_LENGTH` constant. If user tries to upload a file bigger than 3MB, a 413 (File too large) error is raised. I capture it via error_handler and redirect to the item form.
     - __Allowed file extensions:__ Verified via FileAllowed method from flask_wtf.file library in ItemForm validators.
     - __Filename extension:__ In order to save the image in S3 with the correct extension, we need to extract it from the filename. Although I'm not using the filename provided from the user as destination filename, I use werkzeug.secure_filename() to extract the filename extension (for example it will remove ../..).
+
+<h3>GoogleV3 geocoder service</h3>
+When geolocation information cannot be extracted from user's IP. Read more in the next section.
 
 # Geolocation
 The geolocation data is stored in the User class and consist of: country, state, city, latitude and longitude.

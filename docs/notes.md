@@ -24,6 +24,7 @@ I fixed it installing SQLAlchemy via pip install instead of apt-get (added to re
 - Attach the policies to the users (one user for production, another for dev and test).
 - From the "Security Credentials" tab, create an Access Key. Set the Access key ID and Secret Access key as environment variables: S3_KEY, S3_SECRET.
 
+
 # Forms
 
 <h3> Uploading files</h3>
