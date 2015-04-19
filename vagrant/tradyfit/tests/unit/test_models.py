@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import time
+from geoalchemy2.elements import WKTElement
 from mock import patch
 from base import BasicTestCase, UnitTestCase
 from app import db
@@ -102,6 +103,22 @@ class UserModelTestCase(UnitTestCase):
     db.session.commit()
     self.assertTrue(u.latitude == 12)
     self.assertTrue(u.longitude == 34)
+
+  def test_has_coordinates(self):
+    '''verify true is returned if a user has latitude/longitude and
+    false if not'''
+    u = self.create_user_no_location()
+    self.assertFalse(u.has_coordinates())
+    u = self.create_user()
+    self.assertTrue(u.has_coordinates)
+
+  def test_get_point_coordinates(self):
+    '''verify a WKT point is returned if user has latitude/longitude, None
+    in other case'''
+    u = self.create_user_no_location()
+    self.assertTrue(u.get_point_coordinates() is None)
+    u = self.create_user()
+    self.assertTrue(type(u.get_point_coordinates()) == WKTElement)
 
   def test_delete_user(self):
     '''verify that user items are also deleted when user is deleted'''
