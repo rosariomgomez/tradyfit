@@ -1,5 +1,11 @@
-site_name: TradyFit 
+site_name: TradyFit
 pages:
 - [index.md, Home]
+- [installation.md, Installation requirements]
+- [run.md, How to run the code]
+- [architecture.md, Architecture design]
+- [database.md, Database]
+- [testing.md, Testing Strategy]
+- [notes.md, Notes]
 - [about.md, About]
 theme: readthedocs
