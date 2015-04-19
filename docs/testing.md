@@ -64,4 +64,4 @@ I solved it by adding: ``db.get_engine(self.app).dispose()``
 Found solution [here](http://stackoverflow.com/questions/18291180/flask-unittest-and-sqlalchemy-using-all-connections)  
 I confirmed it by checking the process running during test execution, and found several open connections in idle status:  
 ``ps aux | grep tradyfit_test``  
-``postgres 31101  0.0  2.0 168056 10484 ?        Ss   22:27   0:00 postgres: vagrant tradyfit_test [local] idle``
+``postgres 31101  [..]  postgres: vagrant tradyfit_test [local] idle``
