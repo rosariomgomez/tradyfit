@@ -129,8 +129,22 @@ class DeleteAccountViewTestCase(ClientTestCase):
 class CreateItemViewTestCase(ClientTestCase):
   '''Testing: @main.route('/create', methods=['GET', 'POST'])'''
 
-  def test_create_item_route_login(self):
-    '''verify you can go to create an item page
+  def test_create_item_route_user_nolocation(self):
+    '''verify you are redirected to the profile page
+    if the user has not location information
+    1. Go to create an item's page
+    2. Assert you are redirected to profile page
+    '''
+    u = self.create_user_no_location()
+    response = self.make_get_request(u, 'main.create')
+    r = response.get_data(as_text=True)
+    self.assertTrue('Before creating an item, you should have a valid location'
+                    in r)
+
+
+  def test_create_item_route_user_location(self):
+    '''verify you can go to create an item page if the user has location
+    information (latitude/longitude)
     1. Go to the create an item's page
     2. Assert you get the correct page
     '''
@@ -139,6 +153,7 @@ class CreateItemViewTestCase(ClientTestCase):
     self.assertEquals(response.status_code, 200)
     r = response.get_data(as_text=True)
     self.assertTrue('id="item-creation"' in r)
+
 
   def test_create_item_form(self):
     '''verify all fields for creating an item are present
@@ -303,50 +318,51 @@ class EditItemViewTestCase(ClientTestCase):
 
 
 class DeleteItemViewTestCase(ClientTestCase):
-    '''Testing: @main.route('/delete/<int:id>')'''
+  '''Testing: @main.route('/delete/<int:id>')'''
 
-    def test_delete_item_route(self):
-      '''verify you get a 404 for a non existent item
-      and that you can delete a created item if you are the owner
-      1. Request to delete a non existent item
-      2. Assert you get a 404 response
-      3. Try to delete another user's item
-      4. Go to the delete route
-      5. Assert your item has been deleted
-      '''
-      u = self.create_user()
-      u1 = self.create_user('25', 'maggy@example.com', 'maggy')
-      item = self.create_item(u.id)
+  def test_delete_item_route(self):
+    '''verify you get a 404 for a non existent item
+    and that you can delete a created item if you are the owner
+    1. Request to delete a non existent item
+    2. Assert you get a 404 response
+    3. Try to delete another user's item
+    4. Go to the delete route
+    5. Assert your item has been deleted
+    '''
+    u = self.create_user()
+    u1 = self.create_user('25', 'maggy@example.com', 'maggy')
+    item = self.create_item(u.id)
 
-      with self.client as c:
-        with c.session_transaction() as sess:
-          sess['user_id'] = u1.id
-          sess['_fresh'] = True
-        #1. non existent item
-        response = self.client.get(url_for('main.delete', id=12))
-        self.assertEquals(response.status_code, 404)
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u1.id
+        sess['_fresh'] = True
+      #1. non existent item
+      response = self.client.get(url_for('main.delete', id=12))
+      self.assertEquals(response.status_code, 404)
 
-        #2. try to delete other user's item
-        response = self.client.get(url_for('main.delete', id=item.id),
-                                  follow_redirects=True)
-        self.assertFalse(b'Your item has been deleted.' in response.data)
+      #2. try to delete other user's item
+      response = self.client.get(url_for('main.delete', id=item.id),
+                                follow_redirects=True)
+      self.assertFalse(b'Your item has been deleted.' in response.data)
 
-      #3. delete your item
-      with self.client as c:
-        with c.session_transaction() as sess:
-          sess['user_id'] = u.id
-          sess['_fresh'] = True
+    #3. delete your item
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
 
-        response = self.client.get(url_for('main.delete', id=item.id),
-                                  follow_redirects=True)
-        self.assertTrue('Your item has been deleted.' in response.data)
+      response = self.client.get(url_for('main.delete', id=item.id),
+                                follow_redirects=True)
+      self.assertTrue('Your item has been deleted.' in response.data)
 
 
 class SearchResultsTestCase(ClientTestCase):
   '''Testing: @main.route('/search_results/<query>')'''
 
-  def test_search_results(self):
-    '''verify that search results are shown as expected
+  def test_search_results_nologin(self):
+    '''verify that search results are shown ordered by time creation if
+    user is not logged in
     1. Create 3 items
     2. Make a search with a word in common from 2 of the 3 items
        (independent of uper/lower case)
@@ -355,7 +371,7 @@ class SearchResultsTestCase(ClientTestCase):
     '''
     u = self.create_user()
     item = self.create_item(u.id, 'tri suit', 'black and blue')
-    item1 = self.create_item(u.id, 'bycicle', 'tri scatante bike')
+    item1 = self.create_item(u.id, 'bicycle', 'tri scatante bike')
     item2 = self.create_item(u.id,'t-shirt','manchester club t-shirt')
     response = self.client.get(url_for('main.search_results',
                                       query='tri'))
@@ -365,6 +381,39 @@ class SearchResultsTestCase(ClientTestCase):
     items = soup.find_all("li", id=re.compile("^item-"))
     self.assertTrue(len(items) == 2)
     self.assertTrue("item-"+str(item1.id) in str(items[0]))
+
+
+  def test_search_results_user_login_with_coordinates(self):
+    '''verify that search results are shown ordered by user nearby
+    if the request is made with an authenticated user with location
+    1. Create 2 items with the word "bicycle" in common:
+       one form a Madrid user, other from Berlin
+    2. Make a search with the word "bicycle" with a user from Barcelona
+    3. Check the 2 items appears on the results in the correct order
+       (ordered by nearby: Madrid, Berlin, no location)
+    '''
+    user_madrid = self.create_user()
+    item_madrid = self.create_item(user_madrid.id, 'fast and furious',
+                                  'break records with this bicycle')
+    user_berlin = self.create_user_location()
+    item_berlin = self.create_item(user_berlin.id, 'triathlon bicycle',
+                                   'specially designed to win')
+    user_barcelona = self.create_user_location('2', 'bart@example.com',
+                      'bart', 'Barcelona', 'NU', 'ES', 41.387128, 2.16856499)
+
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = user_barcelona.id
+        sess['_fresh'] = True
+
+      response = self.client.get(url_for('main.search_results',
+                                        query='bicycle'))
+      soup = BeautifulSoup(response.get_data(as_text=True))
+      items = soup.find_all("li", id=re.compile("^item-"))
+      self.assertTrue(len(items) == 2)
+      self.assertTrue("item-"+str(item_madrid.id) in str(items[0]))
+      self.assertTrue("item-"+str(item_berlin.id) in str(items[1]))
+
 
   def test_search_sqlinjection(self):
     '''make sure the search is not vulnerable to an SQL injection'''
