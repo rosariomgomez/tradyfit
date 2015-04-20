@@ -78,7 +78,6 @@ class ClientTestCase(UnitTestCase):
 
   def setUp(self):
     super(ClientTestCase, self).setUp()
-    Category.insert_categories()
     self.client = self.app.test_client()
     #do not request urls from S3
     self.app.config["S3_LOCATION"] = ''
