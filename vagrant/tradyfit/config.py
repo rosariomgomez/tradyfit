@@ -7,6 +7,7 @@ class Config:
   SECRET_KEY = os.environ.get('SECRET_KEY') or 'our so secret password'
   SQLALCHEMY_COMMIT_ON_TEARDOWN = True
   TRADYFIT_ADMIN = os.environ.get('TRADYFIT_ADMIN')
+  RATELIMIT_STRATEGY = 'fixed-window-elastic-expiry'
 
   FACEBOOK = {
     'consumer_key': os.environ.get('FB_CKEY'),
