@@ -202,6 +202,23 @@ class Item(db.Model):
   def image(self):
     return get_image('S3_UPLOAD_ITEM_DIR', self.image_url)
 
+  @property
+  def serialize(self):
+    '''helper method to allow send items as JSON objects
+    in a serializable format'''
+    return {
+      'id': self.id,
+      'name': self.name,
+      'description': self.description,
+      'price': self.price,
+      'image_url': self.image_url,
+      'category': self.category.name,
+      'city': self.city,
+      'state': self.state if self.country == 'US' else '',
+      'country': self.country,
+      'timestamp': self.timestamp
+    }
+
 
 @event.listens_for(Item, 'before_delete')
 def receive_before_delete(mapper, connection, target):
