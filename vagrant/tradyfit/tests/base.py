@@ -58,8 +58,9 @@ class UnitTestCase(BasicTestCase):
     return u
 
 
-  def create_item(self, user_id, item_name='ball', item_desc='small and round'):
-    c = Category.get_category('soccer')
+  def create_item(self, user_id, item_name='ball', item_desc='small and round',
+                  category='soccer'):
+    c = Category.get_category(category)
     item = Item(name=item_name, description=item_desc, price=23,
                 category_id=c.id, image_url='ball.jpg', user_id=user_id)
     db.session.add(item)
