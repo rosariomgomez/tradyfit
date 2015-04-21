@@ -3,7 +3,7 @@ application, such as, why use one library against another or why implementing
 a feature in a certain way.
 
 
-#Search engine for items
+## Search engine for items
 
 I've implemented this full text indexing search via [SQLAlchemy-Searchable](https://sqlalchemy-searchable.readthedocs.org/en/latest/index.html) because it can be neatly integrated into Flask-SQLAlchemy using SearchQueryMixin class. It makes use of PostgreSQL built-in TSVectorType class to vectorize string columns and create the search vectors.
 
@@ -25,7 +25,7 @@ I did a first implementation using Whoosh via [Flask-WhooshAlchemy](https://pyth
 Problem: it stores the indices in files, so not compatible with Heroku deployment restrictions for accessing the filesystem.
 
 
-# Nearby searches
+## Nearby searches
 
 When a user is logged in and has latitude and longitude values, the search's results are ordered by nearby location. The execution of a raw SQL query will be very expensive in processing, that's why I used the PostGIS extension for PostgreSQL and I perform the queries via GeoAlchemy2 library.  
 
@@ -39,7 +39,7 @@ For more information about spatial queries, check the GeoAlchemy [documentaion](
 - Modified the automatic generated migration script from flask-migrate. Check the [migration applied]() for reference.
 - Needed to enable PostGIS on [.travis.yml](https://github.com/rosariomgomez/tradyfit/blob/master/.travis.yml#L18) file for running tests on Travis-CI.
 
-# External services
+## External services
 
 <h3>Facebook login</h3>
 The reason of implementing social login instead of a personal sign up system is to avoid storing sensible users’ information.
@@ -71,7 +71,7 @@ Amazon S3 is a popular and reliable storage option for storing files. I've used 
 <h3>GoogleV3 geocoder service</h3>
 When geolocation information cannot be extracted from user's IP. Read more in the next section.
 
-# Geolocation
+## Geolocation
 The geolocation data is stored in the User class and consist of: country, state, city, latitude and longitude.
 All this information is extracted from the user's IP, by looking into the [Free GeoLite2 City](http://dev.maxmind.com/geoip/geoip2/geolite2/) MaxMind DB (a binary file format that stores data indexed by IP address subnets).
 I use the [maxminddb python library](https://github.com/maxmind/MaxMind-DB-Reader-python) to interact with the MaxMind DB in my application.
