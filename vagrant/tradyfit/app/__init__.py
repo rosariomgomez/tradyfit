@@ -4,6 +4,7 @@ from flask_jsglue import JSGlue
 from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.moment import Moment
+from flask_limiter import Limiter
 from config import config
 import geonamescache
 from geopy.geocoders import GoogleV3
@@ -15,6 +16,7 @@ moment = Moment()
 gc = geonamescache.GeonamesCache()
 geolocator = GoogleV3()
 jsglue = JSGlue()
+limiter = Limiter()
 
 login_manager = LoginManager()
 login_manager.login_view = 'main.index'
@@ -29,6 +31,7 @@ def create_app(config_name):
   db.init_app(app)
   login_manager.init_app(app)
   jsglue.init_app(app)
+  limiter.init_app(app)
 
   from .main import main as main_blueprint
   app.register_blueprint(main_blueprint)

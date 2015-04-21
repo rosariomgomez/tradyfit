@@ -91,4 +91,7 @@ class ClientTestCase(UnitTestCase):
         sess['_fresh'] = True
       return c.get(url_for(url), follow_redirects=True)
 
-
+  def make_get_localhost_request(self, url, headers):
+    '''make a get request with localhost address to avoid API rate limit'''
+    return self.client.get(url, headers=headers,
+                            environ_base={'REMOTE_ADDR': '127.0.0.1'})
