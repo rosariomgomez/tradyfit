@@ -32,3 +32,9 @@ def get_items_search(query):
     return jsonify(items=[item.serialize for item in items])
   else:
     return bad_request('Not a valid search')
+
+
+@public_api.route('/items/<int:id>')
+def get_item(id):
+  item = Item.query.get_or_404(id)
+  return jsonify(item.serialize)

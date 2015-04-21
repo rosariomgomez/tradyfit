@@ -82,3 +82,26 @@ class APITestCase(ClientTestCase):
     self.assertTrue(json_response['items'][0]['name'] == item3.name)
 
 
+  def test_get_item_no_exist(self):
+    '''testing @public_api.route('/items/search/<search>')
+    Verify you get a 404 response if the item doesn't exist'''
+    response = self.client.get('public-api/v1.0/items/5', 
+                headers=self.get_api_headers())
+    self.assertTrue(response.status_code == 404)
+
+
+  def test_get_item_exist(self):
+    '''testing @public_api.route('/items/<int:id>')
+    1. Create an item.
+    2. Request item with id
+    3. Verify the item is returned'''
+
+    user = self.create_user_location()
+    item = self.create_item(user.id)
+    response = self.client.get('public-api/v1.0/items/{0}'.format(item.id), 
+                headers=self.get_api_headers())
+    self.assertTrue(response.status_code == 200)
+    json_response = json.loads(response.data.decode('utf-8'))
+    self.assertTrue(json_response['name'] == item.name)
+
+
