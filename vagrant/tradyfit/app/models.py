@@ -211,7 +211,7 @@ class Item(db.Model):
       'name': self.name,
       'description': self.description,
       'price': self.price,
-      'image_url': self.image_url,
+      'image_url': self.image(),
       'category': self.category.name,
       'city': self.city,
       'state': self.state if self.country == 'US' else '',
