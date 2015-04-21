@@ -22,7 +22,7 @@ class APITestCase(ClientTestCase):
     '''request items for a non existent category.
     Verify you get a 404
     '''
-    response = self.client.get('public-api/v1.0/items/notacategory', 
+    response = self.client.get('public-api/v1.0/items/category/notacategory', 
                 headers=self.get_api_headers())
     self.assertTrue(response.status_code == 404)
 
@@ -36,7 +36,7 @@ class APITestCase(ClientTestCase):
     user = self.create_user_location()
     item1 = self.create_item(user.id)
     item2 = self.create_item(user.id, 'bike', 'blue and red', 'cycling')
-    response = self.client.get('public-api/v1.0/items/cycling', 
+    response = self.client.get('public-api/v1.0/items/category/cycling', 
                 headers=self.get_api_headers())
     self.assertTrue(response.status_code == 200)
     json_response = json.loads(response.data.decode('utf-8'))
