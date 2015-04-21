@@ -7,7 +7,7 @@
 [![MIT Licensed](http://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/rosariomgomez/tradyfit/blob/master/LICENSE.txt)  
 
 ##TradyFit##
-> TradyFit is an application that allows users to sell their used sports' gear. Potential buyers can search products by key words. The results will be displayed by nearby location. It uses Python, Flask and PostgreSQL/PostGIS as framework.
+> TradyFit is an application that allows users to sell their sport gear. Potential buyers can search products by key words. The results will be displayed by nearby location. It uses Python, Flask and PostgreSQL/PostGIS as framework.
 
 ###Documentation###
-For detailed explanation on the architecture, testing strategy and how to run the code refer to the [documentation](http://tradyfit.readthedocs.org/en/latest/)
+For detailed explanation on the architecture, testing strategy, requirements and how to run the code refer to the [documentation](http://tradyfit.readthedocs.org/en/latest/)
