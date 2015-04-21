@@ -39,4 +39,8 @@ def create_app(config_name):
   from .msg import msg as msg_blueprint
   app.register_blueprint(msg_blueprint)
 
+  from .public_api_1_0 import public_api as public_api_1_0_blueprint
+  app.register_blueprint(public_api_1_0_blueprint, 
+                        url_prefix='/public-api/v1.0')
+
   return app
