@@ -1,7 +1,6 @@
 import requests
 from uuid import uuid4
 import boto
-from boto.s3.key import Key
 from flask import current_app
 from werkzeug import secure_filename
 
