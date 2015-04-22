@@ -1,3 +1,5 @@
+# Database 
+
 Database model definition and a guide to check how to create a database, make a migration, ...
 
 ## Database model

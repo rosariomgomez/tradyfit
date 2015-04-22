@@ -1,3 +1,5 @@
+# Architecture design
+
 This section contains explanations of the decisions taken during building the
 application, such as, why use one library against another or why implementing
 a feature in a certain way.

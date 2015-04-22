@@ -1,6 +1,8 @@
+# Testing strategy
+
 This section contains all the information about the tools, packages and strategy followed for testing the application.
 
-# Behavior Driven Development
+## Behavior Driven Development
 The idea of following BDD is to focus the test suite on the behavior of the application as a whole.
 Writing first a test describing the feature's functionality before coding it, helps to understand on a higher level what are the expectations from a user point of view.
 
@@ -10,7 +12,7 @@ Writing first a test describing the feature's functionality before coding it, he
 - After writing the acceptance test, I write the integration/unit test to test the code at a granular level.  
 __Note:__ In the future, I'm planning to include the [behave](https://pythonhosted.org/behave) testing framework to write the __feature behaviors__ making use of the Gherkin Syntax (Scenario: Given-When-Then), and finally link those behaviors a __steps file__ where the acceptance test is written.
 
-# Unit tests
+## Unit tests
 Test methods in isolation. Mock any external call to other methods.
 
 __Some notes on making mocks work:__  
@@ -37,10 +39,10 @@ Any new changes to my source code (every time I push code to Github) will trigge
 
 - [Builds history](https://drone.io/github.com/rosariomgomez/tradyfit)
 
-# Integration tests  
+## Integration tests  
 Test feature functionality without browser interaction.
 
-# Acceptance tests
+## Acceptance tests
 Test feature functionality with browser interaction by using Selenium Webdriver with unittest framework.  
 In order to not DRY, I created the following files:  
 - ```functional/helper.py``` contains the necessary code to connect with the RemoteWebdriver server and launch our application in a thread.  
@@ -53,7 +55,7 @@ __Some notes:__
 
 <h3>Running the tests in the cloud with Sauce Labs</h3>
 
-#Notes
+## Notes
 __Mocking:__  
 - In order to unit test form validation for file uploading, I had to mock a file, by using the specifications from the FileStorage class. That was the only way I was able to pass the FileRequired validation (``test_create_item_form``)  
 
