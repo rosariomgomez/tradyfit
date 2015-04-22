@@ -33,7 +33,7 @@ for item in resp['items']:
 404           | Not found   | The resource referenced in the URL was not found
 429           | Rate limit exceeded | The request exceeds the rate limit
 500           | Internal server error | An unexpected error has occurred
-
+  
 <h3>Errors</h3>
 If an error occur, the response will be a JSON object with the keys 'error' and can also include a 'message'. Example of a response with an invalid search:
 ```

@@ -93,8 +93,10 @@ def index():
 ```
 
 See the returned value of a malicious request:
-```~$ curl -H "X-Forwarded-For: <script>alert(1)</script>" http://0.0.0.0:5000```
-``Your IP is <script>alert(1)</script>``
+```
+~$ curl -H "X-Forwarded-For: <script>alert(1)</script>" http://0.0.0.0:5000
+Your IP is <script>alert(1)</script>
+```
 
 In order to avoid IP Spoofing, I first check whether or not this string represents a valid IP address (IPv4 or IPv6) by using the ``ipaddr`` library (which is also used by the maxminddb library, so we have it already installed):
 ```
