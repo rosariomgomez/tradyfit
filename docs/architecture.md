@@ -44,16 +44,14 @@ For more information about spatial queries, check the GeoAlchemy [documentaion](
 ## External services
 
 <h3>Facebook login</h3>
-The reason of implementing social login instead of a personal sign up system is to avoid storing sensible users’ information.
+The reason of implementing a social login instead of a personal sign up system is to avoid storing sensible users’ information.
 
-In order to interact with the 3rd party log in services, I’ve used flask-oauthlib that implements Oauth.
+In order to interact with the 3rd party log in services, I’ve used [flask-oauthlib](https://flask-oauthlib.readthedocs.org/en/latest/) that implements Oauth.
 
-- Documentation: https://flask-oauthlib.readthedocs.org/en/latest/
-- Github: https://github.com/lepture/flask-oauthlib
 - The view code was created following the flask-oauthlib [example provided on github](https://github.com/lepture/flask-oauthlib/blob/master/example/facebook.py)
 
 I’ve created the __auth blueprint__ to include all the code related with the authentication process.
-The config.py file contains the necessary set up for the service. The passwords and API keys are set up as environment variables.
+The [config.py](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/config.py#L12) file contains the necessary set up for the service. The passwords and API keys are set up as environment variables.
 
 __User model:__
 
