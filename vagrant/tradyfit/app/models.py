@@ -132,7 +132,7 @@ class User(UserMixin, db.Model):
 
 
 @event.listens_for(User, 'before_delete')
-def receive_before_delete(mapper, connection, target):
+def remove_avatar_before_delete(mapper, connection, target): # pylint: disable=W0613
   '''before delete user, delete the avatar from S3'''
   if not current_app.testing and not delete_avatar(target.avatar_url):
     raise Exception('Avatar not deleted')
@@ -221,7 +221,7 @@ class Item(db.Model):
 
 
 @event.listens_for(Item, 'before_delete')
-def receive_before_delete(mapper, connection, target):
+def remove_image_before_delete(mapper, connection, target): # pylint: disable=W0613
   '''before delete item, delete the image from S3'''
   if not current_app.testing and not delete_item_image(target.image_url):
     raise Exception('Image not deleted')
@@ -252,7 +252,7 @@ class Message(db.Model):
     }
 
 
-class Country():
+class Country(object):
 
   @staticmethod
   def get_countries():
@@ -275,7 +275,7 @@ class Country():
     return Country.get_countries()[code]['name']
 
 
-class State():
+class State(object):
 
   @staticmethod
   def get_us_states_by_names():
