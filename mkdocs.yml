@@ -1,4 +1,5 @@
 site_name: TradyFit
+repo_url: https://github.com/rosariomgomez/tradyfit
 pages:
 - [index.md, Home]
 - [architecture.md, Architecture design]
