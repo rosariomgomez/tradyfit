@@ -3,7 +3,7 @@ import os
 import maxminddb
 from flask import current_app
 from . import geolocator
-from ipaddr import IPAddress, IPv4Address, IPv6Address
+from ipaddr import IPAddress
 
 path = os.path.dirname(os.path.abspath(__file__))
 db_file = os.path.join(path,'../geoip/GeoLite2-City.mmdb')
@@ -20,7 +20,7 @@ class Geolocation(object):
   def validate_ip(string_ip):
     '''verify that the IP is a valid IPv4 or IPv6 address'''
     try:
-      ip = IPAddress(string_ip)
+      IPAddress(string_ip)
       return True
     except ValueError:
       return False
