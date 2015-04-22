@@ -37,14 +37,16 @@ mock_save_avatar.assert_called_with('http://test-image.png')
   
 
 ## Integration tests  
-Test feature functionality without browser interaction.
+Test feature functionality without browser interaction.  
+
+Unit and integration test classes inherit from BasicTestCase, UnitTestCase or ClientTestCase defined on [base.py](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/tests/base.py)  
 
 ## Acceptance tests
 Test feature functionality with browser interaction by using Selenium Webdriver with unittest framework.  
 In order to not DRY, I created the following files:  
-- ```functional/helper.py``` contains the necessary code to connect with the RemoteWebdriver server and launch our application in a thread.  
-- ```functional/page.py``` defines page objects. A page object represents an area in the web application UI that the test is interacting with (home page, item page...).  
-- ```functional/locators.py``` define all the elements (and their locators) that the tests will be interacting with, so if we change the locator of an element, this is the only place where the change is needed.  
+- [helper.py](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/tests/functional/helper.py) contains the necessary code to connect with the RemoteWebdriver server and launch our application in a thread.  
+- [page.py](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/tests/functional/page.py) defines page objects. A page object represents an area in the web application UI that the test is interacting with (home page, item page...).  
+- [locators.py](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/tests/functional/locators.py) define all the elements (and their locators) that the tests will be interacting with, so if we change the locator of an element, this is the only place where the change is needed.  
 
 __Some notes:__  
   - Try to use id (#) and class (.) attributes for locators whenever is possible  
@@ -80,7 +82,7 @@ After the tests have finished on TravisCI, a code report is sent to coveralls. I
 ## Improving code quality
 
 <h3>Code climate and Landscape</h3>
-They provide a suite of static analysis tools that rate code complexity, look for code duplication, style and clarity.  
+They provide a suite of static analysis tools that inspect the code complexity, look for code duplication, security issues, style and clarity.    
 I use both tools because although there is some overlapping on the information they provide, there are some problems that appear only in one or the other.  
 
 - [Code climate dashboard](https://codeclimate.com/github/rosariomgomez/tradyfit)
