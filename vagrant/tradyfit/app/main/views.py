@@ -110,14 +110,14 @@ def create():
 
 
 @main.route('/item/<int:id>')
-def item(id):
+def item(id): # pylint: disable=W0622
   item = Item.query.get_or_404(id)
   return render_template('item.html', item=item)
 
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
 @login_required
-def edit(id):
+def edit(id): # pylint: disable=W0622
   item = Item.query.get_or_404(id)
   if current_user != item.user:
     return redirect(url_for('main.index'))
@@ -157,7 +157,7 @@ def edit(id):
 
 @main.route('/delete/<int:id>')
 @login_required
-def delete(id):
+def delete(id): # pylint: disable=W0622
   item = Item.query.get_or_404(id)
   if current_user != item.user:
     return redirect(url_for('main.index'))
