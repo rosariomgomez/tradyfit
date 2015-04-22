@@ -4,7 +4,7 @@ from wtforms import StringField, SelectField, SubmitField, \
 TextAreaField, DecimalField, ValidationError
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import Required, Length, NumberRange, Regexp
-from ..models import Category, Item, User, Country, State
+from ..models import Category, User, Country, State
 # pylint: disable=E1002
 
 class UserForm(Form):
