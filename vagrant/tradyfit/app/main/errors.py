@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from flask import render_template, request, jsonify
 from . import main
-
+# pylint: disable=W0613
 
 @main.app_errorhandler(413)
 def request_entity_too_large(e):
