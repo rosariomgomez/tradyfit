@@ -8,9 +8,8 @@ Writing first a test describing the feature's functionality before coding it, he
 
 ![BDD cycle](img/bdd_cycle.jpg)
 
-- I chose to write the acceptance tests at a browser level. For doing this I created a testing framework by using the [Selenium WebDriver API](http://selenium.googlecode.com/git/docs/api/py/api.html) in conjunction with the unittest library.
-- After writing the acceptance test, I write the integration/unit test to test the code at a granular level.  
-__Note:__ In the future, I'm planning to include the [behave](https://pythonhosted.org/behave) testing framework to write the __feature behaviors__ making use of the Gherkin Syntax (Scenario: Given-When-Then), and finally link those behaviors a __steps file__ where the acceptance test is written.
+- I write the acceptance test as an integration test. After writing it, I write several unit tests that exercise the code at a granular level.
+- Finally, with all the design in place, I write functional tests at a browser level. For doing this I created a testing framework by using the [Selenium WebDriver API](http://selenium.googlecode.com/git/docs/api/py/api.html) in conjunction with the unittest library.
 
 ## Unit tests
 Test methods in isolation. Mock any external call to other methods.
@@ -34,11 +33,6 @@ __Some notes on making mocks work:__
 - More info in the [patch documentation](http://mock.readthedocs.org/en/latest/patch.html#where-to-patch).  
 
 
-<h3> Continuous integration with drone.io</h3>
-Any new changes to my source code (every time I push code to Github) will trigger a build. It creates a new virtual machine with the set up specified: environment variables, databases and the build commands, and then it runs the tests (unit and integration).
-
-- [Builds history](https://drone.io/github.com/rosariomgomez/tradyfit)
-
 ## Integration tests  
 Test feature functionality without browser interaction.
 
@@ -60,10 +54,32 @@ __Mocking:__
 - In order to unit test form validation for file uploading, I had to mock a file, by using the specifications from the FileStorage class. That was the only way I was able to pass the FileRequired validation (``test_create_item_form``)  
 
 __Remove connection on tearDown:__  
-
 If the connection is not removed, it stays idle. After running several tests (the error occurs to me when adding the 117 test case), sqlalchemy is using all the connections and an Operational error occur.  
 I solved it by adding: ``db.get_engine(self.app).dispose()``  
 Found solution [here](http://stackoverflow.com/questions/18291180/flask-unittest-and-sqlalchemy-using-all-connections)  
 I confirmed it by checking the process running during test execution, and found several open connections in idle status:  
-``ps aux | grep tradyfit_test``  
-``postgres 31101  [..]  postgres: vagrant tradyfit_test [local] idle``
+```
+ps aux | grep tradyfit_test  
+postgres 31101  [..]  postgres: vagrant tradyfit_test [local] idle
+```
+
+## External services
+
+<h3>Continuous integration</h3>
+
+<h4>Travis-CI</h4>
+Any new changes on the source code (every time I push code to Github) will trigger a build. It creates a new virtual machine with the set up specified on the [.travis.yml](https://github.com/rosariomgomez/tradyfit/blob/master/.travis.yml) file: database, dependences and the build commands; and then, it runs the tests (unit and integration).
+
+- [Builds history](https://travis-ci.org/rosariomgomez/tradyfit/builds)
+
+<h4>Coveralls</h4>
+After the tests have finished on TravisCI, a code report is sent to coveralls. It provides a [dashboard](https://coveralls.io/r/rosariomgomez/tradyfit), where you can see the total coverage per build, see how it changes over time, and also you can browse each file to inspect what lines have been covered or are missing.
+
+<h3>Improving code quality</h3>
+
+<h4>Code climate and Landscape</h4>
+They provide a suite of static analysis tools that rate code complexity, look for code duplication, style and clarity.  
+I use both tools because although there is some overlapping on the information they provide, there are some problems that appear only in one or the other.  
+
+- [Code climate dashboard](https://codeclimate.com/github/rosariomgomez/tradyfit)
+- [Landscape dashboard](https://landscape.io/github/rosariomgomez/tradyfit) 
