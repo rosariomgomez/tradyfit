@@ -19,19 +19,22 @@ __Some notes on making mocks work:__
 
 - When the import is common:  
 
-    In the ``facebook_authorized()`` method from the view ``app/auth/views.py``, there's a call to the method ``helpers.save_avatar()``. The import is made by calling ``from app.main import helpers``.  
-    Then, in the test function ``test_login_user_fb_auth(self)`` inside the file ``tests/unit/auth/test_auth_views.py``, the import is made in the same way and we can patch the save_avatar method by doing: ``with patch.object(helpers, 'save_avatar', mock_save_avatar)``  
+    In the [facebook_authorized()](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/app/auth/views.py#L59) method, there's a call to the method helpers.save_avatar(). The import is made by calling ``from app.main import helpers``.  
+    Then, in the test function [test_login_user_fb_auth(self)](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/tests/unit/auth/test_auth_views.py#L69), the import is made in the same way and we can patch the save_avatar method by doing: ``with patch.object(helpers, 'save_avatar', mock_save_avatar)``  
 
   
 - When there is already a reference to the method we want to patch:  
 
-    In the ``create()`` method from the view ``app/main/views.py``, there's a call to the method ``save_item_image()``. The import is made by calling ``from .helpers import save_item_image``.  
+    In the [create()](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/app/main/views.py#L81), there's a call to the method save_item_image(). The import is made by calling ``from .helpers import save_item_image``.  
     Then, in the test function we need to make the import of the view where we have the method we want to test and patch the call to save_item_image by writing ``@patch('app.main.views.save_item_image'):``  
 
-- To ensure a mock is being called, you can make use of the built in instance method from the Mock class ``assert_called_with()``. Example: ``mock_save_avatar.assert_called_with('http://test-image.png')``  
-  
+- To ensure a mock is being called, you can make use of the built in instance method from the Mock class ``assert_called_with()``. Example: 
+```
+mock_save_avatar.assert_called_with('http://test-image.png')
+```
+    
 - More info in the [patch documentation](http://mock.readthedocs.org/en/latest/patch.html#where-to-patch).  
-
+  
 
 ## Integration tests  
 Test feature functionality without browser interaction.
@@ -62,22 +65,21 @@ I confirmed it by checking the process running during test execution, and found 
 ps aux | grep tradyfit_test  
 postgres 31101  [..]  postgres: vagrant tradyfit_test [local] idle
 ```
+  
 
-## External services
+## Continuous integration
 
-<h3>Continuous integration</h3>
-
-<h4>Travis-CI</h4>
+<h3>Travis-CI</h3>
 Any new changes on the source code (every time I push code to Github) will trigger a build. It creates a new virtual machine with the set up specified on the [.travis.yml](https://github.com/rosariomgomez/tradyfit/blob/master/.travis.yml) file: database, dependences and the build commands; and then, it runs the tests (unit and integration).
 
 - [Builds history](https://travis-ci.org/rosariomgomez/tradyfit/builds)
 
-<h4>Coveralls</h4>
+<h3>Coveralls</h3>
 After the tests have finished on TravisCI, a code report is sent to coveralls. It provides a [dashboard](https://coveralls.io/r/rosariomgomez/tradyfit), where you can see the total coverage per build, see how it changes over time, and also you can browse each file to inspect what lines have been covered or are missing.
 
-<h3>Improving code quality</h3>
+## Improving code quality
 
-<h4>Code climate and Landscape</h4>
+<h3>Code climate and Landscape</h3>
 They provide a suite of static analysis tools that rate code complexity, look for code duplication, style and clarity.  
 I use both tools because although there is some overlapping on the information they provide, there are some problems that appear only in one or the other.  
 
