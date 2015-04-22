@@ -9,7 +9,7 @@ from ..models import Item, Message
 
 @msg.route('/msg/create/<int:id>', methods=['GET', 'POST'])
 @login_required
-def create(id):
+def create(id): # pylint: disable=W0622
   item = Item.query.get_or_404(id)
   form = MessageForm()
 
@@ -26,7 +26,6 @@ def create(id):
 @msg.route('/notifications', methods=['GET', 'POST'])
 @login_required
 def notifications():
-
   if request.method == 'POST':
     if request.form.get('type') == 'unread':
       msgs = current_user.msgs_unread
@@ -43,7 +42,7 @@ def notifications():
 
 @msg.route('/msg/<int:id>', methods=['GET', 'POST'])
 @login_required
-def message(id):
+def message(id): # pylint: disable=W0622
   msg = Message.query.get_or_404(id)
   if not (current_user == msg.receiver or current_user == msg.sender):
     return redirect(url_for('main.index'))
