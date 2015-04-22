@@ -16,6 +16,7 @@ class Config:
     'base_url': 'https://graph.facebook.com',
     'request_token_url': None,
     'access_token_url': '/oauth/access_token',
+    'access_token_method': 'GET',
     'authorize_url': 'https://www.facebook.com/dialog/oauth'
   }
 
