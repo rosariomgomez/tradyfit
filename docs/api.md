@@ -55,13 +55,15 @@ curl --header "Accept: application/json" --verbose http://tradyfit.com/public-ap
 ```
 
 ## Rate limiting
-I've implemented a rate limit feature in order to help been flooded with requests, as the designed API is public and doesn't need user authentication.  
+I've implemented a rate limit feature in order to try to avoid been flooded with requests, as the designed API is public and doesn't need user authentication.  
 
 I've used the [Flask-Limiter library](http://flask-limiter.readthedocs.org/en/stable/) with a _Fixed Window with Elastic Expiry_ rate limiting strategy, allowing 10 requests per resource per minute or 2 requests per resource per second: 
 ```
 @limiter.limit("10/minute;2/second")
 ```
-With this tecnique, for example, if the minute rate limit is breached the attacker will be locked out of the resource for an extra 60 seconds after the last hit.  
+With this technique, for example, if the minute rate limit is breached the attacker will be locked out of the resource for an extra 60 seconds after the last hit.  
+
+The rate limit is specified by IP address. In the method [get_ipaddr()](https://github.com/alisaifee/flask-limiter/blob/master/flask_limiter/util.py#L8) Flask-limiter uses the value of request.access_route[0] or request.remote_addr to retrieve the IP.
 
 ## Notes
 - [404](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/app/main/errors.py#L13) and [500](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/app/main/errors.py#L23) error handlers were adapted to serve their responses (HTML or JSON) based on the format requested by the client (content negotiation technique).
