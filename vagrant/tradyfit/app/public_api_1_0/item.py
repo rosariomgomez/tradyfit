@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 import re
-from flask import jsonify, request, url_for
+from flask import jsonify, request
 from ..models import Category, Item
 from . import public_api
 from .errors import bad_request
@@ -46,6 +46,6 @@ def get_items_search(query):
 
 @public_api.route('/items/<int:id>')
 @limiter.limit("10/minute;2/second")
-def get_item(id):
+def get_item(id): # pylint: disable=W0622
   item = Item.query.get_or_404(id)
   return jsonify(item.serialize)
