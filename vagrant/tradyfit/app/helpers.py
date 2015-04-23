@@ -53,20 +53,33 @@ def delete_s3(s3_directory, filename):
     return False
 
 
-def delete_avatar(filename):
-  '''delete user avatar from S3 if it is not the DEFAULT_AVATAR image'''
-  if filename != current_app.config["DEFAULT_AVATAR"]:
-    return delete_s3(current_app.config["S3_UPLOAD_AVATAR_DIR"], filename)
+def delete_filename(filename, default_filename, s3_directory):
+  '''call to delete_s3 method to delete filename from s3_directory
+  if it is not the default_filename
+  Output: Return True if it was deleted or was the default_filename
+  '''
+  if filename != default_filename:
+    return delete_s3(s3_directory, filename)
   else:
     return True
+
+
+def delete_avatar(filename):
+  '''delete user avatar from S3
+  Output: Return True if it was successfully deleted (or default file),
+  False otherwise
+  '''
+  return delete_filename(filename, current_app.config["DEFAULT_AVATAR"],
+                        current_app.config["S3_UPLOAD_AVATAR_DIR"])
 
 
 def delete_item_image(filename):
-  '''delete item image from S3 if it is not the DEFAULT_ITEM image'''
-  if filename != current_app.config["DEFAULT_ITEM"]:
-    return delete_s3(current_app.config["S3_UPLOAD_ITEM_DIR"], filename)
-  else:
-    return True
+  '''delete item image from S3
+  Output: Return True if it was successfully deleted (or default file),
+  False otherwise
+  '''
+  return delete_filename(filename, current_app.config["DEFAULT_ITEM"],
+                        current_app.config["S3_UPLOAD_ITEM_DIR"])
 
 
 def save_avatar(avatar):
