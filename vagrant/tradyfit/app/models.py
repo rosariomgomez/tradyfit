@@ -65,20 +65,20 @@ class User(UserMixin, db.Model):
       user_geo = Geolocation(ip)
       if user_geo.location:
         r, country = user_geo.get_country()
-        if not (r and country): #do not continue if the country is not present
+        if not r: #do not continue if the country is not present
           return
         self.country = country
         r, state = user_geo.get_state()
-        if r and state:
+        if r:
           self.state = state
         r, city = user_geo.get_city()
-        if r and city:
+        if r:
           self.city = city
         r, latitude = user_geo.get_latitude()
-        if r and latitude:
+        if r:
           self.latitude = latitude
         r, longitude = user_geo.get_longitude()
-        if r and longitude:
+        if r:
           self.longitude = longitude
 
         db.session.add(self)
