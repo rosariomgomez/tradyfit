@@ -135,7 +135,7 @@ class User(UserMixin, db.Model):
 def remove_avatar_before_delete(mapper, connection, target): # pylint: disable=W0613
   '''before delete user, delete the avatar from S3'''
   if not current_app.testing and not delete_avatar(target.avatar_url):
-    raise Exception('Avatar not deleted')
+    raise ValueError('Avatar not deleted')
 
 
 @login_manager.user_loader
@@ -224,7 +224,7 @@ class Item(db.Model):
 def remove_image_before_delete(mapper, connection, target): # pylint: disable=W0613
   '''before delete item, delete the image from S3'''
   if not current_app.testing and not delete_item_image(target.image_url):
-    raise Exception('Image not deleted')
+    raise ValueError('Image not deleted')
 
 
 class Message(db.Model):
