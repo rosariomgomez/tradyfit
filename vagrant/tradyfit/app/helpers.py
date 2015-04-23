@@ -22,7 +22,7 @@ def get_s3_bucket():
         current_app.config["S3_SECRET"])
     return conn.get_bucket(current_app.config["S3_BUCKET"])
   except:
-    raise Exception('connection refused')
+    raise ReferenceError('connection refused')
 
 
 def upload_s3(s3_directory, filename, data):
