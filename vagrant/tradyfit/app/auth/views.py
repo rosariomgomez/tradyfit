@@ -21,8 +21,7 @@ def before_request():
     else:
       session['last_seen'] = datetime.utcnow()
       current_user.ping()
-      #extract geolocation info from the user ip
-      ip = get_ip()
+      ip = get_ip() #extract geolocation info from the user ip
       current_user.location(ip)
 
 
