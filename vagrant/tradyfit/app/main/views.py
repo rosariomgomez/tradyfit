@@ -70,7 +70,7 @@ def delete_account():
     try:
       db.session.delete(current_user)
       flash('We are sorry to see you go...')
-    except:
+    except ValueError:
       flash('Sorry, there was a problem deleting your account. Try again later')
     return redirect(url_for('main.index'))
   return render_template('delete_account.html', form=form)
@@ -164,7 +164,7 @@ def delete(id): # pylint: disable=W0622
   try:
     db.session.delete(item)
     flash('Your item has been deleted.')
-  except:
+  except ValueError:
     flash('Sorry, there was a problem deleting your item. Try again later.')
     return redirect(url_for('main.item', id=item.id))
   return redirect(url_for('main.index'))
