@@ -114,9 +114,11 @@ def logout():
 def get_ip():
   '''Return user IP: If a forwarded header exists the access_route
   contains a list of all ip addresses from the client ip to the last
-  proxy server (need to be created where a request context exist)'''
+  proxy server (this method must be created where a request context exist)'''
   try:
-    ip = request.access_route[0]
-    return ip
-  except:
+    ip_list = request.access_route
+    if type(ip_list) == list:
+      return ip_list[0]
+    return None
+  except ValueError:
     return None
