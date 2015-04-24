@@ -39,6 +39,18 @@ class GeolocationTestCase(UnitTestCase):
     r, city = geo_obj.get_city()
     self.assertTrue(r is False and city == None)
 
+  def test_get_city_empty_value(self):
+    geo_obj = Geolocation(VALID_IPv4_US)
+    geo_obj.location['city'] = {'names': {'en': ''} }
+    r, city = geo_obj.get_city()
+    self.assertTrue(r is False and city == None)
+
+  def test_get_location_value_empty_value(self):
+    geo_obj = Geolocation(VALID_IPv4_US)
+    geo_obj.location['foo'] = {'bar': ''}
+    r, value = geo_obj.get_location_value('foo', 'bar')
+    self.assertTrue(r is False and value == None)
+
   def test_get_valid_country(self):
     geo_obj = Geolocation(VALID_IPv4_ES)
     r, country = geo_obj.get_country()
