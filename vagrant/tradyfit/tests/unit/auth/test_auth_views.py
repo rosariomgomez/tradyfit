@@ -103,7 +103,7 @@ class FBLoginTestCase(ClientTestCase):
         sess['user_id'] = u.id
         sess['_fresh'] = True
       response = c.get(url_for('auth.fb_login'),follow_redirects=True)
-      self.assertTrue('Welcome to TradyFit' in response.get_data(as_text=True))
+      self.assertTrue('id="search-form"' in response.get_data(as_text=True))
 
   def test_user_denied_login(self):
     '''user denied login with FB'''
