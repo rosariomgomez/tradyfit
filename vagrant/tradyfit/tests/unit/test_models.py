@@ -87,6 +87,16 @@ class UserModelTestCase(UnitTestCase):
     u.location('10.0.0.2')
     self.assertTrue(u.latitude == 123)
 
+  @patch('app.geolocation.Geolocation', return_value={'key': 'value'})
+  @patch('app.geolocation.Geolocation.get_country', return_value=(False, None))
+  def test_location_user_no_city_no_geo_country(self, m_geo, m_country):
+    '''verify location method finishes if no country returned
+    from geolocation'''
+    u = self.create_user()
+    latitude = u.latitude
+    u.city = ''
+    u.location('10.0.0.2')
+    self.assertTrue(u.latitude == u.latitude) #no changes on user
 
   @patch('app.geolocation.Geolocation.get_geolocation', return_value=(12,34))
   def test_modify_geolocation(self, mock_geo_coord):
