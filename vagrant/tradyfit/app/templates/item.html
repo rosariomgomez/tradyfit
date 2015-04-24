@@ -4,13 +4,48 @@
 
 {% block page_content %}
 <div class="page-header">
-    <h1>Item</h1>
+    <h1>{{ item.name.capitalize() }}</h1>
 </div>
-<div class="col-md-4" id="item-{{item.id}}">
-	{% include "_item.html" %}
-  <br>
-  {% if current_user.is_authenticated() and current_user.id != item.user_id %}
-    <a href="{{ url_for('msg.create', id=item.id) }}">Contact</a>
-  {% endif %}
+<div class="row item-view">
+  <div class="col-md-6" id="item-{{item.id}}">
+    <div id="item-location">
+      <p><i class="fa fa-map-marker"></i> {{ item.address }}</p>
+    </div>
+	  <div id="item-description">
+      <p>{{ item.description|default('No description provided', true) }}</p>
+    </div>
+    <div id="item-price">
+      <h5><b>Price:</b> {{ item.price }}$
+      <span class="pull-right">
+      <i class="fa fa-tags"></i> {{ item.category.name.capitalize() }}</h5>
+      </span>
+    </div>
+    <hr>
+    <div class="row">
+      <div class="col-md-2" id="owner-avatar">
+        <img class="img-circle" src="{{ item.user.avatar() }}" height="50"
+        width="50">
+      </div>
+      <div class="col-md-5" id="owner-info">
+        {% if item.modified %}
+          <h5>Modified {{ moment(item.modified).fromNow(refresh=True) }}
+        {% else %}
+          <h5>Created {{ moment(item.timestamp).fromNow(refresh=True) }}
+        {% endif %}
+          by {{ item.user.username }}</h5>
+      </div>
+    </div>
+    <hr>
+    {% if current_user.is_authenticated() and current_user.id != item.user_id %}
+      <p><a href="{{ url_for('msg.create', id=item.id) }}" class="btn btn-primary">Contact seller</a></p>
+    {% endif %}
+    {% if current_user.is_authenticated() and current_user.id == item.user_id %}
+      <p><a href="{{ url_for('main.edit', id=item.id) }}">Edit</a> |
+      <a href="{{ url_for('main.delete', id=item.id) }}">Delete</a></p>
+    {% endif %}
+  </div>
+  <div class="col-md-5 pull-right" id="item-image">
+    <img class="img-thumbnail" src="{{ item.image() }}">
+  </div>
 </div>
 {% endblock %}
