@@ -1,13 +1,13 @@
 {% extends "base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block title %}TradyFit - Edit an item{% endblock %}
+{% block title %}TradyFit - Edit item{% endblock %}
 
 {% block page_content %}
 <div class="page-header">
     <h1>Edit your item</h1>
 </div>
-<div class="col-md-4" id="edit-item-{{ id }}">
+<div class="col-md-6 col-lg-5" id="edit-item-{{ id }}">
 	{% include "_item_form.html" %}
 </div>
 <div class="col-md-4" id="item-image-{{ id }}">
