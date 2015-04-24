@@ -73,7 +73,7 @@ class ItemForm(Form):
 class SearchForm(Form):
   search = StringField('What are you looking for?',
                         validators=[ Required(), Length(3, 80),
-                                Regexp('^[A-Za-z][.\- \w]+$', 0,
+                                Regexp('^[A-Za-z0-9][.\- \w]+$', 0,
                                 'Search must have only letters,'
                                 ' numbers, dots, dashes or underscores')])
   submit = SubmitField('Search')
