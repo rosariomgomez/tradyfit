@@ -219,6 +219,13 @@ class Item(db.Model):
       'timestamp': self.timestamp
     }
 
+  @property
+  def address(self):
+    if self.country == 'US' and self.state != 'NU': #'NU'== 'Not US'
+      return ', '.join([self.city, self.state, self.country])
+    else:
+      return ', '.join([self.city, self.country])
+
 
 @event.listens_for(Item, 'before_delete')
 def remove_image_before_delete(mapper, connection, target): # pylint: disable=W0613
