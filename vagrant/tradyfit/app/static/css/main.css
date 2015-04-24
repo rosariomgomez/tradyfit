@@ -248,6 +248,7 @@ hr {
   padding-top: 10px;
   padding-bottom: 25px;
   text-align: center;
+  min-height: 150px;
 }
 
 #wh h4 {
@@ -258,6 +259,10 @@ hr {
   border-right: 1px solid #cccccc;
 }
 
+#wh .error-msg {
+  color: #f85c37;
+  font-weight: 100;
+}
 
 /* Light Grey Wrap */
 #lg {
