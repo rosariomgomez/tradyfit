@@ -1,31 +1,106 @@
-{% extends "base.html" %}
+{% extends "bootstrap/base.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 
-{% block page_content %}
-<div class="page-header">
-    <h1>Welcome to TradyFit</h1>
-</div>
-<div class="row">
-  <div class="col-md-4" id="search-form">
-      {{ wtf.quick_form(form) }}<br>
+{% block title %}TradyFit{% endblock %}
+
+{% block head %}
+{{ super() }}
+<link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
+{% endblock %}
+
+{% block navbar %}
+  {% include '_navbar.html' %}
+{% endblock %}
+
+{% block content %}
+
+<div id="headerwrap" class='bckgimage'>
+  <div class="row centered">
+    <h1><b>Train. Sweat. Repeat.<b></h1>
+    <h2>Enjoy your favorite sport on a budget</h2>
+  </div><!-- row -->
+</div><!-- headerwrap -->
+
+<div id="wh">
+  <div class="container">
+    <div class="row centered">
+      <div class="col-md-6 col-md-offset-3">
+        <h1>What are you looking for?</h1>
+        <form action="{{url_for('main.index')}}" class="form-inline"
+        method="POST" id="search-form">
+          {{ form.hidden_tag() }}
+          <div class="form-group">
+            <input id="search" name="search" class="form-control"
+            placeholder="triathlon bike, surf table, ..." type="text" size="35">
+          </div>
+          <button type="submit" class="btn btn-primary">Search</button>
+        </form>
+      </div>
+    </div>
   </div>
 </div>
-<div class="row">
-  <div class="col-md-6">
-    <ul class="items">
+
+<div id="lg">
+  <div class="container">
+    <div class="row alert-section">
+      <div class="col-md-2"></div>
+      <div class="col-md-8">
+        {% for message in get_flashed_messages() %}
+          <div class="alert alert-warning">
+            <button type="button" class="close" data-dismiss="alert">&times;</button>
+            {{ message }}
+          </div>
+        {% endfor %}
+      </div>
+      <div class="col-md-2"></div>
+    </div>
+
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Last added items</h2>
+      </div>
+    </div>
+    <div class="row" id="items">
       {% for item in items %}
-      <li class="item" id="item-{{ item.id }}">
-      {% include "_item.html" %}
-      </li>
-      <br>
+        {% include "_item_box.html" %}
       {% endfor %}
-    </ul>
+    </div>
+    <div class="row">
+      <div class="col-md-6">
+        <h2>Browse by Top Categories</h2>
+      </div>
+    </div>
+    <div class="row top-categories">
+      <div class="hidden-xs col-md-12 col-lg-8">
+        <img src="{{ url_for('static', filename='img/swim.jpg') }}">
+      </div>
+      <div class="col-lg-3 pull-left">
+        <img src="{{ url_for('static', filename='img/tri.jpg') }}">
+      </div>
+      <div class="col-lg-4">
+        <img src="{{ url_for('static', filename='img/soccer.jpg') }}">
+      </div>
+      <div class="col-lg-4 pull-left">
+        <img src="{{ url_for('static', filename='img/basketball.jpg') }}">
+      </div>
+      <div class="col-lg-4">
+        <img src="{{ url_for('static', filename='img/baseball.jpg') }}">
+      </div>
+    </div>
+    <br><br>
   </div>
 </div>
+
+<div id="footer">
+  {% include 'footer.html' %}
+</div>
+
 {% endblock %}
 
 {% block scripts %}
 {{ super() }}
+{{ moment.include_moment() }}
 <script type=text/javascript>
 $(function () {
   //remove #_=_ added from FB login redirect
