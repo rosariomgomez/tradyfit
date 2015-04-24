@@ -30,7 +30,7 @@ def index():
   if search_form.validate_on_submit():
     return redirect(url_for('main.search_results',
                             query=search_form.search.data))
-  items = Item.query.order_by(Item.timestamp.desc()).all()
+  items = Item.query.order_by(Item.timestamp.desc()).limit(4).all()
   return render_template('index.html', form=search_form, items=items)
 
 
