@@ -45,19 +45,19 @@ class DeleteUserForm(Form):
 
 
 class ItemForm(Form):
-  name = StringField('Name', validators =
+  name = StringField('Name (*)', validators =
                                 [ Required(), Length(3, 80),
                                   Regexp('^[A-Za-z0-9][.\- \w]+$', 0,
                                   'Product names must have only letters,'
                                   ' numbers, dots, dashes or underscores')])
   description = TextAreaField('Description', validators=[Length(0,500)])
-  price = DecimalField('Price', default=0, places=2,
+  price = DecimalField('Price (*)', default=0, places=2,
                         validators= [NumberRange(0, 10**10-1)])
-  category = SelectField('Category', coerce=int)
+  category = SelectField('Category (*)', coerce=int)
   image = FileField('Image (max. size: 3MB)', validators=[
                     FileAllowed(['jpg', 'jpeg', 'png', 'gif'],
                       'Only jpg, png and gif files allowed')])
-  submit = SubmitField('Submit')
+  submit = SubmitField('Create')
 
   def __init__(self, *args, **kwargs):
     super(ItemForm, self).__init__(*args, **kwargs)
