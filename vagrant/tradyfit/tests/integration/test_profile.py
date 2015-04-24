@@ -45,4 +45,4 @@ class DeleteUserIntegrationTestCase(ClientTestCase):
       resp = self.client.post(url_for('main.delete_account'),
                               follow_redirects=True)
     self.assertTrue('We are sorry to see you go...' in resp.data)
-    self.assertTrue('Welcome to TradyFit' in resp.data)
+    self.assertTrue('id="search-form"' in resp.data)
