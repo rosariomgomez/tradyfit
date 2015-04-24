@@ -1,0 +1,369 @@
+ /* FONTS */
+@import url(http://fonts.googleapis.com/css?family=Lato:300,400,700,900);
+@import url(http://fonts.googleapis.com/css?family=Raleway:400,300,700,900);
+
+/* OVERALL ASPECT */
+
+body {
+  background-color: #f7f7f7;
+  font-family: "Lato";
+  font-weight: 300;
+  font-size: 16px;
+  color: #555;
+
+  -webkit-font-smoothing: antialiased;
+  -webkit-overflow-scrolling: touch;
+
+  margin-top: 80px;
+}
+
+.alert-messages {
+  height: 50px;
+  margin-top: -20px;
+}
+
+.alert-messages .alert-warning {
+  padding: 3 3 3 20;
+}
+
+/* Titles */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Raleway";
+  font-weight: 300;
+  color: #333;
+}
+
+
+/* Paragraph & Typographic */
+p {
+  line-height: 28px;
+  margin-bottom: 25px;
+}
+
+.centered {
+  text-align: center;
+}
+
+/* Links */
+
+a {
+  color: #7b7b7b;
+  word-wrap: break-word;
+
+  -webkit-transition: color 0.1s ease-in, background 0.1s ease-in;
+  -moz-transition: color 0.1s ease-in, background 0.1s ease-in;
+  -ms-transition: color 0.1s ease-in, background 0.1s ease-in;
+  -o-transition: color 0.1s ease-in, background 0.1s ease-in;
+  transition: color 0.1s ease-in, background 0.1s ease-in;
+}
+
+a:hover,
+a:focus {
+  color: #f85c37;
+  text-decoration: none;
+  outline: 0;
+}
+
+a:before,
+a:after {
+  -webkit-transition: color 0.1s ease-in, background 0.1s ease-in;
+  -moz-transition: color 0.1s ease-in, background 0.1s ease-in;
+  -ms-transition: color 0.1s ease-in, background 0.1s ease-in;
+  -o-transition: color 0.1s ease-in, background 0.1s ease-in;
+  transition: color 0.1s ease-in, background 0.1s ease-in;
+}
+
+hr {
+  display: block;
+  height: 1px;
+  border: 0;
+  border-top: 1px solid #ccc;
+  margin: 1em 0;
+  padding: 0;
+}
+
+
+.navbar {
+  font-weight: 800;
+  font-size: 14px;
+  padding-top: 4px;
+  padding-bottom: 0px;
+}
+
+.navbar-inverse {
+  background: #fff;
+  border-color: #f85c37;
+  margin-bottom: 0px;
+}
+
+.navbar-inverse .navbar-nav > .active > a {
+  background: #f85c37
+}
+
+.navbar-inverse .navbar-brand:hover,
+.navbar-inverse .navbar-brand:focus
+{
+  color: #f85c37;
+}
+
+.navbar-inverse .navbar-nav>li>a:hover,
+.navbar-inverse .navbar-nav>li>a:focus {
+  color: #000;
+  background-color: transparent;
+}
+
+.navbar-inverse .navbar-brand {
+  color: #f85c37;
+  font-weight: bolder;
+  font-size: 22px;
+  letter-spacing: 1px;
+}
+
+.navbar-inverse .navbar-toggle {
+  background-color: #333;
+}
+
+.navbar-inverse .navbar-landing {
+  margin-bottom: 5px;
+}
+
+.navbar-inverse .navbar-weather {
+  margin-top: 10px;
+  margin-right: 10px;
+  color: #9d9d9d;
+}
+
+.navbar-inverse .navbar-nav>.open>a,
+.navbar-inverse .navbar-nav>.open>a:hover,
+.navbar-inverse .navbar-nav>.open>a:focus {
+  color: #000;
+  background-color: transparent;
+}
+
+.dropdown ul.dropdown-menu{
+  margin-top: 1px;
+}
+
+
+.dropdown ul.dropdown-menu:before {
+  content: "";
+  border-bottom: 10px solid #fff;
+  border-right: 10px solid transparent;
+  border-left: 10px solid transparent;
+  position: absolute;
+  top: -10px;
+  right: 6px;
+  z-index: 10;
+}
+.dropdown ul.dropdown-menu:after {
+  content: "";
+  border-bottom: 12px solid #ccc;
+  border-right: 12px solid transparent;
+  border-left: 12px solid transparent;
+  position: absolute;
+  top: -12px;
+  right: 4px;
+  z-index: 9;
+}
+
+.thumbnail {
+  position: relative;
+  padding: 0px;
+  margin-bottom: 15px;
+}
+
+.thumbnail h4 {
+  font-size: 25px;
+}
+
+.thumbnail h5 {
+  font-size: 14px;
+}
+
+.thumbnail p {
+  line-height: 28px;
+  margin-bottom: 5px;
+  font-size: 12px;
+}
+
+.thumbnail img {
+  width: 100%;
+}
+
+.thumbnail i {
+  color: #f85c37;
+  font-size: 15px;
+}
+
+
+/* ================================================================
+  Wrap Sections
+================================================================ */
+
+#headerwrap {
+  margin-top: -25px;
+  text-align:center;
+  background-attachment: relative;
+  background-position: center center;
+  max-height: 300px;
+  width: 100%;
+
+  -webkit-background-size: 100%;
+  -moz-background-size: 100%;
+  -o-background-size: 100%;
+  background-size: 100%;
+
+  -webkit-background-size: cover;
+  -moz-background-size: cover;
+  -o-background-size: cover;
+  background-size: cover;
+}
+
+.bckgimage {
+  background: url(../img/bg1.jpg) no-repeat center top;
+}
+
+#headerwrap h1 {
+  margin-top: 100px;
+  margin-left: 0px;
+  color: #f85c37;
+  font-size: 70px;
+  font-weight: 580;
+  letter-spacing: 3px;
+}
+
+
+#headerwrap h2 {
+  color: #fff;
+  margin-left: 0px;
+  font-size: 30px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+/* White Wrap */
+#wh {
+  background: #fff;
+  padding-top: 10px;
+  padding-bottom: 25px;
+  text-align: center;
+}
+
+#wh h4 {
+  font-weight: 700;
+}
+
+#wh .text{
+  border-right: 1px solid #cccccc;
+}
+
+
+/* Light Grey Wrap */
+#lg {
+  padding-top: 20px;
+}
+
+#lg h2 {
+  font-size: 25px;
+  line-height: 35px;
+  font-weight: 400;
+  margin-bottom: 20px;
+}
+
+#lg .alert-section {
+  min-height: 20px;
+  max-height: 40px;
+}
+
+.alert {
+  padding: 4px 35px 4px 14px;
+  font-size: 15px;
+}
+
+#lg .top-categories img {
+  margin-bottom: 10px;
+}
+
+/* Footer Wrap */
+#footer {
+  background: #000;
+  padding-top: 10px;
+  padding-bottom: 10px;
+}
+
+#footer a {
+  color: #7b7b7b;
+  font-weight: 800;
+  font-size: 14px;
+}
+
+#footer a:hover,
+a:focus {
+  color: #7b7b7b;
+  text-decoration: none;
+  outline: 0;
+}
+
+#footer i {
+  font-size: 30px;
+  color: #f85c37;
+}
+
+
+/* At 768px navbar menu expands */
+@media (max-width: 767px) {
+
+  .navbar-inverse .navbar-weather {
+    display: none;
+  }
+
+  .dropdown ul.dropdown-menu:before {
+    display: none;
+  }
+  .dropdown ul.dropdown-menu:after {
+    display: none;
+  }
+
+  #headerwrap h1 {
+    margin-top: 100px;
+  }
+
+  #headerwrap h2 {
+    font-size: 20px;
+    font-weight: 200;
+  }
+
+}
+
+/* Mobile devices */
+@media (max-width: 468px) {
+
+  .navbar-inverse .navbar-weather {
+    display: none;
+  }
+
+  .dropdown ul.dropdown-menu:before {
+    display: none;
+  }
+  .dropdown ul.dropdown-menu:after {
+    display: none;
+  }
+
+  #headerwrap h1 {
+    margin-top: 100px;
+    margin-left: 2px;
+    font-size: 50px;
+    font-weight: 300;
+  }
+
+  #headerwrap h2 {
+    font-size: 18px;
+    font-weight: 200;
+  }
+
+  #wh h1 {
+    font-size: 30px;
+  }
+
+}
