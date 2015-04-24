@@ -57,7 +57,7 @@ class ItemForm(Form):
   image = FileField('Image (max. size: 3MB)', validators=[
                     FileAllowed(['jpg', 'jpeg', 'png', 'gif'],
                       'Only jpg, png and gif files allowed')])
-  submit = SubmitField('Create')
+  submit = SubmitField('Submit')
 
   def __init__(self, *args, **kwargs):
     super(ItemForm, self).__init__(*args, **kwargs)
