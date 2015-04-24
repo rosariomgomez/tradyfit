@@ -19,7 +19,7 @@ class IndexViewTestCase(ClientTestCase):
     '''verify you are in the index page'''
     response = self.client.get(url_for('main.index'))
     r = response.get_data(as_text=True)
-    self.assertTrue('Welcome to TradyFit' in r)
+    self.assertTrue('id="search-form"' in r)
 
   def test_navbar_anonymous_user(self):
     '''verify if you are not logged in you cannot see the list an item
@@ -54,14 +54,14 @@ class IndexViewTestCase(ClientTestCase):
     index page
     1. Create two items
     2. Go to index page
-    3. Assert the second item created appears on top
+    3. Assert the second item created appears before
     '''
     u = self.create_user()
     item = self.create_item(u.id)
     item2 = self.create_item(u.id)
     response = self.client.get(url_for('main.index'))
     soup = BeautifulSoup(response.get_data(as_text=True))
-    items = soup.find_all("li", id=re.compile("^item-"))
+    items = soup.find_all("div", {"class": "thumbnail"})
     self.assertTrue("item-"+str(item2.id) in str(items[0]))
 
   def test_search_form(self):
@@ -69,20 +69,6 @@ class IndexViewTestCase(ClientTestCase):
     response = self.client.get(url_for('main.index'))
     self.assertTrue(b'id="search-form"' in response.data)
 
-  def test_edit_link(self):
-    '''verify an item can be edited from the index page by the owner
-    1. Create two items by two different users
-    2. Go to index page
-    3. Assert the edit link is present for the user's item
-    '''
-    u = self.create_user()
-    u1 = self.create_user('25', 'maggy@example.com', 'maggy')
-    item = self.create_item(u.id)
-    item2 = self.create_item(u1.id)
-    response = self.make_get_request(u, 'main.index')
-    r = response.get_data(as_text=True)
-    self.assertTrue('<a href="/edit/' + str(item.id) + '"' in r)
-    self.assertFalse('<a href="/edit/' + str(item2.id) + '"' in r)
 
 
 class ProfileViewTestCase(ClientTestCase):
