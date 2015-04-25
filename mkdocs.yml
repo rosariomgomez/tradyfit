@@ -2,10 +2,12 @@ site_name: TradyFit
 repo_url: https://github.com/rosariomgomez/tradyfit
 pages:
 - [index.md, 'Home']
+- [start.md, 'Getting started']
 - [architecture.md, 'Architecture design']
 - [api.md, 'REST API']
 - [database.md, 'Database']
 - [testing.md, 'Testing Strategy']
+- [design.md, 'Design']
 - [notes.md, 'Notes']
 - [about.md, 'About']
 theme: readthedocs
