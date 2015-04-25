@@ -31,14 +31,14 @@
           by <i>@{{ item.user.username }}</i>
         </small>
         <h4>{{ item.description|default('No description provided', true)|truncate(150, True) }}</h4>
-        <div class="col-md-3">
+        <div class="col-sm-3 col-md-3">
           <h5><b>Price: </b>{{ item.price }}$</h5>
         </div>
-        <div class="col-md-3">
+        <div class="col-sm-3 col-md-3">
           <h5>
           <i class="fa fa-tags"></i> {{ item.category.name.capitalize() }}</h5>
         </div>
-        <div class="col-md-4">
+        <div class="col-sm-5 col-md-4">
           <h5><i class="fa fa-map-marker"></i> {{ item.address }}</h5>
         </div>
       </div>
