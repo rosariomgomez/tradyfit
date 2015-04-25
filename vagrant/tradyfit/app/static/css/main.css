@@ -199,13 +199,77 @@ form textarea#description {
   font-size: 12px;
 }
 
+.thumbnail i {
+  color: #f85c37;
+  font-size: 15px;
+}
+
 .thumbnail img {
   width: 100%;
 }
 
-.thumbnail i {
-  color: #f85c37;
+.horizontal-box {
+  background: #fff;
+  box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.horizontal-box:hover {
+  box-shadow: 0px 1px 5px rgba(0, 0, 0, 0.5);
+  -webkit-transition: all 0.3s ease-in-out;
+  -moz-transition: all 0.3s ease-in-out;
+  -o-transition: all 0.3s ease-in-out;
+  transition: all 0.3s ease-in-out;
+}
+
+.horizontal-box img {
+  max-width: 215px;
+}
+
+.horizontal-box .media-body {
+  padding-right: 40px;
+  padding-top: 10px;
+}
+
+.horizontal-box h3, small {
+  margin-left: 15px;
+  margin-bottom: 0px;
+}
+
+.horizontal-box h5 {
+  margin-bottom: 0px;
+}
+
+.horizontal-box h4 {
+  margin-left: 15px;
   font-size: 15px;
+  margin-bottom: 0px;
+}
+
+.horizontal-box i {
+  color: #f85c37;
+}
+
+.horizontal-box span i{
+  font-size: 20px;
+  color: #fff;
+}
+
+.horizontal-box a {
+  color: #555;
+  word-wrap: break-word;
+
+  -webkit-transition: color 0.1s ease-in, background 0.1s ease-in;
+  -moz-transition: color 0.1s ease-in, background 0.1s ease-in;
+  -ms-transition: color 0.1s ease-in, background 0.1s ease-in;
+  -o-transition: color 0.1s ease-in, background 0.1s ease-in;
+  transition: color 0.1s ease-in, background 0.1s ease-in;
+}
+
+.horizontal-box a:hover,
+a:focus {
+  color: #000;
+  text-decoration: none;
+  outline: 0;
 }
 
 /* item view */
