@@ -202,6 +202,10 @@ form textarea#description {
   width: 100%;
 }
 
+.thumbnail .img-circle {
+  margin-left: 15%;
+}
+
 .horizontal-box {
   background: #fff;
   box-shadow: 0px 1px 2px rgba(0, 0, 0, 0.3);
@@ -281,8 +285,7 @@ a:focus {
   text-align:center;
   background-attachment: relative;
   background-position: center center;
-  max-height: 300px;
-  width: 100%;
+  max-height: 480px;
 
   -webkit-background-size: 100%;
   -moz-background-size: 100%;
@@ -297,6 +300,7 @@ a:focus {
 
 .bckgimage {
   background: url(../img/bg1.jpg) no-repeat center top;
+  margin-right: 0px;
 }
 
 #headerwrap h1 {
@@ -411,6 +415,15 @@ a:focus {
     font-weight: 200;
   }
 
+  .bckgimage {
+  background: url(../img/bg1_md.jpg) no-repeat center top;
+  margin-right: 0px;
+  }
+
+  .thumbnail .img-circle {
+    width: 40%;
+  }
+
   .profile-avatar {
     margin-left: 35%;
   }
@@ -439,12 +452,21 @@ a:focus {
     font-weight: 200;
   }
 
+  .bckgimage {
+  background: url(../img/bg1_sm.jpg) no-repeat center top;
+  margin-right: 0px;
+  }
+
   #wh h1 {
     font-size: 30px;
   }
 
   .page-header h1{
     font-size: 25px;
+  }
+
+  .thumbnail .img-circle {
+    width: 60%;
   }
 
   .profile-avatar {
