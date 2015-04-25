@@ -26,3 +26,14 @@ So in the search_results.html template, I check this value and serve one or anot
   {% endfor %}
 {% endif %}
 ```
+
+## Images
+
+Here are the credits for the awesome images I've used, thank you all!!!
+
+- [Coco Ho](https://www.flickr.com/photos/funeralbell/14982897679/) by [Steven Tyler PJs](https://www.flickr.com/photos/funeralbell/)
+- [London 2012 Olympic Women's Triathlon Final](https://www.flickr.com/photos/idarrenj/7724435280/) by [Darren Johnson](https://www.flickr.com/photos/idarrenj/)
+- [CU Swimming and Diving 3](https://www.flickr.com/photos/walkingthedeepfield/3030728199/) by [Angela Radulescu](https://www.flickr.com/photos/walkingthedeepfield/)
+- [ODU v W&M Women's Soccer](https://www.flickr.com/photos/mobili/9543090542/) by [Mobilus In Mobili](https://www.flickr.com/photos/mobili/)
+- [Baseball](https://www.flickr.com/photos/pmillera4/16880380082/) by [Peter Miller](https://www.flickr.com/photos/pmillera4/)
+- [Women's Basketball](https://www.flickr.com/photos/tulanesally/3333629830) by [Tulane Public Relations](https://www.flickr.com/photos/tulanesally/)
