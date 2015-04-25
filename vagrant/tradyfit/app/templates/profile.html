@@ -3,31 +3,29 @@
 
 {% block page_content %}
 <div class="page-header">
-    <h1>Your profile</h1>
+    <h1>@{{ current_user.username }}</h1>
 </div>
 
 <div class="row">
-  <div class="col-md-3" id="user-avatar">
-    <img class="img-circle" src="{{ current_user.avatar() }}">
+  <div class="col-sm-4 col-md-3 col-lg-3" id="user-avatar">
+    <img class="img-circle profile-avatar" src="{{ current_user.avatar() }}">
   </div>
-  <div class="col-md-4" id="user-form">
-      {{ wtf.quick_form(form) }}<br>
-      <a href="{{ url_for('main.delete_account') }}">Delete account</a>
+  <div class="col-sm-5 col-md-4" id="user-form">
+    {{ wtf.quick_form(form) }}<br>
+    <p><a href="{{ url_for('main.delete_account') }}">Delete account</a></p>
   </div>
 </div>
 
-<div class="row">
-  <div class="col-md-4">
-    <br><hr>
-    <h3>Your listed items</h3>
-    <ul class="items">
-      {% for item in items %}
-        <li class="item" id="item-{{ item.id }}">
-          {% include "_item.html" %}
-        </li>
-        <br>
-      {% endfor %}
-    </ul>
-  </div>
+<div class="page-header">
+{% if not items %}
+  <h2>You haven't created any items yet</h2>
+{% else %}
+  <h1>Your listed items</h1>
+{% endif %}
 </div>
+
+{% for item in items %}
+  {% include "_item.html" %}
+{% endfor %}
+<br><br>
 {% endblock %}
