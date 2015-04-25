@@ -421,6 +421,9 @@ a:focus {
     font-weight: 200;
   }
 
+  .profile-avatar {
+    margin-left: 35%;
+  }
 }
 
 /* Mobile devices */
@@ -451,6 +454,12 @@ a:focus {
 
   #wh h1 {
     font-size: 30px;
+  }
+
+  .profile-avatar {
+    margin-left: 35%;
+    height: 100px;
+    width: 100px;
   }
 
 }
