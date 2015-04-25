@@ -129,12 +129,6 @@ hr {
   margin-bottom: 5px;
 }
 
-.navbar-inverse .navbar-weather {
-  margin-top: 10px;
-  margin-right: 10px;
-  color: #9d9d9d;
-}
-
 .navbar-inverse .navbar-nav>.open>a,
 .navbar-inverse .navbar-nav>.open>a:hover,
 .navbar-inverse .navbar-nav>.open>a:focus {
@@ -401,10 +395,6 @@ a:focus {
 /* At 768px navbar menu expands */
 @media (max-width: 767px) {
 
-  .navbar-inverse .navbar-weather {
-    display: none;
-  }
-
   .dropdown ul.dropdown-menu:before {
     display: none;
   }
@@ -429,9 +419,6 @@ a:focus {
 /* Mobile devices */
 @media (max-width: 468px) {
 
-  .navbar-inverse .navbar-weather {
-    display: none;
-  }
 
   .dropdown ul.dropdown-menu:before {
     display: none;
