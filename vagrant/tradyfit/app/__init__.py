@@ -5,6 +5,7 @@ from flask.ext.sqlalchemy import SQLAlchemy
 from flask.ext.login import LoginManager
 from flask.ext.moment import Moment
 from flask_limiter import Limiter
+from flask.ext.mobility import Mobility
 from config import config
 import geonamescache
 from geopy.geocoders import GoogleV3
@@ -32,6 +33,7 @@ def create_app(config_name):
   login_manager.init_app(app)
   jsglue.init_app(app)
   limiter.init_app(app)
+  Mobility(app)
 
   from .main import main as main_blueprint
   app.register_blueprint(main_blueprint)
@@ -43,7 +45,7 @@ def create_app(config_name):
   app.register_blueprint(msg_blueprint)
 
   from .public_api_1_0 import public_api as public_api_1_0_blueprint
-  app.register_blueprint(public_api_1_0_blueprint, 
+  app.register_blueprint(public_api_1_0_blueprint,
                         url_prefix='/public-api/v1.0')
 
   return app
