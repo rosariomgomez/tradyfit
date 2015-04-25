@@ -4,13 +4,9 @@
 <div class="page-header">
     <h1>Search results for "{{ query }}":</h1>
 </div>
-<div class="col-md-4">
-  <ul class="items">
-  {% for item in items %}
-      <li class="item" id="item-{{ item.id }}">
-      {% include "_item.html" %}
-    </li>
-    {% endfor %}
-  </ul>
-</div>
+
+{% for item in items %}
+  {% include "_item.html" %}
+{% endfor %}
+
 {% endblock %}
