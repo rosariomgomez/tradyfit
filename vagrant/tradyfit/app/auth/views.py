@@ -35,10 +35,7 @@ facebook = oauth.remote_app(
 
 @facebook.tokengetter
 def get_facebook_oauth_token():
-  if current_user.is_authenticated():
-    return (current_user.token, current_user.secret)
-  else:
-    return session.get('fb_oauth')
+  return session.get('fb_oauth')
 
 @auth.route('/fb-login')
 def fb_login():
