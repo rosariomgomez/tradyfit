@@ -28,7 +28,7 @@
           {% else %}
             Created {{ moment(item.timestamp).fromNow(refresh=True) }}
           {% endif %}
-          by <i>{{ item.user.username }}</i>
+          by <i>@{{ item.user.username }}</i>
         </small>
         <h4>{{ item.description|default('No description provided', true)|truncate(150, True) }}</h4>
         <div class="col-md-3">
