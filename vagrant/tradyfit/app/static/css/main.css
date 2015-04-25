@@ -443,6 +443,10 @@ a:focus {
     font-size: 30px;
   }
 
+  .page-header h1{
+    font-size: 25px;
+  }
+
   .profile-avatar {
     margin-left: 35%;
     height: 100px;
