@@ -2,9 +2,8 @@
   <div class="thumbnail" id="item-{{ item.id }}">
     <a href="{{ url_for('main.item', id=item.id) }}"><img src="{{ item.image() }}" alt=""></a>
     <div class="caption">
-      <h4>{{ item.name.capitalize()|truncate(40, True) }}</h4>
-      <h5>{{ item.description|default('No description provided', true)|truncate(100, True) }}
-      <br>
+      <h4>{{ item.name.capitalize()|truncate(38, True) }}</h4>
+      <h5>{{ item.description|default('No description provided', true)|truncate(100, True) }}</h5>
       <h5><b>Price: </b>{{ item.price }}$
       <span class="pull-right">
       <i class="fa fa-tags"></i> {{ item.category.name.capitalize() }}</h5>
