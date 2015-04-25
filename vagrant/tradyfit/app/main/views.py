@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 from datetime import datetime
 from flask import current_app, render_template, flash, redirect, url_for, \
-request, abort
+request, abort, session
 from flask.ext.login import current_user, login_required
 from . import main
 from .. import db
@@ -28,8 +28,8 @@ def server_shutdown():
 def index():
   search_form = SearchForm()
   if search_form.validate_on_submit():
-    return redirect(url_for('main.search_results',
-                            query=search_form.search.data))
+    session['query'] = search_form.search.data #store query on session cookie
+    return redirect(url_for('main.search_results'))
   items = Item.query.order_by(Item.timestamp.desc()).limit(4).all()
   return render_template('index.html', form=search_form, items=items)
 
@@ -169,15 +169,18 @@ def delete(id): # pylint: disable=W0622
     return redirect(url_for('main.item', id=item.id))
   return redirect(url_for('main.index'))
 
-
-@main.route('/search_results/<query>')
-def search_results(query):
-  if current_user.is_authenticated() and current_user.has_coordinates():
-    user_loc = current_user.get_point_coordinates()
-    res = Item.query.search(query).order_by(
-                  Item.location.distance_box(user_loc)).limit(50).all()
-  else:
-    res = Item.query.search(query).order_by(
-                  Item.timestamp.desc()).limit(50).all()
-  return render_template('search_results.html', query=query, items=res)
+@main.route('/search_results')
+def search_results():
+  query = session.get('query')
+  session.pop('query', None) #remove query from session cookie
+  if query:
+    if current_user.is_authenticated() and current_user.has_coordinates():
+      user_loc = current_user.get_point_coordinates()
+      res = Item.query.search(query).order_by(
+                    Item.location.distance_box(user_loc)).limit(50).all()
+    else:
+      res = Item.query.search(query).order_by(
+                    Item.timestamp.desc()).limit(50).all()
+    return render_template('search_results.html', query=query, items=res)
+  return redirect(url_for('main.index'))
 
