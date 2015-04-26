@@ -8,12 +8,21 @@
 
 <div class="row">
 <br><br>
-  <div class="col-md-4 well" id="msg-creation">
-    <p class='msg-username'><b>To: </b><i>@{{ item.user.username }}</i></p>
-    {{ wtf.quick_form(form) }}
+  <div class="col-sm-6 col-md-5" id="msg-creation">
+    <div class="panel panel-warning">
+      <div class="panel-heading">
+        <h3 class="panel-title">
+          To: <i>@{{ item.user.username }}</i>
+          <i class="fa fa-paper-plane-o pull-right"></i>
+        </h3>
+      </div>
+      <div class="panel-body">
+        {{ wtf.quick_form(form) }}
+      </div>
+    </div>
   </div>
 
-    {% include "main/_item_box.html" %}
+  {% include "main/_item_box.html" %}
 
 </div>
 {% endblock %}
