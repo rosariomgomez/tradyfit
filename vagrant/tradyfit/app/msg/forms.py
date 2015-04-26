@@ -5,6 +5,6 @@ from wtforms.validators import Required, Length
 
 
 class MessageForm(Form):
-  subject = TextAreaField('Subject', validators=[Required(), Length(2,120)])
+  subject = TextAreaField('Subject (*)', validators=[Required(), Length(2,120)])
   description = TextAreaField('Description', validators=[Length(0,500)])
   submit = SubmitField('Send')
