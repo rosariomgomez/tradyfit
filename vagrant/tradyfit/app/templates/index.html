@@ -74,19 +74,29 @@
     </div>
     <div class="row top-categories">
       <div class="hidden-xs col-md-12 col-lg-8">
+      <a href="{{ url_for('main.category', id=swim) }}">
         <img src="{{ url_for('static', filename='img/swim.jpg') }}">
+      </a>
       </div>
       <div class="col-lg-3 pull-left">
+      <a href="{{ url_for('main.category', id=tri) }}">
         <img src="{{ url_for('static', filename='img/tri.jpg') }}">
+      </a>
       </div>
       <div class="col-lg-4">
+      <a href="{{ url_for('main.category', id=soccer) }}">
         <img src="{{ url_for('static', filename='img/soccer.jpg') }}">
+      </a>
       </div>
       <div class="col-lg-4 pull-left">
+      <a href="{{ url_for('main.category', id=basket) }}">
         <img src="{{ url_for('static', filename='img/basketball.jpg') }}">
+      </a>
       </div>
       <div class="col-lg-4">
+      <a href="{{ url_for('main.category', id=baseball) }}">
         <img src="{{ url_for('static', filename='img/baseball.jpg') }}">
+      </a>
       </div>
     </div>
     <br><br>
