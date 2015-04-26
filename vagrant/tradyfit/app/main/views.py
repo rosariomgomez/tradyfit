@@ -169,18 +169,22 @@ def delete(id): # pylint: disable=W0622
     return redirect(url_for('main.item', id=item.id))
   return redirect(url_for('main.index'))
 
+
 @main.route('/search_results')
 def search_results():
   query = session.get('query')
   session.pop('query', None) #remove query from session cookie
   if query:
+    city = None
     if current_user.is_authenticated() and current_user.has_coordinates():
+      city = current_user.city
       user_loc = current_user.get_point_coordinates()
       res = Item.query.search(query).order_by(
                     Item.location.distance_box(user_loc)).limit(50).all()
     else:
       res = Item.query.search(query).order_by(
                     Item.timestamp.desc()).limit(50).all()
-    return render_template('search_results.html', query=query, items=res)
+    return render_template('search_results.html', query=query, items=res,
+                          city=city)
   return redirect(url_for('main.index'))
 
