@@ -1,13 +1,20 @@
-<div class="msg-sender">
-  {% if msg.sender %}
-    {{ msg.sender.username }}
-  {% else %}
-    Sorry, this user account has been deleted
-  {% endif %}
-</div>
-<div class="msg-subject">
-  {{ msg.subject.capitalize() }}
-</div>
-<div class="msg-description">
-  {{ msg.description.capitalize()|default('No description provided', true) }}
+<div class="panel panel-info">
+  <div class="panel-heading">
+    <h3 class="panel-title"><i class="fa fa-envelope-o"></i> {{ msg.subject.capitalize() }}</h3>
+  </div>
+  <div class="panel-body">
+    <p>
+    {{ msg.description.capitalize()|default('No description provided', true) }}
+    </p>
+  </div>
+  <div class="panel-footer">
+    {% if msg.sender %}
+      <h5 class='msg-username'>
+        <i>From: @{{ msg.sender.username }}</i>
+      </h5>
+    {% else %}
+      <p>Sorry, this user account has been deleted</p>
+    {% endif %}
+    <h6><i>{{ moment(msg.timestamp).fromNow(refresh=True) }}</i></h6>
+  </div>
 </div>
