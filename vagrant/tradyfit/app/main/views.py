@@ -31,7 +31,15 @@ def index():
     session['query'] = search_form.search.data #store query on session cookie
     return redirect(url_for('main.search_results'))
   items = Item.query.order_by(Item.timestamp.desc()).limit(4).all()
-  return render_template('index.html', form=search_form, items=items)
+  #get categories for bottom images links
+  swim = Category.get_category('swimming')
+  tri = Category.get_category('triathlon')
+  soccer = Category.get_category('soccer')
+  basket = Category.get_category('basketball')
+  baseball = Category.get_category('baseball')
+  return render_template('index.html', form=search_form, items=items,
+    swim=swim.id, tri=tri.id, soccer=soccer.id, basket=basket.id,
+    baseball=baseball.id)
 
 
 @main.route('/items/categories')
