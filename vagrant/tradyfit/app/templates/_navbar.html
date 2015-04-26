@@ -11,6 +11,7 @@
     </div>
     <div class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
+        <li><a href="{{ url_for('main.categories') }}">Browse categories</a></li>
         {% if current_user.is_authenticated() %}
           <li><a href="{{ url_for('main.create') }}">List an item</a></li>
         {% endif %}
