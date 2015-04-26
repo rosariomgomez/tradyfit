@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 from StringIO import StringIO
 from mock import patch
 from flask import url_for
+from app.models import Category
 from base import ClientTestCase
 import app.main.views
 
@@ -67,6 +68,41 @@ class IndexViewTestCase(ClientTestCase):
     '''verify the search form is displayed'''
     response = self.client.get(url_for('main.index'))
     self.assertTrue(b'id="search-form"' in response.data)
+
+
+
+class CategoriesViewTestCase(ClientTestCase):
+  '''Testing: @main.route('/items/categories')'''
+
+  def test_categories_route(self):
+    '''verify you can go to the categories page
+    and see all categories listed'''
+    num_cat = Category.query.count()
+    response = self.client.get(url_for('main.categories'))
+    soup = BeautifulSoup(response.get_data(as_text=True))
+    categories = soup.find_all("li", {"class": "list-group-item"})
+    self.assertTrue(num_cat == len(categories))
+
+
+
+class CategoryViewTestCase(ClientTestCase):
+  '''Testing: @main.route('/items/category/<int:id>')'''
+
+  def test_category_route(self):
+    '''verify you get a list of items of the requested category'''
+    u = self.create_user()
+    item = self.create_item(u.id)
+    item2 = self.create_item(u.id, 'bike', 'fast', 'cycling')
+    c = Category.get_category('cycling')
+    response = self.client.get(url_for('main.category', id=c.id))
+    self.assertTrue('id="item-'+str(item2.id) in response.data)
+    self.assertFalse('id="item-'+str(item.id) in response.data)
+
+
+  def test_category_route_404(self):
+    '''verfiy you get a 404 page if the category is not valid'''
+    response = self.client.get(url_for('main.category', id=999))
+    self.assertTrue(response.status_code, 404)
 
 
 
