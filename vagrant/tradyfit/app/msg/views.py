@@ -65,5 +65,5 @@ def message(id): # pylint: disable=W0622
       flash('Your message has been sent.')
       return redirect(url_for('msg.notifications'))
   form.subject.data = "Re: " + msg.subject
-  return render_template('msg/message.html', msg=msg, form=form)
+  return render_template('msg/message.html', msg=msg, item=msg.item, form=form)
 
