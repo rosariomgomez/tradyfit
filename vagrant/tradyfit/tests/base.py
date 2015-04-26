@@ -67,6 +67,18 @@ class UnitTestCase(BasicTestCase):
     db.session.commit()
     return item
 
+  def create_item_location(self, user, item_name='bike', item_desc='fast',
+    category='cycling'):
+    c = Category.get_category(category)
+    location = user.get_point_coordinates()
+    item = Item(name=item_name, description=item_desc, price=23,
+                category_id=c.id, image_url='ball.jpg', user_id=user.id,
+                location=location, country=user.country, state=user.state,
+                city=user.city)
+    db.session.add(item)
+    db.session.commit()
+    return item
+
   def create_message(self, sender_id, receiver_id, item_id):
     msg = Message(subject='Hi there!', description='some text',
                   sender_id=sender_id, receiver_id=receiver_id, item_id=item_id)
