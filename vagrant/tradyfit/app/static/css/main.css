@@ -424,6 +424,10 @@ a:focus {
     width: 40%;
   }
 
+  .page-header h2 {
+    font-size: 25px;
+  }
+
   .profile-avatar {
     margin-left: 35%;
   }
@@ -461,8 +465,12 @@ a:focus {
     font-size: 30px;
   }
 
-  .page-header h1{
+  .page-header h1 {
     font-size: 25px;
+  }
+
+  .page-header h2 {
+    font-size: 20px;
   }
 
   .thumbnail .img-circle {
