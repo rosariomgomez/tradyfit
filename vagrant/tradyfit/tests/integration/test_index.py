@@ -17,6 +17,13 @@ class IndexIntegrationTestCase(ClientTestCase):
     self.assertTrue(b'Search results for "soccer ball":' in resp.data)
 
 
+  def test_search_no_query(self):
+    '''verify you are redirected to home if no query on session cookie'''
+    resp = self.client.get(url_for('main.search_results'),
+                          follow_redirects=True)
+    self.assertTrue('id="search-form"' in resp.data)
+
+
   def test_search_results_nologin(self):
     '''verify that search results are shown ordered by time creation if
     user is not logged in
@@ -50,13 +57,13 @@ class IndexIntegrationTestCase(ClientTestCase):
        one form a Madrid user, other from Berlin
     2. Make a search with the word "bicycle" with a user from Barcelona
     3. Check the 2 items appears on the results in the correct order
-       (ordered by nearby: Madrid, Berlin, no location)
+       (ordered by nearby: Madrid, Berlin)
     '''
     user_madrid = self.create_user()
-    item_madrid = self.create_item(user_madrid.id, 'fast and furious',
+    item_madrid = self.create_item_location(user_madrid, 'fast and furious',
                                   'break records with this bicycle')
     user_berlin = self.create_user_location()
-    item_berlin = self.create_item(user_berlin.id, 'triathlon bicycle',
+    item_berlin = self.create_item_location(user_berlin, 'triathlon bicycle',
                                    'specially designed to win')
     user_barcelona = self.create_user_location('2', 'bart@example.com',
                       'bart', 'Barcelona', 'NU', 'ES', 41.387128, 2.16856499)
@@ -72,6 +79,7 @@ class IndexIntegrationTestCase(ClientTestCase):
                               }, follow_redirects=True)
       soup = BeautifulSoup(response.get_data(as_text=True))
       items = soup.find_all("div", id=re.compile("^item-"))
+      self.assertTrue(user_barcelona.city in response.data) #user's city name
       self.assertTrue(len(items) == 2)
       self.assertTrue("item-"+str(item_madrid.id) in str(items[0]))
       self.assertTrue("item-"+str(item_berlin.id) in str(items[1]))
@@ -84,8 +92,7 @@ class IndexIntegrationTestCase(ClientTestCase):
                             data={
                                 'search': "foo UNION SELECT id FROM categories"
                             }, follow_redirects=True)
-    resp = response.get_data(as_text=True)
-    soup = BeautifulSoup(resp)
+    soup = BeautifulSoup(response.get_data(as_text=True))
     items = soup.find_all("div", id=re.compile("^item-"))
     self.assertTrue(not items)
 
