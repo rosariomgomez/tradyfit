@@ -1,0 +1,33 @@
+{% extends "base.html" %}
+
+{% block page_content %}
+<div class="page-header">
+  {% if city %}
+    <h2>Last added items for <i>{{ category.name }}</i> near {{ city}}:</h2>
+  {% else %}
+    <h2>Last added items for {{ category.name }}:</h2>
+  {% endif %}
+</div>
+
+<div class="row">
+  <div class="hidden-xs hidden-sm col-md-2">
+    {% include "_category_list.html" %}
+  </div>
+  <div class="col-xs-12 col-sm-12 col-md-10">
+    {% if items %}
+      {% if request.MOBILE %}
+        {% for item in items %}
+          {% include "_item_box.html" %}
+        {% endfor %}
+      {% else %}
+        {% for item in items %}
+          {% include "_item.html" %}
+        {% endfor %}
+      {% endif %}
+    {% else %}
+      <h4><i>There's no items created for this category yet</i></h4>
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}
