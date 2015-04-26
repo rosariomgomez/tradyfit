@@ -2,17 +2,25 @@
 
 {% block page_content %}
 <div class="page-header">
-    <h1>Search results for "{{ query }}":</h1>
+  {% if city %}
+    <h2>Search results for "{{ query }}" near {{ city }}:</h2>
+  {% else %}
+    <h2>Search results for "{{ query }}":</h2>
+  {% endif %}
 </div>
 
-{% if request.MOBILE %}
-  {% for item in items %}
-    {% include "_item_box.html" %}
-  {% endfor %}
+{% if items %}
+  {% if request.MOBILE %}
+    {% for item in items %}
+      {% include "_item_box.html" %}
+    {% endfor %}
+  {% else %}
+    {% for item in items %}
+      {% include "_item.html" %}
+    {% endfor %}
+  {% endif %}
 {% else %}
-  {% for item in items %}
-    {% include "_item.html" %}
-  {% endfor %}
+  <h4><i>Sorry, there's no items that matches your search</i></h4>
 {% endif %}
 
 {% endblock %}
