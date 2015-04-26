@@ -11,17 +11,17 @@
 
 <div class="row">
   <div class="hidden-xs hidden-sm col-md-2">
-    {% include "_category_list.html" %}
+    {% include "main/_category_list.html" %}
   </div>
   <div class="col-xs-12 col-sm-12 col-md-10">
     {% if items %}
       {% if request.MOBILE %}
         {% for item in items %}
-          {% include "_item_box.html" %}
+          {% include "main/_item_box.html" %}
         {% endfor %}
       {% else %}
         {% for item in items %}
-          {% include "_item.html" %}
+          {% include "main/_item.html" %}
         {% endfor %}
       {% endif %}
     {% else %}

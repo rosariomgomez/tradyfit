@@ -26,11 +26,11 @@
 
 {% if request.MOBILE %}
   {% for item in items %}
-    {% include "_item_box.html" %}
+    {% include "main/_item_box.html" %}
   {% endfor %}
 {% else %}
   {% for item in items %}
-    {% include "_item.html" %}
+    {% include "main/_item.html" %}
   {% endfor %}
 {% endif %}
 <br><br>

@@ -37,7 +37,7 @@ def index():
   soccer = Category.get_category('soccer')
   basket = Category.get_category('basketball')
   baseball = Category.get_category('baseball')
-  return render_template('index.html', form=search_form, items=items,
+  return render_template('main/index.html', form=search_form, items=items,
     swim=swim.id, tri=tri.id, soccer=soccer.id, basket=basket.id,
     baseball=baseball.id)
 
@@ -51,7 +51,8 @@ def categories():
                         Item.location.distance_box(user_loc)).limit(12).all()
   else:
     items = Item.query.order_by(Item.timestamp.desc()).limit(12).all()
-  return render_template('categories.html', items=items, categories=categories)
+  return render_template('main/categories.html', items=items,
+                          categories=categories)
 
 
 @main.route('/items/category/<int:id>')
@@ -67,8 +68,8 @@ def category(id): # pylint: disable=W0622
   else:
     items = Item.query.filter_by(category=category).order_by(
                                         Item.timestamp.desc()).limit(20).all()
-  return render_template('category.html', items=items, categories=categories,
-                          category=category, city=city)
+  return render_template('main/category.html', items=items,
+                          categories=categories, category=category, city=city)
 
 
 @main.route('/profile', methods=['GET', 'POST'])
@@ -96,7 +97,7 @@ def profile():
   form.country.data = current_user.country
   form.state.data = current_user.state
   form.city.data = current_user.city
-  return render_template('profile.html', form=form, items=items)
+  return render_template('main/profile.html', form=form, items=items)
 
 
 @main.route('/delete_account', methods=['GET', 'POST'])
@@ -110,7 +111,7 @@ def delete_account():
     except ValueError:
       flash('Sorry, there was a problem deleting your account. Try again later')
     return redirect(url_for('main.index'))
-  return render_template('delete_account.html', form=form)
+  return render_template('main/delete_account.html', form=form)
 
 
 @main.route('/create', methods=['GET', 'POST'])
@@ -143,13 +144,13 @@ def create():
     else:
       flash('Sorry, there was a problem creating your item. Try again later.')
       return redirect(url_for('main.index'))
-  return render_template('create.html', form=form)
+  return render_template('main/create.html', form=form)
 
 
 @main.route('/item/<int:id>')
 def item(id): # pylint: disable=W0622
   item = Item.query.get_or_404(id)
-  return render_template('item.html', item=item)
+  return render_template('main/item.html', item=item)
 
 
 @main.route('/edit/<int:id>', methods=['GET', 'POST'])
@@ -188,7 +189,7 @@ def edit(id): # pylint: disable=W0622
   form.description.data = item.description
   form.price.data = item.price
   form.category.data = item.category.id
-  return render_template('edit_item.html', form=form, id=item.id,
+  return render_template('main/edit_item.html', form=form, id=item.id,
                           image=item.image())
 
 
@@ -221,7 +222,7 @@ def search_results():
     else:
       res = Item.query.search(query).order_by(
                     Item.timestamp.desc()).limit(20).all()
-    return render_template('search_results.html', query=query, items=res,
+    return render_template('main/search_results.html', query=query, items=res,
                           city=city)
   return redirect(url_for('main.index'))
 
