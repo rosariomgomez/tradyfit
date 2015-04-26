@@ -280,6 +280,11 @@ a:focus {
   color: #f85c37;
 }
 
+/* user profile */
+#user-avatar h3 {
+  color: #f85c37;
+}
+
 /* ================================================================
   Wrap Sections
 ================================================================ */
@@ -432,6 +437,11 @@ a:focus {
     font-size: 25px;
   }
 
+  #user-avatar h3 {
+    margin-left: 38%;
+    font-size: 20px;
+  }
+
   .profile-avatar {
     margin-left: 35%;
   }
@@ -485,6 +495,11 @@ a:focus {
     margin-left: 35%;
     height: 100px;
     width: 100px;
+  }
+
+  #user-avatar h3 {
+    margin-left: 25%;
+    font-size: 20px;
   }
 
 }
