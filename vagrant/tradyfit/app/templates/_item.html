@@ -1,48 +1,50 @@
 <div class="row" id="item-{{ item.id }}">
-  <div class="col-md-10">
-    <div class="media horizontal-box">
-      <span class="media-left">
-          <a href="{{ url_for('main.item', id=item.id) }}"><img src="{{ item.image() }}" alt="..."></a>
-      </span>
-      <div class="media-body">
-        <h3 class="media-heading">
-          <a href="{{ url_for('main.item', id=item.id) }}">
-            {{ item.name.capitalize()|truncate(50, True) }}
-          </a>
-          {% if current_user.is_authenticated() and current_user.id == item.user_id %}
-            <span class="pull-right">
-              <a class="btn btn-xs btn-primary" href="{{ url_for('main.edit', id=item.id) }}">
-                <i class="fa fa-pencil-square-o"></i>
-              </a>
-              <a class="btn btn-xs btn-danger" href="{{ url_for('main.delete', id=item.id) }}">
-                <i class="fa fa-trash-o"></i>
-              </a>
-            </span>
-          {% endif %}
-        </h3>
-        <small>
-          <img class="img-circle" src="{{ item.user.avatar() }}" width="20"
-          height="20">
-          {% if item.modified %}
-            Modified {{ moment(item.modified).fromNow(refresh=True) }}
-          {% else %}
-            Created {{ moment(item.timestamp).fromNow(refresh=True) }}
-          {% endif %}
-          by <i>@{{ item.user.username }}</i>
-        </small>
-        <h4>{{ item.description|default('No description provided', true)|truncate(150, True) }}</h4>
-        <div class="col-sm-3 col-md-3">
-          <h5><b>Price: </b>{{ item.price }}$</h5>
-        </div>
-        <div class="col-sm-3 col-md-3">
-          <h5>
-          <i class="fa fa-tags"></i> {{ item.category.name.capitalize() }}</h5>
-        </div>
-        <div class="col-sm-5 col-md-4">
-          <h5><i class="fa fa-map-marker"></i> {{ item.address }}</h5>
-        </div>
+  <div class="media horizontal-box">
+    <span class="media-left">
+      <a href="{{ url_for('main.item', id=item.id) }}">
+        <img src="{{ item.image() }}" alt="...">
+      </a>
+    </span>
+    <div class="media-body">
+      <h3 class="media-heading">
+        <a href="{{ url_for('main.item', id=item.id) }}">
+          {{ item.name.capitalize()|truncate(50, True) }}
+        </a>
+        {% if current_user.is_authenticated() and current_user.id == item.user_id %}
+          <span class="pull-right">
+            <a class="btn btn-xs btn-primary" href="{{ url_for('main.edit', id=item.id) }}">
+              <i class="fa fa-pencil-square-o"></i>
+            </a>
+            <a class="btn btn-xs btn-danger" href="{{ url_for('main.delete', id=item.id) }}">
+              <i class="fa fa-trash-o"></i>
+            </a>
+          </span>
+        {% endif %}
+      </h3>
+      <small>
+        <img class="img-circle" src="{{ item.user.avatar() }}" width="20"
+        height="20">
+        {% if item.modified %}
+          Modified {{ moment(item.modified).fromNow(refresh=True) }}
+        {% else %}
+          Created {{ moment(item.timestamp).fromNow(refresh=True) }}
+        {% endif %}
+        by <i>@{{ item.user.username }}</i>
+      </small>
+      <h4>{{ item.description|default('No description provided', true)|truncate(150, True) }}</h4>
+      <div class="col-sm-3 col-md-3">
+        <h5><b>Price: </b>{{ item.price }}$</h5>
+      </div>
+      <div class="col-sm-3 col-md-3">
+        <h5>
+        <i class="fa fa-tags"></i>
+        <a href="{{ url_for('main.category', id=item.category_id) }}">
+          {{ item.category.name.capitalize() }}</a></h5>
+      </div>
+      <div class="col-sm-5 col-md-4">
+        <h5><i class="fa fa-map-marker"></i> {{ item.address }}</h5>
       </div>
     </div>
-    <br>
   </div>
+  <br>
 </div>
