@@ -74,7 +74,7 @@ def category(id): # pylint: disable=W0622
 @main.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
-  items = current_user.items.all()
+  items = current_user.items.order_by(Item.timestamp.desc()).all()
   form = UserForm(user=current_user)
 
   if form.validate_on_submit():
