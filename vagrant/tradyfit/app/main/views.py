@@ -46,6 +46,23 @@ def categories():
   return render_template('categories.html', items=items, categories=categories)
 
 
+@main.route('/items/category/<int:id>')
+def category(id):
+  city = None
+  category = Category.query.get_or_404(id)
+  categories = Category.query.all()
+  if current_user.is_authenticated() and current_user.has_coordinates():
+    user_loc = current_user.get_point_coordinates()
+    items = Item.query.filter_by(category=category).order_by(
+                        Item.location.distance_box(user_loc)).limit(12).all()
+    city = current_user.city
+  else:
+    items = Item.query.filter_by(category=category).order_by(
+                                                Item.timestamp.desc()).all()
+  return render_template('category.html', items=items, categories=categories,
+                          category=category, city=city)
+
+
 @main.route('/profile', methods=['GET', 'POST'])
 @login_required
 def profile():
