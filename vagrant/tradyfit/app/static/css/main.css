@@ -275,6 +275,10 @@ a:focus {
   color: #f85c37;
 }
 
+/* msg form */
+.msg-username i {
+  color: #f85c37;
+}
 
 /* ================================================================
   Wrap Sections
