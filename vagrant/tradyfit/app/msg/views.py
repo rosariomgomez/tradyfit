@@ -20,6 +20,7 @@ def create(id): # pylint: disable=W0622
     db.session.add(msg)
     flash('Your message has been sent.')
     return redirect(url_for('main.item', id=item.id))
+  form.subject.data = "Hi! I'm interested on your " + item.name
   return render_template('msg/create.html', form=form, item=item)
 
 
