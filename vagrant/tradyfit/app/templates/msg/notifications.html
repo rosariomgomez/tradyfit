@@ -19,12 +19,15 @@
       <ul class="list-group">
         <li class="list-group-item">
           <a href="javascript:messages('unread');">Unread</a>
+          <span class="badge num-unread">{{ num_unread }}</span>
         </li>
         <li class="list-group-item">
           <a href="javascript:messages('sent');">Sent</a>
+          <span class="badge num-sent">{{ num_sent }}</span>
         </li>
         <li class="list-group-item">
           <a href="javascript:messages('received');">Received</a>
+          <span class="badge num-received">{{ num_received }}</span>
         </li>
       </ul>
     </div>
