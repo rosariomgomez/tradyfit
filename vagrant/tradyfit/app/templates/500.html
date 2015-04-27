@@ -3,7 +3,16 @@
 {% block title %}TradyFit - Internal Server Error{% endblock %}
 
 {% block page_content %}
-<div class="page-header">
-    <h1>Internal Server Error</h1>
+<div class="row error-page">
+  <br><br>
+  <div class="col-sm-5 col-md-6 col-lg-6">
+    <p>
+      <b>500.</b> Wooow! Something is technically wrong. <br>
+      Thank you for noticing, we are going to fix it up and have things back to normal soon.<br><br>
+    </p>
+  </div>
+  <div class="col-sm-5 col-md-4 col-lg-5">
+    <img src="{{ url_for('static', filename='img/robots.png') }}">
+  </div>
 </div>
 {% endblock %}
