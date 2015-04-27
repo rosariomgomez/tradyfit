@@ -2,13 +2,15 @@ function messages(type) {
   $.post('/notifications', {
       type: type,
   }).done(function(data) {
-    var messages = data['msgs']
+    var messages = data['msgs'];
+    var $title = $('#title');
+    $title.text(data['type']);
     var $msg_ul = $('#messages');
     $msg_ul.empty(); // empty ul content
     // iterate over the messages
     messages.forEach(function (msg) {
       // create a new li and append it
-      var $li = $('<li class="msg" id="msg-' + msg.id + '"">')
+      var $li = $('<li class="list-group-item msg" id="msg-' + msg.id + '"">')
       // create the link to the message
       $li.append($('<a>',{
         text: msg.subject,
