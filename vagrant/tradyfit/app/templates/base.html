@@ -5,6 +5,10 @@
 {% block head %}
 {{ super() }}
 <link href="//netdna.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+<link rel="shortcut icon" href="{{ url_for('static',
+filename='img/favicon.ico') }}" type="image/x-icon">
+<link rel="icon" href="{{ url_for('static', filename='img/favicon.ico') }}"
+type="image/x-icon">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/main.css') }}">
 {% endblock %}
 
