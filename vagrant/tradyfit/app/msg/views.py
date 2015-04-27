@@ -30,11 +30,14 @@ def notifications():
   if request.method == 'POST':
     if request.form.get('type') == 'unread':
       msgs = current_user.msgs_unread
+      n_type = 'Unread'
     elif request.form.get('type') == 'sent':
-      msgs = current_user.msgs_sent.all()
+      msgs = current_user.msgs_sent.order_by(Message.timestamp.desc()).all()
+      n_type = 'Sent'
     else:
-      msgs = current_user.msgs_received.all()
-    return jsonify(msgs=[msg.serialize for msg in msgs])
+      msgs = current_user.msgs_received.order_by(Message.timestamp.desc()).all()
+      n_type = 'Received'
+    return jsonify(type=n_type, msgs=[msg.serialize for msg in msgs])
 
   else: #GET request
     msgs = current_user.msgs_unread
