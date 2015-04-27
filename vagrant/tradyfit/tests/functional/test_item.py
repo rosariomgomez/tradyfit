@@ -50,6 +50,19 @@ class ItemTestCase(SeleniumTestCase):
 
 
   def test_create_item(self):
+    '''Verify a login user can create an item and it is displayed
+    on her profile page
+    1. Go to home page
+    2. Click on Login link
+    3. Fill login form and submit
+    4. Verify you are successfully logged in and redirected to home page
+    5. Go to list an item page
+    6. Fill the form and submit
+    7. Verify you are redirected to home and a message is displayed verifying
+    the item was created
+    8. Go to profile page
+    9. Check the item is listed in "your listed items" section
+    '''
     self.client.get('http://localhost:5000')
 
     # home page object
@@ -69,14 +82,21 @@ class ItemTestCase(SeleniumTestCase):
     self.assertTrue('Maria' in self.client.page_source)
 
     # navigate to create item page
-    self.client.find_element(*NavBarLocators.LIST_ITEM).click()
+    home_page.go_to_create_item()
 
     list_item_page = page.ListItemPage(self.client)
     self.assertTrue(list_item_page.is_title_matches)
 
-    # assert an item was successfully created
+    # create the item
     image_path = os.path.dirname(os.path.abspath(__file__))
     list_item_page.add_item('bike', 'super six', '1245.3', 'cycling',
                             os.path.join(image_path,"files/bike.jpg"))
+
+    # assert an item was successfully created
     self.assertTrue('Your item has been created.' in self.client.page_source)
 
+    # navigate to profile page
+    home_page.go_to_profile()
+
+    # assert the created item appears in the page
+    self.assertTrue('super six' in self.client.page_source)
