@@ -28,7 +28,8 @@
             {% endif %}
           </li>
           <li class="dropdown">
-            <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+            <a href="#" class="dropdown-toggle" id="user-dropdown"
+            data-toggle="dropdown">
               <img class="img-circle" src="{{ current_user.avatar() }}"
               height="25" width="25"> {{ current_user.username }}
               <b class="caret"></b>
