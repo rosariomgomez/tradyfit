@@ -3,8 +3,10 @@ function messages(type) {
       type: type,
   }).done(function(data) {
     var messages = data['msgs'];
-    var $title = $('#title');
-    $title.text(data['type']);
+    $('#title').text(data['type']);
+    $('#num-unread').text(data['num-unread']);
+    $('#num-sent').text(data['num-sent']);
+    $('#num-received').text(data['num-received']);
     var $msg_ul = $('#messages');
     $msg_ul.empty(); // empty ul content
     // iterate over the messages
