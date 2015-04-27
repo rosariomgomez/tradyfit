@@ -8,21 +8,40 @@
 {% endblock %}
 
 {% block page_content %}
-<div class="page-header">
-    <h1>Notifications</h1>
-</div>
 <div class="row">
-  <div class="col-md-4">
-    <a href="javascript:messages('unread');">Unread</a><br>
-    <a href="javascript:messages('sent');">Sent</a><br>
-    <a href="javascript:messages('received');">Received</a><br>
+<br><br>
+  <div class="col-sm-4 col-md-3 col-lg-3">
+    <div class="panel panel-primary">
+      <div class="panel-heading">
+        <h3 class="panel-title"><i class="fa fa-inbox"></i>
+        Notifications</h3>
+      </div>
+      <ul class="list-group">
+        <li class="list-group-item">
+          <a href="javascript:messages('unread');">Unread</a>
+        </li>
+        <li class="list-group-item">
+          <a href="javascript:messages('sent');">Sent</a>
+        </li>
+        <li class="list-group-item">
+          <a href="javascript:messages('received');">Received</a>
+        </li>
+      </ul>
+    </div>
   </div>
-  <div class="col-md-6">
-    <ul id="messages">
-    {% for msg in msgs %}
-      <li class="msg" id="msg-{{ msg.id }}">
-        <a href="{{ url_for('msg.message', id=msg.id)}}">{{ msg.subject }}</a>
-      </li>
-    </ul>
-    {% endfor %}
+  <div class="col-sm-8 col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading" id="title">Unread</div>
+        <ul class="list-group" id="messages">
+          {% for msg in msgs %}
+            <li class="list-group-item msg" id="msg-{{ msg.id }}">
+              <a href="{{ url_for('msg.message', id=msg.id)}}">
+              {{ msg.subject }}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
 {% endblock %}
