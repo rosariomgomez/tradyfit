@@ -37,3 +37,5 @@ Here are the credits for the awesome images I've used, thank you all!!!
 - [ODU v W&M Women's Soccer](https://www.flickr.com/photos/mobili/9543090542/) by [Mobilus In Mobili](https://www.flickr.com/photos/mobili/)
 - [Baseball](https://www.flickr.com/photos/pmillera4/16880380082/) by [Peter Miller](https://www.flickr.com/photos/pmillera4/)
 - [Women's Basketball](https://www.flickr.com/photos/tulanesally/3333629830) by [Tulane Public Relations](https://www.flickr.com/photos/tulanesally/)
+- [Robot Model No. [7]](https://www.flickr.com/photos/ad7m/3597656172) by [Adam McIver](https://www.flickr.com/photos/ad7m/)
+- [Cup of robots](https://www.flickr.com/photos/striatic/1276095/) by [hobvias sudoneighm](https://www.flickr.com/photos/striatic/) 
