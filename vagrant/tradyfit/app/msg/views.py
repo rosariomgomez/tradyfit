@@ -27,6 +27,11 @@ def create(id): # pylint: disable=W0622
 @msg.route('/notifications', methods=['GET', 'POST'])
 @login_required
 def notifications():
+  #number of messages of each type
+  num_unread = len(current_user.msgs_unread)
+  num_sent = current_user.msgs_sent.count()
+  num_received = current_user.msgs_received.count()
+
   if request.method == 'POST':
     if request.form.get('type') == 'unread':
       msgs = current_user.msgs_unread
@@ -37,11 +42,14 @@ def notifications():
     else:
       msgs = current_user.msgs_received.order_by(Message.timestamp.desc()).all()
       n_type = 'Received'
-    return jsonify(type=n_type, msgs=[msg.serialize for msg in msgs])
-
+    return jsonify(type=n_type, msgs=[msg.serialize for msg in msgs],
+                    num_unread=num_unread, num_sent=num_sent,
+                    num_received=num_received)
   else: #GET request
     msgs = current_user.msgs_unread
-    return render_template('msg/notifications.html', msgs=msgs)
+    return render_template('msg/notifications.html', msgs=msgs,
+                    num_unread=num_unread, num_sent=num_sent,
+                    num_received=num_received)
 
 
 @msg.route('/msg/<int:id>', methods=['GET', 'POST'])
