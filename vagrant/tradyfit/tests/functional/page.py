@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 from selenium.webdriver.support.select import Select
 from locators import NavBarLocators, LoginPageLocators, ListItemPageLocators
+
 
 class BasePage(object):
 
@@ -9,13 +11,27 @@ class BasePage(object):
   def is_title_matches(self, title):
     return title in self.client.title
 
+  def go_to_login(self):
+    self.client.find_element(*NavBarLocators.LOGIN).click()
+
+  def go_to_create_item(self):
+    self.client.find_element(*NavBarLocators.LIST_ITEM).click()
+
+  def go_to_profile(self):
+    user_dropdown = self.client.find_element(*NavBarLocators.USER_DROPDOWN)
+    user_dropdown.click()
+    self.client.find_element(*NavBarLocators.PROFILE).click()
+
+  def go_to_log_out(self):
+    user_dropdown = self.client.find_element(*NavBarLocators.USER_DROPDOWN)
+    user_dropdown.click()
+    self.client.find_element(*NavBarLocators.LOGOUT).click()
+
+
 class HomePage(BasePage):
 
   def is_title_matches(self):
     super("TradyFit")
-
-  def go_to_login(self):
-    self.client.find_element(*NavBarLocators.LOGIN).click()
 
 
 class LoginPage(BasePage):
@@ -28,6 +44,7 @@ class LoginPage(BasePage):
     password_field = self.client.find_element(*LoginPageLocators.PASS)
     password_field.send_keys(user_pwd)
     password_field.submit()
+
 
 class ListItemPage(BasePage):
 
@@ -50,3 +67,11 @@ class ListItemPage(BasePage):
     file_input.send_keys(image)
     #submit the form
     self.client.find_element(*ListItemPageLocators.SUBMIT).click()
+
+
+class ProfilePage(BasePage):
+
+  def is_title_matches():
+    super("TradyFit - Profile")
+
+
