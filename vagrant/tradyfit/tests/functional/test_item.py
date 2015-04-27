@@ -98,5 +98,8 @@ class ItemTestCase(SeleniumTestCase):
     # navigate to profile page
     home_page.go_to_profile()
 
+    profile_page = page.ProfilePage(self.client)
+    self.assertTrue(profile_page.is_title_matches)
+
     # assert the created item appears in the page
     self.assertTrue('super six' in self.client.page_source)
