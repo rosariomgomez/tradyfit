@@ -4,13 +4,12 @@
 
 <div class="row">
   <br><br>
-  <div class="col-md-5" id="msg-{{ msg.id }}">
+  <div class="col-md-6 col-lg-6" id="msg-{{ msg.id }}">
     {% include "msg/_msg.html" %}
 
     {% if msg.item and msg.sender and current_user != msg.sender %}
       {% include "msg/_msg_reply.html" %}
     {% endif %}
-
   </div>
 
   {% if item %}
