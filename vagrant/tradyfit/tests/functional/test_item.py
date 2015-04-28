@@ -1,12 +1,8 @@
 # -*- coding: utf-8 -*-
-from uuid import uuid4
-from app import db
-from app.models import User, Item
 from app.helpers import delete_item_image
 from helper import SeleniumTestCase
+from app.models import Item
 import page
-from locators import NavBarLocators
-import time
 import os
 
 
@@ -35,22 +31,12 @@ class ItemTestCase(SeleniumTestCase):
     if not self.client:
       self.skipTest('Web browser not available')
 
-    #create the fb test user to log in
-    u = User(fb_id=self.app.config['FB_TEST_ID'],
-            email=self.app.config['FB_TEST_EMAIL'],
-            name='Maria Amiecbddcgdc', username='Maria',
-            avatar_url=uuid4().hex + '.jpg',
-            city='Mountain View', country='US', state='CA',
-            latitude=37.3860517, longitude=-122.0838511)
-    db.session.add(u)
-    db.session.commit()
-
   def tearDown(self):
     pass
 
 
   def test_create_item(self):
-    '''Verify a login user can create an item and it is displayed
+    '''Verify a logged in user can create an item and it is displayed
     on her profile page
     1. Go to home page
     2. Click on Login link
@@ -74,12 +60,12 @@ class ItemTestCase(SeleniumTestCase):
     login_page = page.LoginPage(self.client)
     self.assertTrue(login_page.is_title_matches)
 
-    # login user
+    # login user US
     login_page.login(self.app.config['FB_TEST_EMAIL'],
-                    self.app.config['FB_TEST_PWD'])
+                      self.app.config['FB_TEST_PWD'])
 
     #user redirected to Home page
-    self.assertTrue('Maria' in self.client.page_source)
+    self.assertTrue('maria' in self.client.page_source)
 
     # navigate to create item page
     home_page.go_to_create_item()
@@ -103,3 +89,65 @@ class ItemTestCase(SeleniumTestCase):
 
     # assert the created item appears in the page
     self.assertTrue('super six' in self.client.page_source)
+
+    # logout user
+    profile_page.go_to_log_out()
+
+
+  def test_item_send_message(self):
+    '''Verify user can send a message
+    1. Go to home page
+    2. Click on Login link
+    3. Go to browse categories
+    4. Go to 'Lakers t-shirt' item page
+    5. Click on send a message
+    6. Fill the form
+    7. Verify you are redirected to item page
+    8. Go to notifications
+    9. Verify you have 2 sent messages
+    '''
+    self.client.get('http://localhost:5000')
+
+    # home page object
+    home_page = page.HomePage(self.client)
+    self.assertTrue(home_page.is_title_matches)
+    # navigate to login page
+    home_page.go_to_login()
+
+    login_page = page.LoginPage(self.client)
+    self.assertTrue(login_page.is_title_matches)
+
+    # go to browse categories
+    home_page.go_to_browse_categories()
+
+    browse_page = page.BrowsePage(self.client)
+    self.assertTrue(browse_page.is_title_matches)
+
+    # go to item page
+    browse_page.go_to_item_page('Lakers t-shirt')
+
+    # item page object
+    item_page = page.ItemPage(self.client)
+    item_page.contact_seller()
+
+    # create_message page object
+    create_msg_page = page.CreateMessagePage(self.client)
+    self.assertTrue(create_msg_page.is_title_matches)
+
+    # send message
+    create_msg_page.send_message('I think your item is cool!')
+
+    # verify you are redirected to item page
+    self.assertTrue(item_page.is_title_matches)
+
+    # go to notifications
+    item_page.go_to_notifications()
+
+    # notifications page object
+    notifications_page = page.NotificationsPage(self.client)
+
+    #verify you have 2 sent messages
+    self.assertTrue(notifications_page.get_num_sent() == '2')
+
+    # logout user
+    notifications_page.go_to_log_out()
