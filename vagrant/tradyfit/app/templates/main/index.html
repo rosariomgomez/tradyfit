@@ -36,7 +36,7 @@ type="image/x-icon">
             <input id="search" name="search" class="form-control"
             placeholder="triathlon bike, surf table, ..." type="text" size="35">
           </div>
-          <button type="submit" class="btn btn-primary">Search</button>
+          <button type="submit" class="btn btn-primary" id="submit-search">Search</button>
           {% if form.errors.items() %}
             <br><i class='error-msg'>{{ form.errors.items()[0][1][0] }}</i>
           {% endif %}
