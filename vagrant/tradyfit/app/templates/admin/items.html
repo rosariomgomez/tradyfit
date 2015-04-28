@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% block title %}TradyFit - Admin Panel - Items{% endblock %}
+
+{% block page_content %}
+<div class="row">
+<br><br>
+
+  {% include "admin/_resources.html" %}
+
+  <div class="col-sm-8 col-md-6">
+    <div class="panel panel-default">
+      <div class="panel-heading" id="title">
+        Items <span class="badge pull-right">{{ items|length }}</span>
+      </div>
+        <ul class="list-group" id="items">
+          {% for item in items %}
+            <li class="list-group-item" id="item-{{ item.id }}">
+              <p>
+              <b>{{ item.name }}</b><br>
+              User: {{ item.user.username }}<br>
+              Category: {{ item.category.name }}<br>
+              Image: <a href="{{ item.image() }}">Image</a><br>
+              Messages: {{ item.messages.count() }}<br>
+              Modified: {{ moment(item.modified).fromNow(refresh=True) }}<br>
+              Created: {{ moment(item.timestamp).fromNow(refresh=True) }}
+              </p>
+            </li>
+          {% endfor %}
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
