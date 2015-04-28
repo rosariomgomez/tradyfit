@@ -20,11 +20,11 @@
         {% if current_user.is_authenticated() %}
           <li>
             {% if current_user.msgs_unread %}
-              <a href="{{ url_for('msg.notifications') }}">
+              <a id="notif-link" href="{{ url_for('msg.notifications') }}">
               Notifications <span class="badge">
               {{ current_user.msgs_unread|length }}</span></a>
             {% else %}
-              <a href="{{ url_for('msg.notifications') }}">Notifications</a>
+              <a id="notif-link" href="{{ url_for('msg.notifications') }}">Notifications</a>
             {% endif %}
           </li>
           <li class="dropdown">
