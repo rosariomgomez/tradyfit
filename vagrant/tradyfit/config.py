@@ -55,10 +55,14 @@ class TestingConfig(Config):
   #AWS S3
   S3_BUCKET = 'tradyfitbucket.test'
 
-  #FB Test user credentials
+  #FB Test users credentials
   FB_TEST_ID = '100009532443743'
   FB_TEST_EMAIL = os.environ.get('FB_TEST_EMAIL')
-  FB_TEST_PWD = os.environ.get('FB_TEST_PWD'),
+  FB_TEST_PWD = os.environ.get('FB_TEST_PWD')
+
+  FB_TEST_ID1 = '1408003872852560'
+  FB_TEST_EMAIL1 = os.environ.get('FB_TEST_EMAIL1')
+  FB_TEST_PWD1 = os.environ.get('FB_TEST_PWD1')
 
 
 class ProductionConfig(Config):
