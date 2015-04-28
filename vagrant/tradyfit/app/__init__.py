@@ -35,6 +35,9 @@ def create_app(config_name):
   limiter.init_app(app)
   Mobility(app)
 
+  from .admin import admin as admin_blueprint
+  app.register_blueprint(admin_blueprint, url_prefix='/admin')
+
   from .main import main as main_blueprint
   app.register_blueprint(main_blueprint)
 
