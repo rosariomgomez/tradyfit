@@ -5,7 +5,8 @@ import unittest
 from selenium import webdriver
 from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from app import create_app, db
-from app.models import Category
+from app.models import Category, User
+from fixtures import create_item, create_message
 
 
 class SeleniumTestCase(unittest.TestCase):
@@ -41,6 +42,30 @@ class SeleniumTestCase(unittest.TestCase):
       db.create_all()
       Category.insert_categories()
 
+      # create fb test users, one item each and a message
+      user_US = User(fb_id=cls.app.config['FB_TEST_ID'],
+                    email=cls.app.config['FB_TEST_EMAIL'],
+                    name='Maria Bowl', username='maria',
+                    avatar_url='avatar1.jpg',
+                    city='Mountain View', country='US', state='CA',
+                    latitude=37.3860517, longitude=-122.0838511)
+      db.session.add(user_US)
+      db.session.commit()
+
+      user_ES = User(fb_id=cls.app.config['FB_TEST_ID1'],
+                    email=cls.app.config['FB_TEST_EMAIL1'],
+                    name='Rick Salman', username='rick23',
+                    avatar_url='avatar2.jpg',
+                    city='Madrid', country='ES', state='NU',
+                    latitude=40.479732, longitude=-3.5898299)
+      db.session.add(user_ES)
+      db.session.commit()
+
+      item_US = create_item(user_US, 'Soccer t-shirt', 'soccer', 'soccer.jpg')
+      item_ES = create_item(user_ES, 'Lakers t-shirt', 'basketball',
+                            'basket.jpg')
+      create_message(user_US.id, user_ES.id, item_ES.id)
+
       # start the Flask server in a thread
       td = threading.Thread(target=SeleniumTestCase.run_server)
       td.start()
@@ -62,4 +87,3 @@ class SeleniumTestCase(unittest.TestCase):
 
       # remove application context
       cls.app_context.pop()
-
