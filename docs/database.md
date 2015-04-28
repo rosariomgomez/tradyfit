@@ -56,8 +56,8 @@ The same can be achieved from the command line, run psql and create the dev and 
 [PostGIS](http://postgis.net/) adds support for geographic objects allowing location queries to be run in SQL. In vagrant's config file [pg_config.sh](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/pg_config.sh#L12) install the packages and create the extensions:  
 ```
 sudo apt-get install postgis postgresql-9.3-postgis-2.1
-su vagrant psql -c "CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;" tradyfit_dev
-su vagrant psql -c "CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;" tradyfit_test
+sudo -u postgres psql -c "CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;" tradyfit_dev
+sudo -u postgres psql -c "CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;" tradyfit_test
 ```
 
 ## Set up
