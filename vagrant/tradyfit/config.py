@@ -74,13 +74,29 @@ class TestingConfig(Config):
 
 
 class ProductionConfig(Config):
-  #S3_BUCKET = 'tradyfitbucket'
-  pass
+  SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
+  S3_BUCKET = 'tradyfitbucket'
+  S3_KEY = os.environ.get('S3_KEY_PROD')
+  S3_SECRET = os.environ.get('S3_SECRET_PROD')
+
+  @classmethod
+  def init_app(cls, app):
+    Config.init_app(app)
+
+
+class HerokuConfig(ProductionConfig):
+
+  @classmethod
+  def init_app(cls, app):
+    ProductionConfig.init_app(app)
+
+
 
 config = {
   'development': DevelopmentConfig,
   'testing': TestingConfig,
   'production': ProductionConfig,
+  'heroku': HerokuConfig,
 
   'default': DevelopmentConfig
 }
