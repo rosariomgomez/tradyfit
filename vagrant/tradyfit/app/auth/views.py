@@ -1,11 +1,11 @@
-from flask import flash, request, redirect, url_for, session
+from flask import flash, request, redirect, url_for, session, current_app
 from flask_oauthlib.client import OAuth, OAuthException
 from flask.ext.login import login_user, logout_user, current_user, \
 login_required
 from datetime import datetime, timedelta
 from app.models import User
 from app import helpers
-from .. import db
+from .. import db, opbeat
 from . import auth
 
 
@@ -60,7 +60,12 @@ def facebook_authorized():
   if resp is None:
     flash('You denied the request to sign in.')
     return redirect(url_for('main.index'))
+
   if isinstance(resp, OAuthException):
+    #send exception to error log
+    if not current_app.testing:
+      opbeat.captureMessage('FB login error: %s' %resp.message)
+    #redirect user to home
     flash('Something went wrong, please try to sign in later.')
     return redirect(url_for('main.index'))
 

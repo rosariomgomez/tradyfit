@@ -2,7 +2,7 @@
 import os
 import maxminddb
 from flask import current_app
-from . import geolocator
+from . import geolocator, opbeat
 from ipaddr import IPAddress
 
 path = os.path.dirname(os.path.abspath(__file__))
@@ -61,6 +61,8 @@ class Geolocation(object):
         location = geolocator.geocode(address)
         return (location.latitude, location.longitude)
       except:
+        #send exception to error log
+        opbeat.captureException()
         return None
 
 

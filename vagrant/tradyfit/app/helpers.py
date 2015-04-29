@@ -3,6 +3,7 @@ from uuid import uuid4
 import boto
 from flask import current_app
 from werkzeug import secure_filename
+from . import opbeat
 
 
 def make_image_request(url):
@@ -22,6 +23,8 @@ def get_s3_bucket():
         current_app.config["S3_SECRET"])
     return conn.get_bucket(current_app.config["S3_BUCKET"])
   except:
+    if not current_app.testing:
+      opbeat.captureMessage('Error trying to connect to S3')
     raise ReferenceError('connection refused')
 
 
@@ -38,6 +41,8 @@ def upload_s3(s3_directory, filename, data):
     sml.set_acl('public-read')
     return True
   except:
+    if not current_app.testing:
+      opbeat.captureMessage('Error trying to upload file to %s' %s3_directory)
     return False
 
 
@@ -50,6 +55,9 @@ def delete_s3(s3_directory, filename):
     k.delete() #delete the file
     return True
   except:
+    if not current_app.testing:
+      opbeat.captureMessage(
+          'Error trying to delete {} from {}'.format(filename, s3_directory))
     return False
 
 
