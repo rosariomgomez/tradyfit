@@ -9,6 +9,12 @@ class Config(object):
   TRADYFIT_ADMIN = os.environ.get('TRADYFIT_ADMIN')
   RATELIMIT_STRATEGY = 'fixed-window-elastic-expiry'
 
+  OPBEAT = {
+    'ORGANIZATION_ID': os.environ.get('OPBEAT_ORG_ID'),
+    'APP_ID': os.environ.get('OPBEAT_APP_ID'),
+    'SECRET_TOKEN': os.environ.get('OPBEAT_SECRET')
+  }
+
   FACEBOOK = {
     'consumer_key': os.environ.get('FB_CKEY'),
     'consumer_secret': os.environ.get('FB_CSECRET'),
@@ -51,6 +57,9 @@ class TestingConfig(Config):
   SQLALCHEMY_DATABASE_URI = os.environ.get('TEST_DATABASE_URL') or \
       'postgresql:///tradyfit_test'
   WTF_CSRF_ENABLED = False #disable csrf token protection on forms
+
+  #Disable OPBEAT logger
+  OPBEAT = {'APP_ID': None}
 
   #AWS S3
   S3_BUCKET = 'tradyfitbucket.test'
