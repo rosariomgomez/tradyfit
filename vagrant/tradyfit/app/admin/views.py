@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
-from flask import render_template, redirect, url_for
-from flask.ext.login import current_user, login_required
+from flask import render_template
 from . import admin
 from .decorators import admin_required
 from ..models import User, Item
