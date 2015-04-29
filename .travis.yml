@@ -1,13 +1,13 @@
 language: python
 
 python:
-  - 2.7
+  - 2.7.9
 
 services:
     - postgresql
 
 #install dependencies
-install: 
+install:
   - pip install -qr vagrant/tradyfit/requirements.txt
   - pip install coveralls
 
@@ -20,7 +20,7 @@ before_script:
   - psql -c 'CREATE EXTENSION postgis_topology;' -U postgres -d tradyfit_test
 
 #run tests
-script: 
+script:
   coverage run --source=vagrant/tradyfit/app vagrant/tradyfit/manage.py test
 
 after_success:
