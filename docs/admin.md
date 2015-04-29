@@ -8,6 +8,6 @@ Only admin user is allowed to access admin routes. Admin user is specified by se
 ## Opbeat
 After [setting it up](https://opbeat.com/docs/articles/error-logging-in-flask/) it automatically captures HTTP 500 errors that occur in the application.  
 
-I also send some additional events for capturing errors related to the REST API's rate limits and 3rd party services: Facebook login, Amazon S3 and Google API.  
+I also send some additional events for capturing errors related to the REST API's rate limits and 3rd party services: Facebook login, Amazon S3 and GoogleV3 geolocation API.  
 
-Opbeat is based in [Raven](http://raven.readthedocs.org/en/latest/) (the oficial client for [Sentry](https://www.getsentry.com/docs/)).
+Opbeat is based on [Raven](http://raven.readthedocs.org/en/latest/) (the oficial Python client for [Sentry](https://www.getsentry.com/docs/)).
