@@ -8,6 +8,7 @@ pages:
 - [database.md, 'Database']
 - [testing.md, 'Testing Strategy']
 - [design.md, 'Design']
+- [admin.md, 'Administration']
 - [notes.md, 'Notes']
 - [about.md, 'About']
 theme: readthedocs
