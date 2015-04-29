@@ -6,6 +6,7 @@ from flask.ext.login import LoginManager
 from flask.ext.moment import Moment
 from flask_limiter import Limiter
 from flask.ext.mobility import Mobility
+from opbeat.contrib.flask import Opbeat
 from config import config
 import geonamescache
 from geopy.geocoders import GoogleV3
@@ -18,6 +19,7 @@ gc = geonamescache.GeonamesCache()
 geolocator = GoogleV3()
 jsglue = JSGlue()
 limiter = Limiter()
+opbeat = Opbeat()
 
 login_manager = LoginManager()
 login_manager.login_view = 'main.index'
@@ -34,6 +36,7 @@ def create_app(config_name):
   jsglue.init_app(app)
   limiter.init_app(app)
   Mobility(app)
+  opbeat.init_app(app)
 
   from .admin import admin as admin_blueprint
   app.register_blueprint(admin_blueprint, url_prefix='/admin')
