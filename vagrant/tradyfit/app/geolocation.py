@@ -62,7 +62,8 @@ class Geolocation(object):
         return (location.latitude, location.longitude)
       except:
         #send exception to error log
-        opbeat.captureException()
+        opbeat.captureMessage('Problem trying to geolocate %s with GoogleV3'
+                              %address)
         return None
 
 
