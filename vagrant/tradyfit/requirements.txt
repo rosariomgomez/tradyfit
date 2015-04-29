@@ -16,7 +16,7 @@ MarkupSafe==0.18
 SQLAlchemy==0.9.8
 SQLAlchemy-Searchable==0.8.0
 SQLAlchemy-Utils==0.29.6
-Werkzeug==0.9.4
+Werkzeug==0.9.5
 WTForms==2.0.2
 alembic==0.7.4
 beautifulsoup4==4.3.2
