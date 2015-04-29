@@ -28,6 +28,7 @@ ipaddr==2.1.11
 itsdangerous==0.22
 maxminddb==1.2.0
 mock==1.0.1
+opbeat==2.1
 psycopg2==2.4.5
 selenium==2.45.0
 validators==0.7
