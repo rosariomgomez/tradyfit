@@ -15,7 +15,7 @@ def ratelimit_handler(e):
   if not current_app.testing:
     opbeat.captureMessage(
       "Rate limit: {} from resource {} from IP {}".format(
-                          e.description, request.path, get_ip() or 'None'))
+                          str(e.description), request.path, get_ip() or 'None'))
 
   response = jsonify({ 'error': 'ratelimit exceeded',
                        'message': str(e.description) })
