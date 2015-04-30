@@ -109,6 +109,8 @@ def delete_account():
     try:
       db.session.delete(current_user)
       db.session.commit()
+      session.pop('fb_oauth', None)
+      session.pop('last_seen', None)
       flash('We are sorry to see you go...')
     except ValueError:
       flash('Sorry, there was a problem deleting your account. Try again later')

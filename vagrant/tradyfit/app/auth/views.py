@@ -109,6 +109,7 @@ def facebook_authorized():
 def logout():
   '''remove added values to the session cookie and log out'''
   session.pop('fb_oauth', None)
+  session.pop('last_seen', None)
   logout_user()
   return redirect(url_for('main.index'))
 
