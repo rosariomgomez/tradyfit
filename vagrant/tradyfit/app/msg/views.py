@@ -18,6 +18,7 @@ def create(id): # pylint: disable=W0622
                   sender_id=current_user.id, receiver_id=item.user_id,
                   item_id=item.id)
     db.session.add(msg)
+    db.session.commit()
     flash('Your message has been sent.')
     return redirect(url_for('main.item', id=item.id))
   form.subject.data = "Hi! I'm interested on your " + item.name
@@ -62,6 +63,8 @@ def message(id): # pylint: disable=W0622
   #mark message as read if user is the receiver
   if current_user == msg.receiver and msg.unread:
     msg.unread = False
+    db.session.add(msg)
+    db.session.commit()
 
   form = MessageForm()
   #do not reply messages to deleted user accounts, to same user or
@@ -73,6 +76,7 @@ def message(id): # pylint: disable=W0622
                       sender_id=current_user.id, receiver_id=msg.sender_id,
                       item_id=msg.item_id)
       db.session.add(reply)
+      db.session.commit()
       flash('Your message has been sent.')
       return redirect(url_for('msg.notifications'))
   form.subject.data = "Re: " + msg.subject

@@ -90,6 +90,7 @@ def profile():
     current_user.state = form.state.data
     current_user.city = form.city.data
     db.session.add(current_user)
+    db.session.commit()
     flash('Your profile has been updated.')
     return redirect(url_for('main.profile'))
   form.username.data = current_user.username
@@ -107,6 +108,7 @@ def delete_account():
   if form.validate_on_submit():
     try:
       db.session.delete(current_user)
+      db.session.commit()
       flash('We are sorry to see you go...')
     except ValueError:
       flash('Sorry, there was a problem deleting your account. Try again later')
@@ -139,6 +141,7 @@ def create():
                   country=current_user.country, state=current_user.state,
                   city=current_user.city)
       db.session.add(item)
+      db.session.commit()
       flash('Your item has been created.')
       return redirect(url_for('main.index'))
     else:
@@ -182,6 +185,7 @@ def edit(id): # pylint: disable=W0622
     item.category = Category.query.get(form.category.data)
     item.modified = datetime.utcnow()
     db.session.add(item)
+    db.session.commit()
     flash('Your item has been updated.')
     return redirect(url_for('main.item', id=item.id))
 
@@ -201,6 +205,7 @@ def delete(id): # pylint: disable=W0622
     return redirect(url_for('main.index'))
   try:
     db.session.delete(item)
+    db.session.commit()
     flash('Your item has been deleted.')
   except ValueError:
     flash('Sorry, there was a problem deleting your item. Try again later.')

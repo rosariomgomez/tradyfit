@@ -57,6 +57,7 @@ class User(UserMixin, db.Model):
     '''update last_seen field with current time'''
     self.last_seen = datetime.utcnow()
     db.session.add(self)
+    db.session.commit()
 
 
   def location(self, ip):
@@ -82,6 +83,7 @@ class User(UserMixin, db.Model):
           self.longitude = longitude
 
         db.session.add(self)
+        db.session.commit()
 
   def modify_geolocation(self, address):
     '''update latitude and longitude information if user manually changes
@@ -93,6 +95,7 @@ class User(UserMixin, db.Model):
         self.latitude = coordinates[0]
         self.longitude = coordinates[1]
         db.session.add(self)
+        db.session.commit()
 
 
   def has_coordinates(self):
