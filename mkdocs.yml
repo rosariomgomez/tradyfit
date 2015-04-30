@@ -9,6 +9,7 @@ pages:
 - [testing.md, 'Testing Strategy']
 - [design.md, 'Design']
 - [admin.md, 'Administration']
+- [deployment.md, 'Deployment']
 - [notes.md, 'Notes']
 - [about.md, 'About']
 theme: readthedocs
