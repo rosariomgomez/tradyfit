@@ -213,7 +213,7 @@ class Item(db.Model):
       'id': self.id,
       'name': self.name,
       'description': self.description,
-      'price': self.price,
+      'price': str(self.price),
       'image_url': self.image(),
       'category': self.category.name,
       'city': self.city,
