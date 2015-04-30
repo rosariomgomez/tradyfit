@@ -5,7 +5,6 @@ basedir = os.path.abspath(os.path.dirname(__file__))
 
 class Config(object):
   SECRET_KEY = os.environ.get('SECRET_KEY') or 'our so secret password'
-  SQLALCHEMY_COMMIT_ON_TEARDOWN = True
   RATELIMIT_STRATEGY = 'fixed-window-elastic-expiry'
 
   OPBEAT = {
