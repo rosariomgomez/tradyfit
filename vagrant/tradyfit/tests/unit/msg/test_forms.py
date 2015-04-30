@@ -10,7 +10,7 @@ A guru of the artificial neural network.'
 
 class MessageFormTestCase(UnitTestCase):
   def test_message_form(self):
-    '''verify a the form validates with valid inputs'''
+    '''verify the form validates with valid inputs'''
     form = MessageForm(data={'subject': 'Hi there!', 'description': 'Nice'})
     form.validate()
     self.assertTrue(not form.errors)
@@ -23,17 +23,24 @@ class MessageFormTestCase(UnitTestCase):
     form.validate()
     self.assertEqual(form.errors['subject'], ['This field is required.'])
 
-    #2. TC2: Short (<2 chars)
-    form = MessageForm(data={'subject': 'f', 'description': 'Nice'})
+    #2. TC2: Short (<3 chars)
+    form = MessageForm(data={'subject': 'ff', 'description': 'Nice'})
     form.validate()
-    self.assertEqual(form.errors['subject'], ['Field must be between 2 and' +
+    self.assertEqual(form.errors['subject'], ['Field must be between 3 and' +
                                             ' 120 characters long.'])
 
     #3. TC3: Long (>120 chars)
     form = MessageForm(data={'subject': LONG_TEXT, 'description': 'Nice'})
     form.validate()
-    self.assertEqual(form.errors['subject'], ['Field must be between 2 and' +
+    self.assertEqual(form.errors['subject'], ['Field must be between 3 and' +
                                             ' 120 characters long.'])
+
+    #4. TC4: Invalid data types
+    form = MessageForm(data={'subject': '<script>alert(1)</script>',
+                            'description': 'Nice'})
+    form.validate()
+    self.assertEqual(form.errors['subject'], ['Subject must have only ' +
+                            'letters, numbers, dots, dashes or underscores'])
 
   def test_form_description_field(self):
     '''verify that description field only accepts the defined data types'''
@@ -44,7 +51,10 @@ class MessageFormTestCase(UnitTestCase):
     with open(f, "r") as text:
         desc = text.readlines()
 
-    form = MessageForm(data={'subject': 'hi', 'description': desc[0]})
+    form = MessageForm(data={'subject': 'hi!', 'description': desc[0]})
     form.validate()
     self.assertEqual(form.errors['description'], [u'Field must be ' +
                                 'between 0 and 500 characters long.'])
+
+
+
