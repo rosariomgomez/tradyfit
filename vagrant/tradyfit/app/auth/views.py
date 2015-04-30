@@ -1,3 +1,4 @@
+from werkzeug.datastructures import ImmutableList
 from flask import flash, request, redirect, url_for, session, current_app
 from flask_oauthlib.client import OAuth, OAuthException
 from flask.ext.login import login_user, logout_user, current_user, \
@@ -118,7 +119,7 @@ def get_ip():
   proxy server (this method must be created where a request context exist)'''
   try:
     ip_list = request.access_route
-    if type(ip_list) == list:
+    if ip_list and type(ip_list) == ImmutableList:
       return ip_list[0]
     return None
   except ValueError:
