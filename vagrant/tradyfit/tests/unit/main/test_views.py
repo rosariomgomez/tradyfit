@@ -276,7 +276,7 @@ class EditItemViewTestCase(ClientTestCase):
       resp = self.client.post(url_for('main.edit', id=item.id),
                               data=form_data(item), follow_redirects=True)
       self.assertTrue(b'Your item has been updated.' in resp.data)
-      self.assertTrue(b'234$' in resp.data)
+      self.assertTrue(item.description in resp.data)
 
   @patch('app.main.views.save_item_image', return_value='new_s3_img.jpg')
   @patch('app.main.views.delete_item_image', return_value=True)
@@ -295,7 +295,7 @@ class EditItemViewTestCase(ClientTestCase):
                                 data=form_data(item, 'new_image.jpg'),
                                 follow_redirects=True)
       self.assertTrue(b'Your item has been updated.' in resp.data)
-      self.assertTrue(b'234$' in resp.data)
+      self.assertTrue(item.description in resp.data)
       self.assertTrue(mock_delete_image.called_with('image.jpg'))
 
   @patch('app.main.views.save_item_image', return_value=None)

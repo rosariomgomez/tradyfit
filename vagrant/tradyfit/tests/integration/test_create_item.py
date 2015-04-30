@@ -38,7 +38,7 @@ class CreateItemIntegrationTestCase(ClientTestCase):
     u = self.create_user()
     resp = self.post_req_item_create(u, 'image.jpg')
     self.assertTrue('Your item has been created' in resp.data)
-    self.assertTrue('234$' in resp.data)
+    self.assertTrue('plain ball' in resp.data)
 
 
   @patch('app.main.views.save_item_image', return_value=None)
@@ -53,7 +53,7 @@ class CreateItemIntegrationTestCase(ClientTestCase):
     resp = self.post_req_item_create(u, 'image.jpg')
     self.assertTrue('Sorry, there was a problem creating your item.' in
                     resp.data)
-    self.assertFalse('234$' in resp.data)
+    self.assertFalse('plain ball' in resp.data)
 
 
   def test_create_item_without_image(self):
