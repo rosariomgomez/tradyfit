@@ -49,6 +49,9 @@ class DevelopmentConfig(Config):
       'postgresql:///tradyfit_dev'
   S3_BUCKET = 'tradyfitbucket.dev'
 
+  #Disable OPBEAT logger
+  OPBEAT = {'APP_ID': None}
+
 
 class TestingConfig(Config):
   TESTING = True #@login_required is disabled on tests
@@ -72,29 +75,17 @@ class TestingConfig(Config):
   FB_TEST_PWD1 = os.environ.get('FB_TEST_PWD1')
 
 
-class ProductionConfig(Config):
+class HerokuConfig(Config):
   SQLALCHEMY_DATABASE_URI = os.environ.get('DATABASE_URL')
   S3_BUCKET = 'tradyfitbucket'
   S3_KEY = os.environ.get('S3_KEY_PROD')
   S3_SECRET = os.environ.get('S3_SECRET_PROD')
-
-  @classmethod
-  def init_app(cls, app):
-    Config.init_app(app)
-
-
-class HerokuConfig(ProductionConfig):
-
-  @classmethod
-  def init_app(cls, app):
-    ProductionConfig.init_app(app)
 
 
 
 config = {
   'development': DevelopmentConfig,
   'testing': TestingConfig,
-  'production': ProductionConfig,
   'heroku': HerokuConfig,
 
   'default': DevelopmentConfig
