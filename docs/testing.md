@@ -53,7 +53,7 @@ I use both tools because although there is some overlapping on the information t
 
 ## Notes
 __Mocking:__  
-- When mocking an imported method inside the function in test, we must ensure that we patch the name used by the system under test. __The basic principle is that you patch where an object is looked up, which is not necessarily the same place as where it is defined.__
+- When mocking an imported method inside the function in test, we must ensure that we patch the name used by the system under test. __The basic principle is that you patch where an object is looked up, which is not necessarily the same place as where it is defined.__  
 - In order to unit test form validation for file uploading, I had to mock a file, by using the specifications from the FileStorage class. That was the only way I was able to pass the FileRequired validation [test_create_item_form](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/tests/unit/main/test_forms.py#L151)  
 - To ensure a mock is being called, you can make use of the built in instance method from the Mock class ``assert_called_with()``. Example: 
 ```

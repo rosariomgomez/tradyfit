@@ -16,7 +16,7 @@ In this section I explain the deployment workflow, the production environment an
 - Push the code to Github. This automatically launches a build in Travis
 - If the build passes, I push the code to Heroku:  
     - heroku maintenance:on _(put the app offline and show a maintenance page)_
-    - git subtree push \-\-prefix vagrant\/tradyfit heroku master _(because the application doesn’t reside on the top of the git repo)_  
+    - git subtree push --prefix vagrant/tradyfit heroku master _(because the application doesn’t reside on the top of the git repo)_  
     - heroku run python manage.py deploy _(upgrade db, insert categories...)_
     - heroku restart _(restart the app after the deploy to start cleanly)_
     - heroku maitenance:off _(put the app back online)_  
