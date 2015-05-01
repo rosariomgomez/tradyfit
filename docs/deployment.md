@@ -6,7 +6,8 @@ In this section I explain the deployment workflow, the production environment an
 - The configuration settings for Heroku are specified on the [HerokuConfig](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/config.py#L78). In Heroku the config vars need to be [set up](https://devcenter.heroku.com/articles/config-vars).
 - In order to automate repetitive tasks during deployment (create/update database, insert categories...), I've added the [deploy command](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/manage.py#L65) to manage.py
 - Heroku doesn't provide a web server for the application, expecting the application to start their own server. The one Flask uses for development only process a single request at a time, so it's not a good solution for production.  
-    -  I've installed [Gunicorn](http://gunicorn-docs.readthedocs.org/en/latest/) as it's the one [recommended by Heroku](https://devcenter.heroku.com/articles/python-gunicorn).
+    -  I've installed [Gunicorn](http://gunicorn-docs.readthedocs.org/en/latest/) as it's the one [recommended by Heroku](https://devcenter.heroku.com/articles/python-gunicorn). To app locally with this server:
+        +  gunicorn manage:app -b 0.0.0.0:5000
     -  In the [Procfile file](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/Procfile) is where I tell Heroku to start the web server.
 
 
@@ -29,19 +30,10 @@ In this section I explain the deployment workflow, the production environment an
   
   
 ## Some usefull commands on Heroku
-- Running the shell: 
-```
-heroku run python manage.py shell
-```
-- Connect to the database:
-```
-heroku pg:psql
-```
-- See the application logs:
-```
-heroku logs
-```
-  
+- Running the shell: heroku run python manage.py shell
+- Connect to the database: heroku pg:psql
+- See the application logs: heroku logs
+
   
 ## Opbeat
 In order to have real time information about errors occurring in the application, I configured [Opbeat](https://opbeat.com). After [setting it up](https://opbeat.com/docs/articles/error-logging-in-flask/) it automatically captures HTTP 500 errors occurring in the application.  

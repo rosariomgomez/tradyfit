@@ -31,8 +31,9 @@ Below I describe some interesting elements or relations of some tables:
     TSVectorType column that vectorize the string columns name and description and create the search vectors.
 
 <h4>Messages:</h4>
-- Deletes for foreign keys: sender_id, receiver_id and item_id are set to ``ondelete='SET NULL'``, so if a user or item is deleted the message is still available.  
-
+- Deletes for foreign keys:  
+sender_id, receiver_id and item_id are set to ``ondelete='SET NULL'``, so if a user or item is deleted the message is still available.  
+  
 
 ## Database creation  
 In vagrant's config file [pg_config.sh](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/pg_config.sh#L9):  
@@ -49,7 +50,7 @@ The same can be achieved from the command line by running psql and create the de
 >> CREATE DATABASE tradyfit_test;
 ```
   
-
+  
 <h3>How to add PostGIS support</h3>
 [PostGIS](http://postgis.net/) adds support for geographic objects allowing location queries to be run in SQL. In vagrant's config file [pg_config.sh](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/pg_config.sh#L12) install the packages and create the extensions:  
 ```
@@ -57,7 +58,8 @@ sudo apt-get install postgis postgresql-9.3-postgis-2.1
 sudo -u postgres psql -c "CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;" tradyfit_dev
 sudo -u postgres psql -c "CREATE EXTENSION postgis; CREATE EXTENSION postgis_topology;" tradyfit_test
 ```
-
+  
+  
 ## Database Set up
 Since the production app will be using a Postgres DB, it is a good idea to develop and test locally on the same database. In order to communicate the postgres database with the flask application, we need to use the following libraries: 
 
@@ -81,26 +83,22 @@ Some examples:
 ```
 >> python manage.py shell
 ```
-
-  
 - Adding default values to DB from file (such as sports categories):  
 ```
 >> Category.insert_categories()
 ```
-
 - Querying rows:  
 ```
 >> User.query.all()
 >> user1 = User.query.filter_by(username='emily34').first()
 ```
-
 - Deleting:
 ```
 >> db.session.delete(user1)  
 >> db.session.commit()
 ```
   
-
+  
 ## Migrations
 Before database migrations can be maintained, it is necessary to create a migration repository with the init subcommand:   
 ```
@@ -118,3 +116,5 @@ Then, we should review the script to see if it was correctly generated. And fina
 ```
 >> python manage.py db upgrade
 ```
+  
+  

@@ -18,7 +18,7 @@ The following steps will create an environment to run the code in your own machi
 <h3>Launching the web application</h3>
 From the command line, launch the webserver:
 ```
-python manage.py runserver \-\-host 0.0.0.0
+python manage.py runserver --host 0.0.0.0
 ```
 Open a browser and go to the address http://localhost:5000
 
@@ -43,7 +43,7 @@ python manage.py acceptance_test
 
 For getting the code coverage:
 ```
-python manage.py test \-\-coverage
+python manage.py test --coverage
 ```
 To see the generated report, on the host machine:
 ```

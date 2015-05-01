@@ -26,7 +26,9 @@ More info on [this SO thread](http://stackoverflow.com/questions/28241989/flask-
 
 <h3> Uploading files</h3>
 - Remember to set the enctype of the HTML form to multipart/form-data:
-``<form action="" method=post enctype=multipart/form-data>``
+```
+<form action="" method=post enctype=multipart/form-data>
+```
 
 - In order to avoid the upload of big images, I've set up the ``MAX_CONTENT_LENGTH`` variable in the [config.py](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/config.py#L38) file. If a file with size bigger than this variable is tried to be uploaded, a 413 error will be raised, which is captured by an error handler.  
 __Note__: I've tried to redirect instead of render the template but it didn't work.

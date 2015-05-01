@@ -8,6 +8,7 @@ For getting the bootstrap functionallity, templates extend from bootstrap/base.h
 ```
   
   
+
 ## Mobile requests
 
 The design I've created for displaying the search results for desktop doesn't display nicely on mobile, so I decided to serve a different template depending on the device (desktop/mobile).  
@@ -27,8 +28,9 @@ So in the [search_results.html](https://github.com/rosariomgomez/tradyfit/blob/m
   {% endfor %}
 {% endif %}
 ```
+    
   
-
+  
 ## Image credits
 
 Here are the credits for the awesome images I've used, thank you all!!!
