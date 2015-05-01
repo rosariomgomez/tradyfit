@@ -5,8 +5,8 @@ In this section I explain the deployment workflow, the production environment an
 ## Deployment set up
 - The configuration settings for Heroku are specified on the [HerokuConfig](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/config.py#L78). In Heroku the config vars need to be [set up](https://devcenter.heroku.com/articles/config-vars).
 - In order to automate repetitive tasks during deployment (create/update database, insert categories...), I've added the [deploy command](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/manage.py#L65) to manage.py
-- Heroku doesn't provide a web server for the application, expecting the application to start their own server. The one Flask uses for development only process a single request at a time, so it's not a good solution for production.  
-    -  I've installed [Gunicorn](http://gunicorn-docs.readthedocs.org/en/latest/) as it's the one [recommended by Heroku](https://devcenter.heroku.com/articles/python-gunicorn). To app locally with this server:
+- Heroku does not provide a web server for the application, expecting the application to start its own server. The web server Flask uses for development only processes a single request at a time, so it's not a good solution for production.  
+    -  I've installed [Gunicorn](http://gunicorn-docs.readthedocs.org/en/latest/) as it's the one [recommended by Heroku](https://devcenter.heroku.com/articles/python-gunicorn). To run the application locally with this server:
         +  gunicorn manage:app -b 0.0.0.0:5000
     -  In the [Procfile file](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/Procfile) is where I tell Heroku to start the web server.
 
@@ -14,7 +14,7 @@ In this section I explain the deployment workflow, the production environment an
 ## Deployment workflow
 - Verify all the tests are passing locally 
 - Push the code to Github. This automatically launches a build in Travis
-- If the build passes, I push the code to Heroku:  
+- If the build passes, I push the code to Heroku running the following commands:  
     - heroku maintenance:on _(put the app offline and show a maintenance page)_
     - git subtree push --prefix vagrant/tradyfit heroku master _(because the application doesn’t reside on the top of the git repo)_  
     - heroku run python manage.py deploy _(upgrade db, insert categories...)_
@@ -26,10 +26,10 @@ In this section I explain the deployment workflow, the production environment an
 - python-2.7.9
 - PostgreSQL 9.3.5
 - PostGIS 2.1
-- Rest of dependencies specified on requirements.txt (with their version)  
+- The rest of dependencies (with their version) are specified on the requirements.txt file  
   
   
-## Some usefull commands on Heroku
+## Some useful commands on Heroku console
 - Running the shell: heroku run python manage.py shell
 - Connect to the database: heroku pg:psql
 - See the application logs: heroku logs

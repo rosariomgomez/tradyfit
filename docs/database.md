@@ -12,7 +12,7 @@ Below I describe some interesting elements or relations of some tables:
 - Relationships:    
     - items:  
         - A query to the resource is returned when a user is loaded (``lazy='dynamic'``)  
-        - When a user is deleted, all her items are also deleted (``cascade='all, delete-orphan'``)      
+        - When a user is deleted, all his/her items are also deleted (``cascade='all, delete-orphan'``)      
     - msgs_sent:  
         - A query to the resource is returned when a user is loaded (``lazy='dynamic'``)  
         - Specific relation: ``primaryjoin="User.id==Message.sender_id"``  
@@ -28,7 +28,7 @@ Below I describe some interesting elements or relations of some tables:
 - location:  
     Geometry point that represents a spatial coordinate from the [WGS84](http://en.wikipedia.org/wiki/World_Geodetic_System#WGS84) reference system. This is indicated by the spatial reference id value (srid=4326)
 - search_vector:  
-    TSVectorType column that vectorize the string columns name and description and create the search vectors.
+    TSVectorType column that vectorizes the string columns name and description and create the search vectors.
 
 <h4>Messages:</h4>
 - Deletes for foreign keys:  
@@ -64,13 +64,13 @@ sudo -u postgres psql -c "CREATE EXTENSION postgis; CREATE EXTENSION postgis_top
 ## Database set up
 Since the production app will be using a Postgres DB, it is a good idea to develop and test locally on the same database. In order to communicate the postgres database with the flask application, we need to use the following libraries: 
 
-- [psycopg2](http://initd.org/psycopg/): Python adapter for Postgres  
+- [psycopg2](http://initd.org/psycopg/): Python adapter for Postgres.  
 - [sqlalchemy](http://www.sqlalchemy.org/): Python SQL and ORM (Object-relational mapping) framework.
 - [flask-sqlalchemy](https://pythonhosted.org/Flask-SQLAlchemy/): Flask wrapper for SQLAlchemy that provides useful defaults and extra helpers.
-- [Flask-Migrate](https://flask-migrate.readthedocs.org/en/latest/): Flask extension for SQLAlchemy database migrations (it makes use of Alembic)  
-- [GeoAlchemy2](http://geoalchemy-2.readthedocs.org/en/latest/): allows SQLAlchemy's ORM to work with spatial databases (in our case PostgreSQL/PostGIS implemented for items table on location column that will allow us query for nearby points)   
+- [Flask-Migrate](https://flask-migrate.readthedocs.org/en/latest/): Flask extension for SQLAlchemy database migrations (it makes use of Alembic).  
+- [GeoAlchemy2](http://geoalchemy-2.readthedocs.org/en/latest/): allows SQLAlchemy's ORM to work with spatial databases (in our case PostgreSQL/PostGIS implemented for items table on location column that will allow us query for nearby points).   
   
-In the [config.py](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/config.py) file we specify the URI for the database we will be using depending on the environment the application is running.  
+In the [config.py](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/config.py) file we specify the URI for the database we will be using depending on the environment where the application is running.  
 
 
 ## Model definition
