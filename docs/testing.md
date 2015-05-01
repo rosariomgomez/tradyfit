@@ -4,7 +4,7 @@ This section contains all the information about the tools, packages and strategy
 
 ## Behavior Driven Development
 The idea of following BDD is to focus the test suite on the behavior of the application as a whole.
-Writing first a test describing the feature's functionality before coding it, helps to understand on a higher level what are the expectations from a user point of view.
+Writing first a test describing the feature's functionality before coding it, helps to understand on a higher level what are the expectations from a user point of view. The following diagram summarize the process:  
 
 ![BDD cycle](img/bdd_cycle.jpg)
 
@@ -13,29 +13,7 @@ Writing first a test describing the feature's functionality before coding it, he
 
 ## Unit tests
 Test methods in isolation. Mock any external call to other methods.
-
-__Some notes on making mocks work:__  
-- When mocking an imported method inside the function in test, we must ensure that we patch the name used by the system under test. __The basic principle is that you patch where an object is looked up, which is not necessarily the same place as where it is defined.__ There are two scenarios:   
-
-- When the import is common:  
-
-    In the [facebook_authorized()](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/app/auth/views.py#L59) method, there's a call to the method helpers.save_avatar(). The import is made by calling ``from app.main import helpers``.  
-    Then, in the test function [test_login_user_fb_auth(self)](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/tests/unit/auth/test_auth_views.py#L69), the import is made in the same way and we can patch the save_avatar method by doing: ``with patch.object(helpers, 'save_avatar', mock_save_avatar)``  
-
   
-- When there is already a reference to the method we want to patch:  
-
-    In the [create()](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/app/main/views.py#L81), there's a call to the method save_item_image(). The import is made by calling ``from .helpers import save_item_image``.  
-    Then, in the test function we need to make the import of the view where we have the method we want to test and patch the call to save_item_image by writing ``@patch('app.main.views.save_item_image'):``  
-
-- To ensure a mock is being called, you can make use of the built in instance method from the Mock class ``assert_called_with()``. Example: 
-```
-mock_save_avatar.assert_called_with('http://test-image.png')
-```
-    
-- More info in the [patch documentation](http://mock.readthedocs.org/en/latest/patch.html#where-to-patch).  
-  
-
 ## Integration tests  
 Test feature functionality without browser interaction.  
 
@@ -52,27 +30,11 @@ __Some notes:__
   - Try to use id (#) and class (.) attributes for locators whenever is possible  
   - Use explicit waits to meet all browser requirements
 
-<h3>Running the tests in the cloud with Sauce Labs</h3>
-
-## Notes
-__Mocking:__  
-- In order to unit test form validation for file uploading, I had to mock a file, by using the specifications from the FileStorage class. That was the only way I was able to pass the FileRequired validation (``test_create_item_form``)  
-
-__Remove connection on tearDown:__  
-If the connection is not removed, it stays idle. After running several tests (the error occurs to me when adding the 117 test case), sqlalchemy is using all the connections and an Operational error occur.  
-I solved it by adding: ``db.get_engine(self.app).dispose()``  
-Found solution [here](http://stackoverflow.com/questions/18291180/flask-unittest-and-sqlalchemy-using-all-connections)  
-I confirmed it by checking the process running during test execution, and found several open connections in idle status:  
-```
-ps aux | grep tradyfit_test  
-postgres 31101  [..]  postgres: vagrant tradyfit_test [local] idle
-```
-  
 
 ## Continuous integration
 
 <h3>Travis-CI</h3>
-Any new changes on the source code (every time I push code to Github) will trigger a build. It creates a new virtual machine with the set up specified on the [.travis.yml](https://github.com/rosariomgomez/tradyfit/blob/master/.travis.yml) file: database, dependences and the build commands; and then, it runs the tests (unit and integration).
+Any new changes on the source code (every time I push code to Github) will trigger a build. It creates a new virtual machine with the set up specified on the [.travis.yml](https://github.com/rosariomgomez/tradyfit/blob/master/.travis.yml) file: database, dependencies and the build commands; and then, it runs the tests (unit and integration).
 
 - [Builds history](https://travis-ci.org/rosariomgomez/tradyfit/builds)
 
@@ -87,3 +49,26 @@ I use both tools because although there is some overlapping on the information t
 
 - [Code climate dashboard](https://codeclimate.com/github/rosariomgomez/tradyfit)
 - [Landscape dashboard](https://landscape.io/github/rosariomgomez/tradyfit) 
+
+
+## Notes
+__Mocking:__  
+- When mocking an imported method inside the function in test, we must ensure that we patch the name used by the system under test. __The basic principle is that you patch where an object is looked up, which is not necessarily the same place as where it is defined.__
+- In order to unit test form validation for file uploading, I had to mock a file, by using the specifications from the FileStorage class. That was the only way I was able to pass the FileRequired validation [test_create_item_form](https://github.com/rosariomgomez/tradyfit/blob/master/vagrant/tradyfit/tests/unit/main/test_forms.py#L151)  
+- To ensure a mock is being called, you can make use of the built in instance method from the Mock class ``assert_called_with()``. Example: 
+```
+mock_save_avatar.assert_called_with('http://test-image.png')
+```
+    
+- More info in the [patch documentation](http://mock.readthedocs.org/en/latest/patch.html#where-to-patch).  
+
+__Remove connection on tearDown:__  
+If the connection is not removed, it stays idle. After running several tests (the error occurs to me when adding the 117 test case), sqlalchemy is using all the connections and an Operational error occur.  
+I solved it by adding: ``db.get_engine(self.app).dispose()``  
+Found solution [here](http://stackoverflow.com/questions/18291180/flask-unittest-and-sqlalchemy-using-all-connections)  
+I confirmed it by checking the process running during test execution, and found several open connections in idle status:  
+```
+ps aux | grep tradyfit_test  
+postgres 31101  [..]  postgres: vagrant tradyfit_test [local] idle
+```
+  
