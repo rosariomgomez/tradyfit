@@ -12,14 +12,14 @@ Items need to be converted to JSON in order to be served by the API. This is ach
 | --------------------------- | :---------:  | -------------------------------|
 | /items/category/<category\> |  GET         |  All the items from category   |
 | /items/search/<query\>      |  GET         |  All the items from the query  |
-| /item/<int:id\>             |  GET         |  An item                       |
+| /items/<int:id\>            |  GET         |  An item                       |
   
 
 <h3>Example code to parse the API's response</h3>
 ```python
 import json
 import urllib
-response = urllib.urlopen('http://tradyfit.com/public-api/v1.0/items/category/soccer')
+response = urllib.urlopen('http://tradyfit.herokuapp.com/public-api/v1.0/items/category/soccer')
 resp = json.loads(response.read())
 for item in resp['items']:
     print item['name']

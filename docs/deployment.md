@@ -19,7 +19,7 @@ In this section I explain the deployment workflow, the production environment an
     - git subtree push --prefix vagrant/tradyfit heroku master _(because the application doesn’t reside on the top of the git repo)_  
     - heroku run python manage.py deploy _(upgrade db, insert categories...)_
     - heroku restart _(restart the app after the deploy to start cleanly)_
-    - heroku maitenance:off _(put the app back online)_  
+    - heroku maintenance:off _(put the app back online)_  
   
 
 ## Production environment
