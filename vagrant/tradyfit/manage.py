@@ -65,7 +65,6 @@ def acceptance_test():
 def deploy():
   """Run deployment tasks."""
   from flask.ext.migrate import upgrade
-  from app.models import Category
 
   # migrate database to latest revision
   upgrade()
