@@ -56,6 +56,7 @@ curl --header "Accept: application/json" --verbose http://tradyfit.com/public-ap
   "message": "Not a valid search"
 }
 ```
+    
   
   
 ## Rate limiting

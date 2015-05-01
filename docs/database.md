@@ -60,7 +60,8 @@ sudo -u postgres psql -c "CREATE EXTENSION postgis; CREATE EXTENSION postgis_top
 ```
   
   
-## Database Set up
+
+## Database set up
 Since the production app will be using a Postgres DB, it is a good idea to develop and test locally on the same database. In order to communicate the postgres database with the flask application, we need to use the following libraries: 
 
 - [psycopg2](http://initd.org/psycopg/): Python adapter for Postgres  
