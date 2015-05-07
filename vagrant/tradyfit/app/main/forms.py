@@ -70,6 +70,10 @@ class ItemForm(Form):
       fr(self, field)
 
 
+class DeleteItemForm(Form):
+  submit = SubmitField('Delete item')
+
+
 class SearchForm(Form):
   search = StringField('What are you looking for?',
                         validators=[ Required(), Length(3, 80),
