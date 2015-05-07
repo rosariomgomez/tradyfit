@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+
+{% block page_content %}
+
+<div class="row">
+<br><br>
+  <div class="col-md-6" id="delete-account">
+    <p><b>Warning!</b> This is a non reversible acction. <br>
+    Are you sure you want to delete your item? </p>
+
+    {{ wtf.quick_form(form) }}
+    <br><br>
+  </div>
+  <div>
+    {% include "main/_item_box.html" %}
+  </div>
+</div>
+{% endblock %}
