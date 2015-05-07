@@ -5,7 +5,8 @@ request, abort, session
 from flask.ext.login import current_user, login_required
 from . import main
 from .. import db
-from .forms import UserForm, DeleteUserForm, ItemForm, SearchForm
+from .forms import UserForm, DeleteUserForm, ItemForm, DeleteItemForm, \
+SearchForm
 from ..models import Item, Category
 from ..helpers import save_item_image, delete_item_image
 from ..geolocation import Geolocation
@@ -44,6 +45,9 @@ def index():
 
 @main.route('/items/categories')
 def categories():
+  '''Show all categories and 12 items. If user is logged in and has
+  location, the items are the 12 nearest, if not, show last 12 created
+  items'''
   categories = Category.query.all()
   if current_user.is_authenticated() and current_user.has_coordinates():
     user_loc = current_user.get_point_coordinates()
@@ -153,7 +157,7 @@ def create():
 
 
 @main.route('/item/<int:id>')
-def item(id): # pylint: disable=W0622
+def item(id):  # pylint: disable=W0622
   item = Item.query.get_or_404(id)
   return render_template('main/item.html', item=item)
 
@@ -167,17 +171,17 @@ def edit(id): # pylint: disable=W0622
 
   form = ItemForm()
   if form.validate_on_submit():
-    #included new image in form and is a file
+    # included new image in form and is a file
     if hasattr(form.image.data, 'filename') and form.image.data.filename:
-      image = save_item_image(form.image) #save new image
-      if image is None: #problem uploading new image
+      image = save_item_image(form.image)  # save new image
+      if image is None:  # problem uploading new image
         flash('Sorry, there was an error updating your item. Try again later.')
         return redirect(url_for('main.item', id=item.id))
-      elif not delete_item_image(item.image_url): #delete previous image
-        delete_item_image(image) #delete the new image
+      elif not delete_item_image(item.image_url):  # delete previous image
+        delete_item_image(image)  # delete the new image
         flash('Sorry, there was an error updating your item. Try again later.')
         return redirect(url_for('main.item', id=item.id))
-    else: #image not modified
+    else:  # image not modified
       image = item.image_url
 
     item.name = form.name.data
@@ -199,20 +203,23 @@ def edit(id): # pylint: disable=W0622
                           image=item.image())
 
 
-@main.route('/delete/<int:id>')
+@main.route('/delete/<int:id>', methods=['GET', 'POST'])
 @login_required
-def delete(id): # pylint: disable=W0622
+def delete(id):  # pylint: disable=W0622
+  form = DeleteItemForm()
   item = Item.query.get_or_404(id)
   if current_user != item.user:
     return redirect(url_for('main.index'))
-  try:
-    db.session.delete(item)
-    db.session.commit()
-    flash('Your item has been deleted.')
-  except ValueError:
-    flash('Sorry, there was a problem deleting your item. Try again later.')
-    return redirect(url_for('main.item', id=item.id))
-  return redirect(url_for('main.index'))
+  if form.validate_on_submit():
+    try:
+      db.session.delete(item)
+      db.session.commit()
+      flash('Your item has been deleted.')
+      return redirect(url_for('main.index'))
+    except ValueError:
+      flash('Sorry, there was a problem deleting your item. Try again later.')
+      return redirect(url_for('main.item', id=item.id))
+  return render_template('main/delete_item.html', form=form, item=item)
 
 
 @main.route('/search_results')
