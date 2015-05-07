@@ -3,7 +3,7 @@ from bs4 import BeautifulSoup
 from StringIO import StringIO
 from mock import patch
 from flask import url_for
-from app.models import Category
+from app.models import Category, Item
 from base import ClientTestCase
 import app.main.views
 
@@ -343,12 +343,12 @@ class DeleteItemViewTestCase(ClientTestCase):
 
   def test_delete_item_route(self):
     '''verify you get a 404 for a non existent item
-    and that you can delete a created item if you are the owner
+    and that you get the delete page of an item if you are the owner
     1. Request to delete a non existent item
     2. Assert you get a 404 response
     3. Try to delete another user's item
-    4. Go to the delete route
-    5. Assert your item has been deleted
+    4. Go to the delete route of an item you are the owner
+    5. Assert you get the correct item for deletion
     '''
     u = self.create_user()
     u1 = self.create_user('25', 'maggy@example.com', 'maggy')
@@ -373,6 +373,25 @@ class DeleteItemViewTestCase(ClientTestCase):
         sess['user_id'] = u.id
         sess['_fresh'] = True
 
-      response = self.client.get(url_for('main.delete', id=item.id),
-                                follow_redirects=True)
-      self.assertTrue('Your item has been deleted.' in response.data)
+      response = self.client.get(url_for('main.delete', id=item.id))
+      self.assertTrue(item.name.capitalize() in response.data)
+
+  def test_delete_item(self):
+    '''verify you can delete an item
+    1. Go to the delete route of an item you are the owner
+    2. Click on delete item button
+    3. Assert you are redirected home and the item has been deleted
+    '''
+    u = self.create_user()
+    item = self.create_item(u.id)
+    item_id = item.id
+
+    with self.client as c:
+      with c.session_transaction() as sess:
+        sess['user_id'] = u.id
+        sess['_fresh'] = True
+
+      resp = self.client.post(url_for('main.delete', id=item.id),
+                              follow_redirects=True)
+      self.assertTrue('Your item has been deleted' in resp.data)
+      self.assertTrue(Item.query.get(item_id) is None)
